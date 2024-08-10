@@ -1,0 +1,47 @@
+.signin_form {
+	padding: 50px 40px 45px 40px;
+	background-color: rgba(255, 255, 255, 0.1);
+	box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.5);
+	border-radius: 5px;
+	border-right: 1px solid rgba(255, 255, 255, 0.2);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+	backdrop-filter: blur(5px); 
+	display: flex; 
+	flex-direction: column;
+	max-width: 300px;
+}
+
+.input_label {
+	position: relative;
+	border: 1px solid #000;
+	background: #fff;
+	height: 50px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.input_label > input {
+	outline: none;
+	background: #fff;
+	border: none;
+	color: #000;
+	font-size: 0.8em;
+}
+
+.input_label > span {
+	color: #000;
+	position: absolute;
+	left: 0;
+	margin-left: 16px;
+	transition: 0.4s cubic-bezier(0.05, 0.01, 0, 0.93);
+	font-size: 0.8em;
+}
+
+.input_label > input:focus ~ span {
+	transform: translateX(-10px) translateY(-25px);
+	padding: 1px 6px;
+	background: #fff;
+	border: 1px solid #000;
+}
