@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Enums\RequestPriorityLevel;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Company;
 use App\Models\Measurement;
@@ -45,7 +44,7 @@ class RequestController extends Controller
             $expenseRequest->priority = false;
 
             $expenseRequest->save();
-            
+
             // get all request item that has no request id but have the same session id
             $requestItems = RequestItem::where('session_id',  Session::getId())
                 ->whereNull('request_id')

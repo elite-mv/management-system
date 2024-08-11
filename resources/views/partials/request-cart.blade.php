@@ -1,6 +1,6 @@
 
 @foreach($requestItems as $requestItem)
-    <div class="row m-0 px-3 mb-1 border border-dark cart-items" onclick="edit_request_cart('{{$requestItem->id}}');">
+    <div id="requestItem{{$requestItem->id}}" class="cursor-pointer row m-0 px-3 mb-1 border border-dark cart-items" onclick="onSelectExpenseRequest('{{$requestItem->id}}');">
         <div class="col-1 text-center">
             <small>{{ $requestItem->quantity}}</small>
         </div>
