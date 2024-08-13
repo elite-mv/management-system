@@ -19,4 +19,4 @@ jobs:
 
       - name: Deploy
         run: |
-          ssh user@your-server 'cd /var/www/html/management && git pull'
+          ssh john@178.128.31.201 'cd /var/www/html/management && git pull'
