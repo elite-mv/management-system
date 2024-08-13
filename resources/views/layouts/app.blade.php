@@ -226,9 +226,14 @@
                         data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
                     <i class="fas fa-bars"></i>
                 </button>
-                <a class="btn btn-sm rounded-0 btn-outline-dark ms-auto me-1" onclick="logout();">
-                    <i class="fas fa-sign-out-alt" style="margin-right: 5px;"></i><small>LOGOUT</small>
-                </a>
+
+                <form method="POST" action="/logout" class="logoutForm">
+                    @csrf
+                    <button type="submit"> 
+                        <i class="fas fa-sign-out-alt" style="margin-right: 5px;"></i>
+                        <small>LOGOUT</small>
+                    </button>
+                </form>
             </div>
 
             @yield('body')
@@ -258,6 +263,26 @@
 @yield('script')
 <script>
 
+
+    const logoutForm = document.querySelector('.logoutForm');
+
+    logoutForm.addEventListener('submit',(e)=>{
+        
+        e.preventDefault();
+
+        Swal.fire({
+            title: "Are you sure you want to logout?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "log out"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                logoutForm.submit();
+            }
+        })
+    });
 
     $.ajaxSetup({
         headers: {

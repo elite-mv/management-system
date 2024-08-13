@@ -78,6 +78,10 @@ class RequestItemController extends Controller
 
         $images = [];
 
+
+        try{
+
+       
         foreach ($request->file('files') as $file) {
 
             $filename = $file->store('public');
@@ -90,6 +94,16 @@ class RequestItemController extends Controller
         }
 
         return ['images' =>  $images];
+
+    }catch(\Exception $e){
+
+        return response()->json([
+            'message' => $e->getMessage(),
+        ], 500);
+
+    }
+
+
     }
 
     public function getRequestTotal(){

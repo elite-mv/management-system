@@ -1,5 +1,11 @@
 const uploadImageInput = document.querySelector('#requestItemImageInput');
 
+const requestForm = document.querySelector('#requestForm');
+const requestPriorityLevel = document.querySelector('#requestPriorityLevel');
+const requestPriority = document.querySelector('#requestPriority');
+const itemTotal = document.querySelector('#itemTotal');
+
+
 const requestItemId = document.querySelector('#requestId');
 const requestItemQuantity = document.querySelector('#requestQuantity');
 const requestItemUnitOfMeasure = document.querySelector('#requestUnitOfMeasure');
@@ -13,7 +19,43 @@ const requestItemAttachmentPreview = document.querySelector('#itemAttachmentPrev
 
 let selectedIndex = null;
 
-window.addEventListener("load", viewCart);
+window.addEventListener("load", ()=>{
+    viewCart();
+    calculateTotal();
+});
+
+
+const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'PHP',
+  });
+
+requestItemQuantity.addEventListener('change',calculateSubtotal)
+requestItemUnitCost.addEventListener('change',calculateSubtotal)
+
+requestForm.addEventListener('submit',(e)=>{
+    
+    e.preventDefault();
+
+    const requestCompany =  document.querySelector('input[name="company"]:checked');
+
+    if(!requestCompany){
+        Swal.fire({
+            icon: "warning",
+            title: "Oops...",
+            text: "Please select a company first",
+        });
+
+        return;
+    }
+
+    // requestForm.submit();
+})
+
+function calculateSubtotal(){
+    let total =   Number(requestItemQuantity.value) *  Number(requestItemUnitCost.value);
+    requestItemTotal.value = formatter.format(total); 
+}
 
 // Called when an expense request is click
 async function onSelectExpenseRequest(requestId) {
@@ -51,7 +93,8 @@ async function onSelectExpenseRequest(requestId) {
         requestItemQuantity.value = data.quantity;
         requestItemDescription.value = data.description;
         requestItemUnitCost.value = data.cost;
-        requestItemTotal.value = data.total;
+        requestItemTotal.value = formatter.format(data.total);
+
 
     } catch (error) {
         console.error(error.message);
@@ -135,6 +178,8 @@ async function deleteItem() {
         unselectItem();
         selectedIndex = null;
         viewCart();
+        calculateTotal();
+
 
     } catch (error) {
         console.error(error.message);
@@ -172,6 +217,7 @@ async function updateItem() {
 
         await viewCart();
         selectRow(selectedIndex);
+        calculateTotal();
 
         speek('Item has been updated!');
 
@@ -210,6 +256,7 @@ async function addItem() {
 
         await viewCart();
         unselectItem();
+        calculateTotal();
 
     } catch (error) {
         console.error(error.message);
@@ -258,6 +305,8 @@ async function calculateTotal() {
 
         let data = await result.json();
 
+        itemTotal.value = formatter.format(data.total);
+
     } catch (error) {
         console.error(error.message);
     }
@@ -267,7 +316,12 @@ uploadImageInput.addEventListener('change', async () => {
 
     let formData = new FormData();
 
-    formData.append('files', uploadImageInput.value)
+    const files = uploadImageInput.files;
+
+    Array.from(files).forEach(file => {
+        formData.append('files[]', file);
+    });
+
 
     try {
 
@@ -280,11 +334,18 @@ uploadImageInput.addEventListener('change', async () => {
         })
 
         if (!result.ok) {
+
+            let data = await result.json();
+
             Swal.fire({
                 icon: "error",
                 title: "Oops...",
                 text: 'An error occurred while uploading attachment',
             });
+
+            console.log(data);
+
+            return;
         }
 
         let files = await result.json();

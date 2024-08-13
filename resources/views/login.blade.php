@@ -75,7 +75,9 @@
 					<div class="item item5"><img src="images/logos/ELITE_ACES_LOGO.png" style="height: 50px; width: auto;"></div>
 				</div>
 
-				<form id="signin_form" class="text-start">
+				<form method="POST" action="/login" id="signin_form" class="text-start">
+					
+					@csrf
 					<div class="input_label">
 						<input type="email" name="email" class="px-3 w-100 h-100" required>
 						<span id="username_span">Email</span>
@@ -92,6 +94,12 @@
 					<div class="text-center">
 						<button type="submit" class="btn btn-light rounded-pill py-1 w-100 mt-4">Enter</button>
 					</div>
+
+					
+					@if($errors->any())
+						<p class="mt-2 text-center text-danger bg-white">{{$errors->first()}}</p>
+					@endif
+
 				</form>
 			</div>
 		</div>

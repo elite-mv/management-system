@@ -4,7 +4,7 @@
 @section('title', 'Request')
 
 
-@section('title')
+@section('style')
     <style type="text/css">
         .cart-items {
             cursor: pointer;
@@ -27,7 +27,7 @@
 
 @section('body')
 
-    <form method="POST" action="/request">
+    <form id="requestForm" method="POST" action="/request">
 
         @csrf
         <div class="py-3 px-3 px-md-0">
@@ -154,7 +154,7 @@
                                     <input type="number" id="requestUnitCost" class="p-2 form-control" step="0.1">
                                 </div>
                                 <div class="col-2">
-                                    <input type="number" id="requestTotal" class="p-2 form-control" readonly>
+                                    <input type="text" id="requestTotal" class="p-2 form-control" readonly>
                                 </div>
                             </div>
                             <div class="row m-0 px-3">
@@ -206,11 +206,11 @@
                         <div class="row m-0 bg-white">
                             <div class="col-12 col-md-5 p-3 d-flex align-items-center gap-2">
                                 <label class="form-label text-nowrap">TOTAL :</label>
-                                <input type="text" class="form-control p-2" name="total" disabled>
+                                <input  id="itemTotal" type="text" class="form-control p-2" name="total" disabled>
                             </div>
                             <div class="col-12 col-md-3 p-3">
                                 <div class="d-flex align-items-center justify-content-between gap-1">
-                                    <select class="form-control" name="check2">
+                                    <select class="form-control" name="priorityLevel" id="requestPriorityLevel">
                                         <option value="None">Pick a level</option>
                                         <option value="Low">Low (5 Days)</option>
                                         <option value="Medium">Medium (3 Days)</option>
@@ -219,7 +219,7 @@
                                 </div>
                             </div>
                             <div class="col-12 col-md-2 p-3 d-flex align-items-center gap-1">
-                                <input class="form-check-input mt-0" type="checkbox" name="priority" value="priority">
+                                <input class="form-check-input mt-0" type="checkbox" name="priority" value="priority" id="requestPriority">
                                 <label class="form-label mb-0">PRIORITY</label>
                             </div>
                             <div class="col-sm-12 col-md-2 m-0 p-0">
