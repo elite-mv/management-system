@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Enums\RequestPriorityLevel;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Company;
 use App\Models\Measurement;
@@ -41,12 +40,12 @@ class RequestController extends Controller
             $expenseRequest->prepared_by = $request->input('requestedBy');
             $expenseRequest->paid_to = $request->input('paidTo');
 
-            $expenseRequest->priority_level = RequestPriorityLevel::LOW->name;
-            $expenseRequest->priority = false;
+            $expenseRequest->priority_level =  RequestPriorityLevel::LOW->name ;
+            $expenseRequest->priority = $request->input('priority');
 
             $expenseRequest->save();
-            
-            // get all request item that has no request id but have the same session id
+
+            // get all request item that have no request id but have the same session id
             $requestItems = RequestItem::where('session_id',  Session::getId())
                 ->whereNull('request_id')
                 ->get();
@@ -63,5 +62,9 @@ class RequestController extends Controller
             DB::rollback();
             return response()->json(['message' => $e->getMessage()], 500);
         }
+    }
+
+    public function getRequests(){
+        return view('requests', []);
     }
 }

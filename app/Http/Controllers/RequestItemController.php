@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Measurement;
 use App\Models\RequestItem;
 use App\Models\RequestItemImage;
@@ -12,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class RequestItemController extends Controller
 {
-    
+
     public function addRequestItem(Request $request){
 
         $requestItem = new RequestItem();
@@ -46,21 +45,27 @@ class RequestItemController extends Controller
 
         $requestItem =  RequestItem::where('id', $id)->firstOrFail();
 
-        return ['item' => $requestItem->toArray()];
+        return $requestItem;
     }
 
     public function updateItem(Request $request, $id){
 
-        RequestItem::where('id', $id)
-        ->update([
-            'quantity' => $request->input('quantity'),
-            'cost' => $request->input('cost'),
-            'description' => $request->input('description'),
-            'measurement_id' => $request->input('measurement'),
-            'job_order_id' => $request->input('jobOrder'),
-        ]);
+        //check first if the item is present
+        $requestItem = RequestItem::findOrFail($id);
 
-        return ['message' => 'item deleted'];
+        $requestItem->quantity = $request->input('quantity');
+        $requestItem->measurement_id = $request->input('measurement');
+        $requestItem->job_order_id = $request->input('jobOrder');
+        $requestItem->description = $request->input('description');
+        $requestItem->cost = $request->input('cost');
+
+//        $requestItem->quantity = 123;
+//        $requestItem->measurement_id = 1;
+//        $requestItem->job_order_id = 1;
+//        $requestItem->description = 'test';
+//        $requestItem->cost = 12;
+
+        $requestItem->save();
     }
 
     public function removeItem($id){
@@ -69,23 +74,36 @@ class RequestItemController extends Controller
         return ['message' => 'item deleted'];
     }
 
-    public function addRequestItemImage(Request $request){
+    public function addRequestItemImage(Request $request, $id){
 
         $images = [];
 
+
+        try{
+
+       
         foreach ($request->file('files') as $file) {
-                
+
             $filename = $file->store('public');
 
             $requestImage = new RequestItemImage();
-                $requestImage->file = $filename; 
-                $requestImage->request_item_id = $request->input('requestId');
+                $requestImage->file = $filename;
+                $requestImage->request_item_id = $id;
                 $requestImage->save();
-
                 $images[] = $filename;
         }
-            
+
         return ['images' =>  $images];
+
+    }catch(\Exception $e){
+
+        return response()->json([
+            'message' => $e->getMessage(),
+        ], 500);
+
+    }
+
+
     }
 
     public function getRequestTotal(){
@@ -96,6 +114,5 @@ class RequestItemController extends Controller
             ->first();
 
             return $total;
-
     }
 }

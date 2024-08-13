@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('supplier');
             $table->string('paid_to');
             $table->string('request_by');
-            $table->string('prepared_by');
+            $table->foreignId('prepared_by')->constrained('users');
             $table->foreignId('company_id')->constrained();
             $table->enum('priority_level',[
                 RequestPriorityLevel::NONE->name,

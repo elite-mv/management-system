@@ -1,450 +1,372 @@
-const uploadImageForm = document.querySelector('#requestItemImageForm');
 const uploadImageInput = document.querySelector('#requestItemImageInput');
-const uploadImageItemId = document.querySelector('#requestItemImageId');
 
-$(window).on('load', function() {
-    $(".loader").fadeOut('slow');
-    show_request_cart();
+const requestForm = document.querySelector('#requestForm');
+const requestPriorityLevel = document.querySelector('#requestPriorityLevel');
+const requestPriority = document.querySelector('#requestPriority');
+const itemTotal = document.querySelector('#itemTotal');
+
+
+const requestItemId = document.querySelector('#requestId');
+const requestItemQuantity = document.querySelector('#requestQuantity');
+const requestItemUnitOfMeasure = document.querySelector('#requestUnitOfMeasure');
+const requestItemJobOrder = document.querySelector('#requestJobOrder');
+const requestItemDescription = document.querySelector('#requestDescription');
+const requestItemUnitCost = document.querySelector('#requestUnitCost');
+const requestItemTotal = document.querySelector('#requestTotal');
+
+const requestItemAttachment = document.querySelector('#itemAttachment');
+const requestItemAttachmentPreview = document.querySelector('#itemAttachmentPreview');
+
+let selectedIndex = null;
+
+window.addEventListener("load", ()=>{
+    viewCart();
+    calculateTotal();
 });
 
 
-function show_request_cart() {
-    $.ajax({
-        url: "/api/request-item",
-        method: "GET",
-        success: function (data) {
-            data = data.trim();
-            $('#request_cart').html(data);
-            show_total();
-        }
-    });
-}
+const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'PHP',
+  });
 
+requestItemQuantity.addEventListener('change',calculateSubtotal)
+requestItemUnitCost.addEventListener('change',calculateSubtotal)
 
-function edit_request_cart(data) {
-    if (data) {
-        $.ajax({
-            url: `/api/request-item/${data}`,
-            method: "GET",
-            success: function (data) {
-                console.log(data);
-                // data = data.trim();
-                // var detail = data.split("@");
+requestForm.addEventListener('submit',(e)=>{
+    
+    e.preventDefault();
 
-                $('#request_items').find("input[name='qty']").val(data.item.quantity);
-                $('#request_items').find("select[name='uom']").val(data.item.measurement_id);
-                $('#request_items').find("select[name='job_order']").val(data.item.job_order_id);
-                $('#request_items').find("input[name='description']").val(data.item.description);
-                $('#request_items').find("input[name='unit_cost']").val(data.item.cost);
-                $('#request_items').find("input[name='id']").val(data.item.id);
-                $('#request_items').find("input[name='total']").val(data.item.total);
+    const requestCompany =  document.querySelector('input[name="company"]:checked');
 
-                uploadImageItemId.value = data.item.id;
-
-                document.querySelector('#add_image').classList.toggle('d-none');
-
-                // $('#request_items').find('#add_image').fadeIn('slow');
-
-                // for (var i = 7; i < detail.length; i++) {
-                //     const thumbnail = $('<div>').append(
-                //         $('<img>').attr('src', detail[i]).addClass('uploaded-img')
-                //     );
-                //     $('#image_container').append(thumbnail);
-                // }
-
-                $('#request_items').find("button[name='update']").prop('disabled', false);
-                $('#request_items').find("button[name='delete']").prop('disabled', false);
-                
-                $('#request_items').find('#uploaded_image').fadeIn('slow');
-            }
+    if(!requestCompany){
+        Swal.fire({
+            icon: "warning",
+            title: "Oops...",
+            text: "Please select a company first",
         });
+
+        return;
     }
+
+    // requestForm.submit();
+})
+
+function calculateSubtotal(){
+    let total =   Number(requestItemQuantity.value) *  Number(requestItemUnitCost.value);
+    requestItemTotal.value = formatter.format(total); 
 }
 
-function show_total() {
+// Called when an expense request is click
+async function onSelectExpenseRequest(requestId) {
 
-    $.ajax({
-        url: "/api/request-item/total",
-        method: "GET",
-        dataType: 'json',
-        success: function (data) {
+    try {
 
-            console.log(data);
-            
-            $('#final_request').find("input[name='total']").val(data.total);
-        }
-    });
-}
+        unselectRow(selectedIndex);
+        selectedIndex = requestId;
+        selectRow(selectedIndex);
 
-$('#request_items').find("input[name='qty']").on('input', function() {
-    if ($(this).val() <= 0) {
-        $(this).val('1');
-    } else {
-        $('#request_items').find("input[name='total']").val($(this).val() * $('#request_items').find("input[name='unit_cost']").val());
-    }
-});
-
-$('#request_items').find("input[name='unit_cost']").on('input', function() {
-    if ($(this).val() <= 0) {
-        $(this).val('1');
-    } else {
-        $('#request_items').find("input[name='total']").val($(this).val() * $('#request_items').find("input[name='qty']").val());
-        if ($('#request_items').find("input[name='total']").val() > 0) {
-            if ($('#request_items').find("input[name='id']").val()) {
-                $('#request_items').find("button[name='add']").prop('disabled', true);
-            } else {
-                $('#request_items').find("button[name='add']").prop('disabled', false);
+        let result = await fetch(`/api/request-item/${requestId}`, {
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
             }
-        } else {
-            $('#request_items').find("button[name='add']").prop('disabled', true);
-        }
-    }
-})
-
-$('#request_items').find("input[name='description']", "input[name='qyt']", "input[name='unit_cost']").on('input', function() {
-    if ($('#request_items').find("input[name='total']").val() > 0 && $('#request_items').find("input[name='description']").val()) {
-        if ($('#request_items').find("input[name='id']").val()) {
-            $('#request_items').find("button[name='add']").prop('disabled', true);
-        } else {
-            $('#request_items').find("button[name='add']").prop('disabled', false);
-        }
-    } else {
-        $('#request_items').find("button[name='add']").prop('disabled', true);
-    }
-})
-
-$('#request_items').find("button[name='add']").on('click', function() {
-    $.ajax({
-        url: "/api/request-item",
-        method: "POST",
-        data: {
-            quantity: $('#request_items').find("input[name='qty']").val(),
-            measurement: $('#request_items').find("select[name='uom']").val(),
-            jobOrder: $('#request_items').find("select[name='job_order']").val(),
-            description: $('#request_items').find("input[name='description']").val(),
-            cost: $('#request_items').find("input[name='unit_cost']").val(),
-        },
-        success: function (data) {
-            $('#request_items').find("input[name='qty']").val('');
-            $('#request_items').find("input[name='description']").val('');
-            $('#request_items').find("input[name='unit_cost']").val('');
-            $('#request_items').find("input[name='total']").val('');
-            $('#request_items').find("button[name='add']").prop('disabled', true);
-
-            // var audio = new Audio('src/sound/item_added.mp3');
-            // audio.play();
-            show_request_cart();
-        }
-    });
-})
-
-$('#request_items').find("button[name='unselect']").on('click', function() {
-    var audio = new Audio('src/sound/item_unselected.mp3');
-    audio.play();
-    $('#request_items').find("input[name='qty']").val('');
-    $('#request_items').find("input[name='description']").val('');
-    $('#request_items').find("input[name='unit_cost']").val('');
-    $('#request_items').find("input[name='total']").val('');
-    $('#request_items').find("input[name='id']").val('');
-    $('#request_items').find("button[name='add']").prop('disabled', true);
-    $('#request_items').find("button[name='update']").prop('disabled', true);
-    $('#request_items').find("button[name='delete']").prop('disabled', true);
-    $('#request_items').find('#add_item').fadeIn('slow');
-    $('#request_items').find('#add_image').hide();
-    $('#request_items').find("input[name='image']").val('');
-    $('#request_items').find('#uploaded_image').hide();
-    $('#image_container').empty();
-})
-
-$('#request_items').find("button[name='delete']").on('click', function() {
-    $.ajax({
-        url: `/api/request-item/${$('#request_items').find("input[name='id']").val()}`,
-        method: "DELETE",
-        success: function (data) {
-            $('#request_items').find("input[name='qty']").val('');
-            $('#request_items').find("input[name='description']").val('');
-            $('#request_items').find("input[name='unit_cost']").val('');
-            $('#request_items').find("input[name='total']").val('');
-            $('#request_items').find("input[name='id']").val('');
-            $('#request_items').find("button[name='add']").prop('disabled', true);
-            $('#request_items').find("button[name='update']").prop('disabled', true);
-            $('#request_items').find("button[name='delete']").prop('disabled', true);
-            $('#request_items').find('#add_item').fadeIn('slow');
-            $('#request_items').find('#add_image').hide();
-            $('#request_items').find("input[name='image']").val('');
-            $('#request_items').find('#uploaded_image').hide();
-            $('#image_container').empty();
-            
-            // var audio = new Audio('src/sound/item_deleted.mp3');
-            // audio.play();
-            show_request_cart();
-
-        }
-    });
-})
-
-
-uploadImageInput.addEventListener('change',async ()=>{
-
-    let formData = new FormData(uploadImageForm);
-
-    try{
-        let result = await fetch(`/api/request-item/file`,{
-            method: "POST",
-            body: formData,
         })
 
-        if(result.ok){
+        if (!result.ok) {
 
-            let files = await result.json();
-
-            console.log(files);
-
-            files.images.forEach(src => {
-
-                let imageSrc = (src.split('/'))[1];
-
-                const thumbnail = $('<div>').append($('<img>').attr('src', '/storage/' + imageSrc).addClass('uploaded-img imageModal'));
-                $('#image_container').append(thumbnail);
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "An error occurred while fetching selected item",
             });
-            
-            reloadImageModal();
+
+            unselectRow(selectedIndex);
+            selectedIndex = null;
+            return;
         }
-    }catch(error){
-        console.error('item file upload failed!')
-    }finally{
-        uploadImageInput.value = null;
+
+        let data = await result.json();
+
+        requestItemId.value = data.id;
+        requestItemUnitOfMeasure.value = data.measurement_id;
+        requestItemJobOrder.value = data.job_order_id;
+        requestItemQuantity.value = data.quantity;
+        requestItemDescription.value = data.description;
+        requestItemUnitCost.value = data.cost;
+        requestItemTotal.value = formatter.format(data.total);
+
+
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
+function selectRow(id) {
+
+    const row = document.querySelector(`#requestItem${id}`);
+
+    if (!row) {
+        console.warn('Selecting a null index row');
+        return;
     }
 
-})
+    row.classList
+        .add('bg-secondary', 'text-white');
 
+    requestItemAttachment
+        .classList
+        .remove('d-none');
 
+    requestItemAttachmentPreview
+        .classList
+        .remove('d-none');
 
-let new_logo;
+}
 
-// $('#request_items').find("input[name='image']").on('change', function(e) {
-    
-//     const files = e.target.files; // Assuming e.target.files is a FileList
-//     if (files && files.length > 0) {
-//         for (let i = 0; i < files.length; i++) {
-//             const file = files[i];
-//             const reader = new FileReader();
-//             reader.onload = function (event) {
-//                 const fileUrl = event.target.result;
-//                 const FileDataWithoutPrefix = fileUrl.split(',')[1];
-//                 const mime = file.type;
-//                 $.ajax({
-//                     url: "./php/add_temp_image.php",
-//                     method: "POST",
-//                     data: {
-//                         File: FileDataWithoutPrefix,
-//                         Mime: mime
-//                     },
-//                     success: function (data) {
-//                         if (data) {
-//                             if (new_logo) {
-//                                 new_logo =  new_logo + '@' + data;
-//                             } else {
-//                                 new_logo =  data;
-//                             }
+function unselectRow(id) {
 
-//                             const thumbnail = $('<div>').append(
-//                                 $('<img>').attr('src', data).addClass('uploaded-img')
-//                             );
-//                             $('#image_container').append(thumbnail);
-//                         }
-//                     }
-//                 });
-//             };
-//             reader.readAsDataURL(file);
-//         }
-//     }
-// })
+    const row = document.querySelector(`#requestItem${id}`);
 
-$('#request_items').find("button[name='update']").on('click', function() {
-    $.ajax({
-        url: `/api/request-item/${$('#request_items').find("input[name='id']").val()}`,
-        method: "PUT",
-        data: {
+    if (!row) {
+        console.warn('Unselecting a null index row');
+        return;
+    }
 
-            quantity: $('#request_items').find("input[name='qty']").val(),
-            measurement: $('#request_items').find("select[name='uom']").val(),
-            jobOrder: $('#request_items').find("select[name='job_order']").val(),
-            description: $('#request_items').find("input[name='description']").val(),
-            cost: $('#request_items').find("input[name='unit_cost']").val(),
-        },
-        success: function (data) {
-            
-            $('#request_items').find("input[name='qty']").val('');
-            $('#request_items').find("input[name='description']").val('');
-            $('#request_items').find("input[name='unit_cost']").val('');
-            $('#request_items').find("input[name='total']").val('');
-            $('#request_items').find("input[name='id']").val('');
-            $('#request_items').find("button[name='add']").prop('disabled', true);
-            $('#request_items').find("button[name='update']").prop('disabled', true);
-            $('#request_items').find("button[name='delete']").prop('disabled', true);
-            $('#request_items').find('#add_item').fadeIn('slow');
-            $('#request_items').find('#add_image').hide();
-            $('#request_items').find("input[name='image']").val('');
-            $('#request_items').find('#uploaded_image').hide();
-            $('#image_container').empty();
+    row.classList
+        .remove('bg-secondary', 'text-white');
 
-            new_logo = '';
-            
-            // var audio = new Audio('src/sound/item_updated.mp3');
-            // audio.play();
-            show_request_cart();
+    requestItemAttachment
+        .classList
+        .add('d-none');
 
+    requestItemAttachmentPreview
+        .classList
+        .add('d-none');
+}
+
+function unselectItem() {
+    requestItemId.value = null; // Setting requestItemId to null
+    requestItemUnitOfMeasure.value = null; // Setting Unit of Measure to null
+    requestItemJobOrder.value = null; // Setting Job Order to null
+    requestItemQuantity.value = null; // Setting Quantity to null
+    requestItemDescription.value = null; // Setting Description to null
+    requestItemUnitCost.value = null; // Setting Unit Cost to null
+    requestItemTotal.value = null; // Setting Total to null
+
+    unselectRow(selectedIndex)
+    selectedIndex = null;
+}
+
+async function deleteItem() {
+
+    try {
+        let result = await fetch(`/api/request-item/${selectedIndex}`, {
+            method: 'DELETE',
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+            }
+        })
+
+        if (!result.ok) {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "An error occurred while fetching selected item",
+            });
         }
-    });
-})
+
+        unselectItem();
+        selectedIndex = null;
+        viewCart();
+        calculateTotal();
 
 
+    } catch (error) {
+        console.error(error.message);
+    }
+}
 
-$('#final_request').find("button[name='submit']").on('click', function() {
-  
-    let company = $("input[name='checkbox']:checked").val();
-    let supplier = $('#request_details').find("input[name='supplier']").val();
-    let paidTo = $('#request_details').find("input[name='paid_to']").val();
-    let requestedBy  = $('#request_details').find("input[name='requested_by']").val();
-    let priorityLevel  = $('#request_details').find("input[name='priority_level']").val();
-    let priority  = $('#request_details').find("input[name='priority']").val();
+async function updateItem() {
+
+    try {
+        let formData = new FormData();
+
+        formData.append('quantity', requestItemQuantity.value);
+        formData.append('measurement', requestItemUnitOfMeasure.value);
+        formData.append('jobOrder', requestItemJobOrder.value);
+        formData.append('description', requestItemDescription.value);
+        formData.append('cost', requestItemUnitCost.value);
+
+        let result = await fetch(`/api/request-item/${selectedIndex}`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+            }
+        })
+
+        if (!result.ok) {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "An error occurred while updating a request item",
+            });
+
+            return;
+        }
+
+        await viewCart();
+        selectRow(selectedIndex);
+        calculateTotal();
+
+        speek('Item has been updated!');
+
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
+async function addItem() {
+
+    try {
+
+        if (selectedIndex) {
+            throw Error('Cannot add item, please unselect the item first');
+        }
+
+        let formData = new FormData();
+
+        formData.append('quantity', requestItemQuantity.value);
+        formData.append('measurement', requestItemUnitOfMeasure.value);
+        formData.append('jobOrder', requestItemJobOrder.value);
+        formData.append('description', requestItemDescription.value);
+        formData.append('cost', requestItemUnitCost.value);
+
+        let result = await fetch(`/api/request-item`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+            }
+        })
+
+        if (!result.ok) {
+            throw Error('An error occurred while updating a request item')
+        }
+
+        await viewCart();
+        unselectItem();
+        calculateTotal();
+
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
+async function viewCart() {
+    try {
+        let result = await fetch(`/api/request-item`, {
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+            }
+        })
+
+        if (!result.ok) {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: 'An error occurred while retrieving items',
+            });
+
+            return;
+        }
+
+        let data = await result.text();
+
+        $('#request_cart').html(data);
+
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
+async function calculateTotal() {
+
+    try {
+        let result = await fetch(`/api/request-item/total`, {
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+            }
+        })
+
+        if (!result.ok) {
+            throw Error('An error occurred while getting total')
+        }
+
+        let data = await result.json();
+
+        itemTotal.value = formatter.format(data.total);
+
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
+uploadImageInput.addEventListener('change', async () => {
 
     let formData = new FormData();
 
-    formData.append('company', company);
-    formData.append('supplier', supplier);
-    formData.append('paidTo', paidTo);
-    formData.append('requestedBy', requestedBy);
-    // formData.append('priorityLevel', priorityLevel.value);
-    // formData.append('priority', priority.value);
+    const files = uploadImageInput.files;
 
-    // for (var pair of formData.entries()) {
-    //     console.log(pair[0]+ ', ' + pair[1]); 
-    // }
-    fetch('/request',{
-        method: 'POST',
-        body: formData,
-        headers: {
-            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+    Array.from(files).forEach(file => {
+        formData.append('files[]', file);
+    });
+
+
+    try {
+
+        let result = await fetch(`/api/request-item/file/${selectedIndex}`, {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+            }
+        })
+
+        if (!result.ok) {
+
+            let data = await result.json();
+
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: 'An error occurred while uploading attachment',
+            });
+
+            console.log(data);
+
+            return;
         }
-    }).then(data =>{
-        if(data.ok){
-            return data.json();
-        }
-    }).then(data =>{
-        console.log(data);
-        speek('item has been added');
-    }).catch(error => {
-        console.log(error)
-    })
-    
-    // if ($("input[name='checkbox']:checked").length > 0) {
-    //     if (requested_by) {
-    //         if (total) {
-    //             $.ajax({
-    //                 url: "./php/add_final_request.php",
-    //                 method: "POST",
-    //                 data: {
-    //                     supplier: supplier,
-    //                     paid_to: paid_to,
-    //                     requested_by: requested_by,
-    //                     entity: entity,
-    //                     total: total,
-    //                     priority: priority,
-    //                     check2: Check2
-    //                 },
-    //                 success: function (data) {
-    //                     $(".loader").show();
-    //                     $.ajax({
-    //                         url: "./php/send_notification.php",
-    //                         method: "POST",
-    //                         data: {
-    //                             priority: priority,
-    //                             type: 'request'
-    //                         },
-    //                         success: function (data) {
 
-    //                             var audio = new Audio('src/sound/request_successful.mp3');
+        let files = await result.json();
 
-    //                             audio.addEventListener('canplaythrough', function() {
-    //                                 audio.play();
-    //                             });
+        files.images.forEach(src => {
 
-    //                             audio.addEventListener('ended', function() {
-    //                                 window.location.href = 'my_request.php';
-    //                             });
-                                
-    //                         }
-    //                     });
+            let imageSrc = (src.split('/'))[1];
 
-                        
-    //                 }
-    //             });
+            const thumbnail = $('<div>').append($('<img>').attr('src', '/storage/' + imageSrc).addClass('uploaded-img imageModal'));
+            $('#image_container').append(thumbnail);
+        });
 
-    //         } else {
-    //             var audio = new Audio('src/sound/add_items.mp3');
+        reloadImageModal();
+    } catch (error) {
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: error.message,
+        });
 
-    //             audio.addEventListener('canplaythrough', function() {
-    //                 audio.play();
-    //                 alert('Please add items that you would like to request before submitting.');
-    //             });
-
-    //             audio.addEventListener('ended', function() {
-    //                 return;
-    //             });
-    //         }
-
-    //     } else {
-    //         $('html, body').animate(
-    //             {
-    //                 scrollTop: 0
-    //             },
-    //             500,
-    //             'linear'
-    //         );
-
-    //         var audio = new Audio('src/sound/requested_by.mp3');
-
-    //         audio.addEventListener('canplaythrough', function() {
-    //             audio.play();
-    //             alert('Please fill up the requested by field before submitting.');
-    //         });
-
-    //         audio.addEventListener('ended', function() {
-    //             return;
-    //         });
-    //     }
-    // } else {
-    //     $('html, body').animate(
-    //         {
-    //             scrollTop: 0
-    //         },
-    //         500,
-    //         'linear'
-    //     );
-
-    //     var audio = new Audio('src/sound/add_entity.mp3');
-
-    //     audio.addEventListener('canplaythrough', function() {
-    //         audio.play();
-    //         alert('Please select an entity before submitting.');
-    //     });
-
-    //     audio.addEventListener('ended', function() {
-    //         return;
-    //     });
-        
-    // }
-    
-})
-
-$('#final_request').find('input[name="priority"]').on('click', function() {
-    if ($(this).prop('checked') === true) {
-        if (confirm('By checking this, the request would be prioritize and managed by VP Finance. Do you wish to continue?')) {
-            $(this).prop('checked', true);
-        } else {
-            $(this).prop('checked', false);
-        }
+    } finally {
+        uploadImageInput.value = null;
     }
 })

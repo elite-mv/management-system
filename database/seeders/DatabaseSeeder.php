@@ -19,7 +19,8 @@ class DatabaseSeeder extends Seeder
             JobOrderSeeder::class,
             MeasurementSeeder::class,
             RequestItemSeeder::class,
-            RoleSeeder::class
+            RoleSeeder::class,
+            user_seeder::class,
         ]);
 
     }
