@@ -206,19 +206,108 @@
 <div class="container p-3" style="position: relative;">
 
     
-    <div style="max-width: 200px" class="mb-2 form-group d-flex gap-2 align-items-center">
-        <label class="form-label mb-0" for="status">Filter</label>
-        <select class="form-control" id="status">
-            <option>All</option>
-            <option>Pending</option>
-            <option>To Return</option>
-            <option>Hold</option>
-            <option>To Process</option>
-            <option>Processing</option>
-            <option>For Funding</option>
-            <option>Released</option>
-        </select>
-    </div>
+    <form id="filterForm" class="row align-items-center mb-2">
+
+        <div class="col-6 col-md-2 form-group d-flex gap-2 align-items-center">
+            <label class="form-label mb-0" for="status">Filter</label>
+            <select name="status" class="form-control inputs" id="status" >
+                <option value="ALL">All</option> 
+                <option value="PENDING">Pending</option>
+                <option value="TO_RETURN">To Return</option>
+                <option value="HOLD">Hold</option>
+                <option value="TO_PROCESS">To Process</option>
+                <option value="PROCESSING">Processing</option>
+                <option value="FOR_FUNDING">For Funding</option>
+                <option value="RELEASED">Released</option> 
+            </select>
+        </div>
+
+        <div class="col-6 col-md-2 form-group d-flex gap-2 align-items-center">
+            <label class="form-label">Entries</label>
+            <select name="entries" class="form-control inputs">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="25">25</option>
+            </select>
+        </div>
+
+        <div class="mt-2 mt-md-0 col-10 col-md-7 form-group d-flex gap-2 align-items-center">
+            <i class="fas fa-search"></i>
+            <input autocomplete="off" name="search" type="search" class="form-control inputs" placeholder="Search...">
+        </div>
+
+            <!-- Button trigger modal -->
+        <button type="button" class="mt-2 mt-md-0 col-2 col-md-1 btn" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-toggle="tooltip" data-bs-placement="top" title="Advance filter">
+            <i class="fas fa-filter"></i>
+        </button>
+    
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Advance Filter</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row mb-2">
+                        <div class="col-6">
+                            <label>From</label>
+                            <input class="form-control" type="date">
+                        </div>
+                        <div class="col-6">
+                            <label>To</label>
+                            <input class="form-control" type="date">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        
+                        <div class="col-6">
+                            <p class="mb-0">Payment Status</p>
+                            <small class="text-secondary mb-1">Check the box to filter.</small>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                <label class="form-check-label" for="flexCheckDefault">
+                                Default checkbox
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                                <label class="form-check-label" for="flexCheckChecked">
+                                Checked checkbox
+                                </label>
+                            </div>
+                        </div>   
+                        
+                        <div class="col-6">
+                            <p class="mb-0">Entity</p>
+                            <small class="text-secondary mb-1">Check the box to filter.</small>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                <label class="form-check-label" for="flexCheckDefault">
+                                Default checkbox
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                                <label class="form-check-label" for="flexCheckChecked">
+                                Checked checkbox
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Filter</button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </form>
 
     <div class="row mb-3">
 
@@ -233,7 +322,7 @@
                     </div>
                 </div>
                 <div class="card-body overflow-x-auto">
-                    <table>
+                    <table class="table sortable">
                         <thead>
                             <tr>
                                 <th>REFERENCE</th>
@@ -245,8 +334,9 @@
                                 <th>ACTION</th>
                             </tr>
                         </thead>
-                        <tbody id="my_request_database"">
-                        </tbody>
+                        <tbody id="requestData">
+                                <!-- dynamic data here -->
+                            </tbody>
                     </table>
                 </div>
             </div>
@@ -254,161 +344,54 @@
 
     </div>
 
-    <div class="row">
-
-        <div class="col-sm-12 col-md-12 col-lg-6">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <i class="fas fa-chart-area me-1"></i>
-                    My Monthly Expenses
-                </div>
-                <div class="card-body"><canvas id="Area_My" width="100%" height="40"></canvas></div>
-                <div class="card-footer small text-muted">Updated today on <?php echo date("g:i A"); ?></div>
-            </div>
-        </div>
-
-        <div class="col-sm-12 col-md-12 col-lg-6">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col-12 text-start">
-                            <i class="fas fa-chart-pie me-1"></i>
-                            My Request Status Distribution
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body"><canvas id="Request_My_Status_Distribution" width="100%" height="40"></canvas></div>
-                <div class="card-footer small text-muted">Updated today on <?php echo date("g:i A"); ?></div>
-            </div>
-        </div>
-
-    </div>
-
-    <div id="group_message">
-        <div id="hidden_group_message" class="h-100 m-0 p-0">
-            <button type="button" class="bg-dark text-center text-white py-2 w-100 border-0" id="close_group_message" style="height: 50px;">Group Chat for Everyone</button>
-
-            <div class="w-100" id="chat_box_container" style="height: calc(100% - 100px); transform: scaleY(-1); overflow-x: hidden; overflow-y: auto;">
-                <!-- DYNAMIC -->
-            </div>
-
-            <form id="comment-form" class="w-100 sticky-bottom m-0" style="height: 50px;">
-                <div class="comment-area h-100">
-                    <div class="bg-dark h-100" style="display: flex; justify-content: center; align-items: center; flex-direction: row;">
-                        <div class="w-100 p-1 m-0">
-                            <textarea class="form-control rounded-pill" placeholder="Type your here." rows="1" name="message" required style="resize: none;"></textarea>
-                        </div>
-                        <div class="w-50 p-1 d-flex align-items-center m-0">
-                            <button type="submit" class="btn btn-sm btn-danger py-1 w-100 rounded-pill">Send</button>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
 
 </div>
 
 @endsection
 
 @section('script')
-<script type="text/javascript">
-    $(window).on('load', function() {
-        $(".loader").fadeOut('slow');
-        $('#hidden_group_message').hide();
-    });
 
-    $('#group_message').css({
-        position: 'fixed',
-        bottom: '0',
-        right: '0',
-        width: '75px',
-        height: '75px',
-        margin: '15px',
-        border: '2px solid #000',
-        borderRadius: '50%',
-        backgroundImage: 'url(src/logos/ELITE_ACES_LOGO.jpg)',
-        backgroundSize: 'cover',
-        cursor: 'pointer',
-        transition: 'width 1.5s, height 1.5s, border-radius 1.5s, background-image 0.5s, background-color 0.5s',
-        display: 'flex',
-        flexDirection: 'column',
+<script>
+
+const requestData = document.querySelector('#requestData');
+const filterForm = document.querySelector('#filterForm');
+const inputs = document.querySelectorAll('.inputs');
+
+filterForm.addEventListener('submit',(e)=>{
+    e.preventDefault();
+    getData();
+})
+
+
+inputs.forEach(input => {
+    input.addEventListener('change',()=> {
+        getData();
     })
+});
 
-    let Chat_Head = false;
+window.addEventListener('load',()=>{
+    getData()
+})
 
-    function get_comment() {
-        $.ajax({
-            url: "./php/get_group_message.php",
-            method: "GET",
-            success: function (data) {
-                $('#chat_box_container').html(data);
+function getData(){
+    let formData = new FormData(filterForm);
+    const params = new URLSearchParams(formData);
+
+    fetch(`/api/my-requests?${params.toString()}`,{
+        headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
             }
-        });
-    }
-
-    $('#comment-form').on('submit', function(event) {
-        event.preventDefault();
-        const message = $('textarea[name="message"]').val();
-
-        $.ajax({
-            url: "./php/add_group_message.php",
-            method: "POST",
-            data: {
-                message: message
-            },
-            success: function (data) {
-                $('textarea[name="message"]').val('');
-                get_comment();
-
-                $.ajax({
-                    url: "./php/send_notification.php",
-                    method: "POST",
-                    data: {
-                        message: data,
-                        type: 'group'
-                    },
-                    success: function (data) {
-
-                    }
-                });
-            }
-        });
     })
-
-    $('#group_message').on('click', function() {
-        if (!Chat_Head) {
-            $('#group_message').css({
-                'max-width': 'calc(100vw - 30px)',
-                width: '300px',
-                height: '70vh',
-                borderRadius: '0',
-                backgroundImage: '',
-                backgroundColor: '#fff'
-            })
-
-            setTimeout(function() {
-                $('#hidden_group_message').fadeIn('slow');
-                setInterval(get_comment, 1000);
-                Chat_Head = true;
-            }, 1000);
-        } else {
-            Chat_Head = false;
-        }
+    .then(data => data.text())
+    .then(data => {
+        requestData.innerHTML = data;
+    }).catch(err =>{
+        console.log('Something went wrong')
     })
+}
 
-    $('#close_group_message').on('click', function() {
-        if (Chat_Head) {
-            $('#group_message').css({
-                width: '75px',
-                height: '75px',
-                borderRadius: '50%',
-                backgroundImage: 'url(src/logos/ELITE_ACES_LOGO.jpg)'
-            })
-            $('#hidden_group_message').hide();
-        }
-    })
+
 </script>
-<script type="text/javascript" src="./js/my_request.js"></script>
-<script type="text/javascript" src="./js/header.js"></script>
+
+<script type="text/javascript" src="./js/sortable.js"></script>
 @endsection

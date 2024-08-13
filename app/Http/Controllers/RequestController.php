@@ -11,6 +11,7 @@ use App\Models\Request as ModelsRequest;
 use App\Models\RequestItem;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class RequestController extends Controller
 {
@@ -37,11 +38,11 @@ class RequestController extends Controller
             $expenseRequest->company_id =  $request->input('company');
             $expenseRequest->supplier = $request->input('supplier');
             $expenseRequest->request_by = $request->input('requestedBy');
-            $expenseRequest->prepared_by = $request->input('requestedBy');
+            $expenseRequest->prepared_by = Auth::id();
             $expenseRequest->paid_to = $request->input('paidTo');
 
             $expenseRequest->priority_level =  RequestPriorityLevel::LOW->name ;
-            $expenseRequest->priority = $request->input('priority');
+            $expenseRequest->priority = true;
 
             $expenseRequest->save();
 
@@ -64,7 +65,31 @@ class RequestController extends Controller
         }
     }
 
-    public function getRequests(){
-        return view('requests', []);
+    public function getRequests(Request $request){
+        return view('requests');
     }
+
+    public function getRequestsData(Request $request){
+
+        $query = ModelsRequest::query();
+
+        $query->when($request->input('status'), function ($query) use($request){
+           if($request->input('status') !== 'ALL'){
+            $query->where('status', $request->input('status'));
+           }
+        });
+
+        $query->when($request->input('search'), function ($query) use($request){
+            $query->where(function ($query) use ($request){
+                $query->whereRaw("CONCAT(DATE_FORMAT(`created_at`, '%Y%m%d'), '-', `id`) = ?", [$request->input('search')]);
+                $query->orWhere('request_by', 'LIKE' , $request->input('search'));
+            });
+        }); 
+
+        $requests = $query->paginate($request->input('entries'));
+
+        return view('/partials/request-data', ['requests' => $requests]);
+
+    }
+
 }

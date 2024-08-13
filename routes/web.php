@@ -13,10 +13,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/request', [RequestController::class,'index']);
     Route::get('/requests', [RequestController::class,'getRequests']);
+    Route::get('/api/my-requests', [RequestController::class,'getRequestsData']);
 
     Route::post('/request', [RequestController::class,'addRequest']);
     
-
     Route::post('/api/request-item', [RequestItemController::class,'addRequestItem']);
     Route::get('/api/request-item', [RequestItemController::class,'getRequestItems']);
     

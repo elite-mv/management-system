@@ -59,12 +59,6 @@ class RequestItemController extends Controller
         $requestItem->description = $request->input('description');
         $requestItem->cost = $request->input('cost');
 
-//        $requestItem->quantity = 123;
-//        $requestItem->measurement_id = 1;
-//        $requestItem->job_order_id = 1;
-//        $requestItem->description = 'test';
-//        $requestItem->cost = 12;
-
         $requestItem->save();
     }
 

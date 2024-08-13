@@ -49,7 +49,7 @@ requestForm.addEventListener('submit',(e)=>{
         return;
     }
 
-    // requestForm.submit();
+    requestForm.submit();
 })
 
 function calculateSubtotal(){
