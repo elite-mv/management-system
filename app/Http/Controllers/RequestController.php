@@ -92,4 +92,14 @@ class RequestController extends Controller
 
     }
 
+
+    public function viewRequest(int $id){
+        
+        $expenseRequest = ModelsRequest::where('id',$id)->firstOrFail();
+        
+        return view('printable-request-form', [
+            'request' => $expenseRequest
+        ]);
+
+    }
 }

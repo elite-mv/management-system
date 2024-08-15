@@ -31,9 +31,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('requests', function (Blueprint $table) {
-            if(Schema::hasColumn('requests','status')){
-                $table->removeColumn('status');
-            }
+            $table->removeColumn('status');
         });
     }
 };

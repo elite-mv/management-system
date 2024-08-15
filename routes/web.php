@@ -19,6 +19,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/entities', [CompanyController::class,'index']);
 
     Route::post('/request', [RequestController::class,'addRequest']);
+    Route::get('/request/{id}', [RequestController::class,'viewRequest']);
 
     Route::post('/api/request-item', [RequestItemController::class,'addRequestItem']);
     Route::get('/api/request-item', [RequestItemController::class,'getRequestItems']);
