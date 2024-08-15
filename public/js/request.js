@@ -34,7 +34,7 @@ requestItemQuantity.addEventListener('change',calculateSubtotal)
 requestItemUnitCost.addEventListener('change',calculateSubtotal)
 
 requestForm.addEventListener('submit',(e)=>{
-    
+
     e.preventDefault();
 
     const requestCompany =  document.querySelector('input[name="company"]:checked');
@@ -54,7 +54,7 @@ requestForm.addEventListener('submit',(e)=>{
 
 function calculateSubtotal(){
     let total =   Number(requestItemQuantity.value) *  Number(requestItemUnitCost.value);
-    requestItemTotal.value = formatter.format(total); 
+    requestItemTotal.value = formatter.format(total);
 }
 
 // Called when an expense request is click
@@ -364,7 +364,7 @@ uploadImageInput.addEventListener('change', async () => {
             icon: "error",
             title: "Oops...",
             text: error.message,
-        });
+        })
 
     } finally {
         uploadImageInput.value = null;

@@ -82,14 +82,14 @@
                 <small class="my-2" style="color: rgb(255, 255, 255, 0.5);"><b>MAKE REQUEST</b></small>
 
                 <div class="mb-3">
-                    <a href="request.php" class="request_nav">
+                    <a href="/request" class="request_nav">
                         <i class="fas fa-shopping-basket" style="height: 20px; width: 20px;"></i>
                         <small><b>Request</b></small>
                     </a>
                 </div>
 
                 <div class="mb-3">
-                    <a href="my_request.php" class="my_request_nav">
+                    <a href="/requests" class="my_request_nav">
                         <i class="fas fa-clipboard-list" style="height: 20px; width: 20px;"></i>
                         <small><b>My Request</b></small>
                     </a>
@@ -229,7 +229,7 @@
 
                 <form method="POST" action="/logout" class="logoutForm">
                     @csrf
-                    <button type="submit"> 
+                    <button type="submit">
                         <i class="fas fa-sign-out-alt" style="margin-right: 5px;"></i>
                         <small>LOGOUT</small>
                     </button>
@@ -267,7 +267,7 @@
     const logoutForm = document.querySelector('.logoutForm');
 
     logoutForm.addEventListener('submit',(e)=>{
-        
+
         e.preventDefault();
 
         Swal.fire({
