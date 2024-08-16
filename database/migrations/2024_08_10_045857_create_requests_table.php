@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\PaymentMethod;
 use App\Enums\RequestPriorityLevel;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -19,11 +20,21 @@ return new class extends Migration
             $table->string('request_by');
             $table->foreignId('prepared_by')->constrained('users');
             $table->foreignId('company_id')->constrained();
+            
             $table->enum('priority_level',[
                 RequestPriorityLevel::NONE->name,
                 RequestPriorityLevel::LOW->name,
                 RequestPriorityLevel::MEDUIM->name,
                 RequestPriorityLevel::HIGH->name,
+            ]);
+
+            $table->enum('payment_method',[
+                PaymentMethod::NONE->name,
+                PaymentMethod::CASH->name,
+                PaymentMethod::CHECK->name,
+                PaymentMethod::CREDIT_CARD->name,
+                PaymentMethod::GCASH->name,
+                PaymentMethod::ONLINE_TRANSFER->name,
             ]);
 
             $table->boolean('priority');
