@@ -10,11 +10,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\RequestItemController;
+use App\Http\Middleware\SetGlobalVariables;
 
 Route::get('/', [AuthController::class,'index'])->name('login');;
 Route::post('/login', [AuthController::class,'login']);
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', SetGlobalVariables::class])->group(function () {
+
     Route::post('/logout', [AuthController::class,'logout']);
 
     Route::get('/request', [RequestController::class,'index']);

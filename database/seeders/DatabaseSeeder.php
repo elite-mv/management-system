@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             RequestItemSeeder::class,
             RoleSeeder::class,
             user_seeder::class,
+            BankSeeder::class,
         ]);
 
     }

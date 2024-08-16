@@ -4,6 +4,45 @@
 
 @section('title', 'View Request')
 
+@section('style')
+<style>
+
+:root {
+  --blue: rgba(173, 216, 230, 1.0);
+  --red: rgba(255, 0, 0, 0.4);
+  --yellow: rgba(255, 255, 0, 0.4);
+  --green: rgba(75, 200, 75, 0.5);
+}
+
+.bg-red{
+    background-color: var(--red) !important;
+}
+.bg-green{
+    background-color: var(--green) !important;
+}
+.bg-yellow{
+    background-color: var(--yellow) !important;
+}
+.bg-blue{
+    background-color: var(--blue) !important;
+}
+
+td{
+    padding: 0 !important;
+}
+
+.box-shadow-none {
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+}
+
+.outline-0{
+    outline: none
+}
+
+</style>
+@endsection
 
 @section('body')
 
@@ -104,7 +143,7 @@
                 <td colspan="4" class="text-center align-bottom"></td>
                 <td colspan="6" class="text-center align-bottom"></td>
             </tr>
-          
+
             <tr>
                 <td colspan="8" class="fw-bold bg-warning text-center">Signature Over Printed Name</td>
                 <td colspan="4" class="fw-bold bg-danger text-center">Signature Over Printed Name</td>
@@ -118,95 +157,121 @@
                 <td colspan="9" class="text-center fw-bold">AUDITOR DEPARTMENT</td>
             </tr>
             <tr>
-                <td colspan="4" class="text-center fw-bold">Priority level</td>
+                <td colspan="4" class="text-center fw-bold bg-red">Priority level</td>
                 <td colspan="4" class="text-center fw-bold">Type</td>
-                <td colspan="1" class="text-center fw-bold">Bank Name</td>
+                <td colspan="1" class="text-center fw-bold bg-blue">BANK NAME</td>
                 <td colspan="4" class="text-center fw-bold">ITEMS DELIVERY</td>
                 <td colspan="5" class="text-center fw-bold">BOOK KEEPER</td>
             </tr>
             <tr>
-                <td style="width: 32px" colspan="1">
-                    <input type="checkbox">
+                <td colspan="1" class="text-center" style="width: 32px">
+                    @if($request->priority_level === App\Enums\RequestPriorityLevel::LOW)
+                        <input type="checkbox" name="LOW" disabled="" checked>
+                    @else
+                        <input type="checkbox" name="LOW" disabled="">
+                    @endif
                 </td>
                 <td colspan="2">Low</td>
                 <td colspan="1">5 days</td>
-                <td colspan="1" style="width: 32px">
+                <td colspan="1" class="text-center" style="width: 32px">
                     <input type="checkbox">
                 </td>
                 <td colspan="3"></td>
-                <td colspan="1">SELECT AN OPTION</td>
-                <td colspan="1" style="width: 32px">
+                <td colspan="1">
+                    <select class="w-100 h-100 border-0 box outline-0" disabled>
+                        <option disabled selected>SELECT AN OPTON</option>
+                        @foreach($bank_names as $name)
+                            <option class="text-dark" value="name">{{$name}}</option>
+                        @endforeach
+                    </select>
+                </td>
+                <td colspan="1" class="text-center" style="width: 32px">
                     <input type="checkbox">
                 </td>
                 <td colspan="3">Complete</td>
                 <td colspan="5">APPROVED</td>
             </tr>
             <tr>
-                <td colspan="1">
-                    <input type="checkbox">
+                <td colspan="1" class="text-center">
+                    @if($request->priority_level === App\Enums\RequestPriorityLevel::MEDUIM)
+                        <input type="checkbox" name="MEDIUM" disabled="" checked>
+                    @else
+                        <input type="checkbox" name="MEDIUM" disabled="">
+                    @endif
                 </td>
                 <td colspan="2">Medium</td>
                 <td colspan="1">3 days</td>
-                <td colspan="1">
+                <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
                 <td colspan="3"></td>
-                <td colspan="1">BANK CODE</td>
-                <td colspan="1">
+                <td colspan="1" class="text-center fw-bold bg-blue">BANK CODE</td>
+                <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
                 <td colspan="3">Incomplete</td>
                 <td colspan="5">2024-08-12 16:08</td>
             </tr>
             <tr>
-                <td colspan="1">
-                    <input type="checkbox">
+                <td colspan="1" class="text-center">
+                    @if($request->priority_level === App\Enums\RequestPriorityLevel::HIGH)
+                        <input type="checkbox" name="HIGH" disabled="" checked>
+                    @else
+                        <input type="checkbox" name="HIGH" disabled="">
+                    @endif
                 </td>
                 <td colspan="2">High</td>
                 <td colspan="1">1 day</td>
-                <td colspan="1">
+                <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
                 <td colspan="3"></td>
-                <td colspan="1">SELECT AN OPTION</td>
+                <td colspan="1">
+                    <select class="w-100 h-100 border-0 box outline-0" disabled>
+                        <option disabled selected>SELECT AN OPTON</option>
+                        @foreach($bank_codes as $name)
+                            <option class="text-dark" value="name">{{$name}}</option>
+                        @endforeach
+                    </select>
+                </td>
                 <td colspan="4"> SUPPLIER VERIFICATION</td>
                 <td colspan="5">ACCOUNTANT</td>
             </tr>
             <tr>
                 <td colspan="4">ATTACHMENT</td>
-                <td colspan="1">
+                <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
                 <td colspan="3"></td>
                 <td colspan="1">CHECK NUMBER</td>
-                <td colspan="1">
+                <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
                 <td colspan="3">Yes</td>
                 <td colspan="5">Priority</td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
                 <td colspan="3">With</td>
-                <td colspan="1">
+                <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
                 <td colspan="3"></td>
                 <td colspan="1"></td>
-                <td colspan="1">
+                <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
                 <td colspan="3">No</td>
                 <td colspan="5">2024-08-12 16:08</td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
                 <td colspan="3">Without</td>
-                <td colspan="1">
+                <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
                 <td colspan="3"></td>
@@ -216,7 +281,7 @@
             </tr>
             <tr>
                 <td colspan="4">Type</td>
-                <td colspan="1">
+                <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
                 <td colspan="3"></td>
@@ -225,11 +290,11 @@
                 <td colspan="5">Pending</td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
                 <td colspan="3">OPEX</td>
-                <td colspan="1">
+                <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
                 <td colspan="3"></td>
@@ -238,11 +303,11 @@
                 <td colspan="5"></td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
                 <td colspan="3">NON OPEX</td>
-                <td colspan="1">
+                <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
                 <td colspan="3"></td>
@@ -253,7 +318,7 @@
             </tr>
             <tr>
                 <td colspan="4">Receipt</td>
-                <td colspan="1">
+                <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
                 <td colspan="3"></td>
@@ -263,11 +328,11 @@
                 <td colspan="5"></td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
                 <td colspan="3">Official Receipt VAT</td>
-                <td colspan="1">
+                <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
                 <td colspan="3"></td>
@@ -277,11 +342,11 @@
                 <td colspan="5">AUDITOR</td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
                 <td colspan="3">Delivery Receipt</td>
-                <td colspan="1">
+                <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
                 <td colspan="3"></td>
@@ -294,11 +359,11 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
                 <td colspan="3">None</td>
-                <td colspan="1">
+                <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
                 <td colspan="4">
@@ -451,7 +516,7 @@
                     <small>[HIDDEN]</small>
                 @endmanagement
 
-                
+
             </div>
         </div>
     </div>
@@ -558,11 +623,11 @@
                                     <small style="text-wrap: nowrap;">{{$item->jobOrder->name}}</small>
                                 </div>
                                 <div class="col-3 text-start m-0 p-0 border border-dark px-2 d-flex align-items-center" style="border-style: none none solid solid !important; overflow: hidden; text-overflow: ellipsis;">
-                            
+
                                     <div class="border m-0 p-0 d-flex align-items-center justify-content-center ms-2 me-3" style="height: 20px; width: 20px;">
                                         <img src="../temp/664ecc86248ca.jpg" style="height: 100%; width: auto;" name="thumbnail">
                                     </div>
-                                
+
                                     <small style="text-wrap: nowrap;">{{$item->description}}</small>
                                 </div>
                                 <div class="col-2 text-end m-0 p-0 border border-dark px-2" style="border-style: none none solid solid !important; overflow: hidden; text-overflow: ellipsis;">
@@ -831,7 +896,7 @@
             <div class="text-center border-collapse border border-dark py-2 fw-bold">
                 ACCOUNTING DEPARTMENT
             </div>
-        </div> 
+        </div>
         <div class="col-6 p-0">
             <div class="text-center border-collapse border border-dark py-2 fw-bold">
                 AUDITOR DEPARTMENT
@@ -871,7 +936,13 @@
                 <div class="col-4">
                     <div class="row">
                         <div class="col-2 p-0 text-center border border-dark" style="border-style: none none none solid !important;">
-                            <small><input type="checkbox" name="Low" disabled=""></small>
+                            <small>
+                                @if($request->priority_level === App\Enums\RequestPriorityLevel::LOW)
+                                    <input type="checkbox" name="Low" disabled="" checked>
+                                @else
+                                    <input type="checkbox" name="Low" disabled="">
+                                @endif
+                            </small>
                         </div>
                         <div class="col-5 p-0 px-2 border border-dark" style="border-style: none none none solid !important;">
                             <small>Low</small>
@@ -966,7 +1037,11 @@
                 <div class="col-4">
                     <div class="row">
                         <div class="col-2 p-0 text-center border border-dark" style="border-style: solid none none solid !important;">
-                            <small><input type="checkbox" name="Medium" disabled=""></small>
+                            @if($request->priority_level === App\Enums\RequestPriorityLevel::MEDUIM)
+                                <input type="checkbox" name="Medium" disabled="" checked>
+                            @else
+                                <input type="checkbox" name="Medium" disabled="">
+                            @endif
                         </div>
                         <div class="col-5 p-0 px-2 border border-dark" style="border-style: solid none none solid !important;">
                             <small>Medium</small>
@@ -1419,7 +1494,7 @@
                     </div>
                 </div>
                 <div class="col-4 m-0 p-0 border border-dark text-center" style="border-style: none none none solid !important;">
-                    
+
                 </div>
             </div>
         </div>
@@ -1569,7 +1644,7 @@
                     </div>
                 </div>
                 <div class="col-4 m-0 p-0 border border-dark text-center" style="border-style: none none none solid !important;">
-                    
+
                 </div>
             </div>
         </div>
@@ -1644,7 +1719,7 @@
                     </div>
                 </div>
                 <div class="col-4 border border-dark text-center" style="border-style: none none none solid !important;">
-                    
+
                 </div>
             </div>
         </div>
@@ -1726,7 +1801,7 @@
                     </div>
                 </div>
                 <div class="col-4 border border-dark text-center" style="border-style: none none none solid !important;">
-                    
+
                 </div>
             </div>
         </div>
@@ -1808,7 +1883,7 @@
                     </div>
                 </div>
                 <div class="col-4 border border-dark text-center" style="border-style: none none none solid !important;">
-                    
+
                 </div>
             </div>
         </div>
@@ -1825,10 +1900,10 @@
                     </div>
                 </div>
                 <div class="col-4 border border-dark" style="border-style: solid none none solid !important;">
-                    
+
                 </div>
                 <div class="col-2 border border-dark" style="border-style: solid solid none solid !important;">
-                    
+
                 </div>
             </div>
         </div>
@@ -1872,7 +1947,7 @@
                     </div>
                 </div>
                 <div class="col-4 border border-dark" style="border-style: none none none solid !important;">
-                    
+
                 </div>
                 <div class="col-2 border border-dark text-center" style="border-style: none solid none solid !important; position: relative;">
                     <small style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%);"><b>RCA</b></small>
@@ -1922,4 +1997,31 @@
     </div></div>
     </div>
 </div>
+@endsection
+
+
+@section('javascript')
+    <script>
+
+        let bankSelection;
+
+        bankSelection.addEventListener('change', async ()=>{
+
+            let formData = new FormData();
+            let requestId = 1;
+
+            formData.append('request', requestId)
+            formData.append('bank', bankSelection.value)
+
+            fetch('/api/expense-request/bank', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                }
+            })
+
+        })
+
+    </script>
 @endsection

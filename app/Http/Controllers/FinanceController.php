@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\RequestPaymentStatus;
 use App\Models\Request as ModelsRequest;
 
 class FinanceController extends Controller
@@ -13,9 +14,8 @@ class FinanceController extends Controller
 
     public function getRequests()
     {
-        $requests = ModelsRequest::whereDoesntHave('approvals', function($query) {
-            $query->where('role_id', 2);
-        })->where('priority', false)->get();
+        $requests = ModelsRequest::where('priority', true)
+        ->where('status', RequestPaymentStatus::PENDING->name)->get();
 
         return view('/partials/request-data', ['requests' => $requests]);
     }

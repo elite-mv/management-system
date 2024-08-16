@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\RequestItemStatus;
+use App\Enums\RequestPriorityLevel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -27,6 +28,13 @@ class Request extends Model
     ];
 
     protected $appends = ['total', 'reference', 'fund', 'fund_item'];
+
+    protected function casts(): array
+    {
+        return [
+            'priority_level' => RequestPriorityLevel::class,
+        ];
+    }
 
     public function getTotalAttribute(): float{
         return $this->items()->sum(DB::raw('quantity * cost'));
