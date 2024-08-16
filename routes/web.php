@@ -1,6 +1,11 @@
 <?php
 
+use App\Http\Controllers\AccountantController;
+use App\Http\Controllers\AuditorController;
+use App\Http\Controllers\BookKeeperController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\FinanceController;
+use App\Http\Controllers\PresidentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RequestController;
@@ -16,7 +21,22 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/requests', [RequestController::class,'getRequests']);
     Route::get('/api/my-requests', [RequestController::class,'getRequestsData']);
 
-    Route::get('/entities', [CompanyController::class,'index']);
+    Route::get('/book-keeper', [BookKeeperController::class,'index']);
+    Route::get('/api/book-keeper', [BookKeeperController::class,'getRequests']);
+
+    Route::get('/accountant', [AccountantController::class,'index']);
+    Route::get('/api/accountant', [AccountantController::class,'getRequests']);
+
+    Route::get('/finance', [FinanceController::class,'index']);
+    Route::get('/api/finance', [FinanceController::class,'getRequests']);
+
+    Route::get('/president', [PresidentController::class,'index']);
+    Route::get('/api/president', [PresidentController::class,'getRequests']);
+
+    Route::get('/auditor', [AuditorController::class,'index']);
+    Route::get('/api/auditor', [AuditorController::class,'getRequests']);
+
+    Route::get('/entity', [CompanyController::class,'index']);
 
     Route::post('/request', [RequestController::class,'addRequest']);
     Route::get('/request/{id}', [RequestController::class,'viewRequest']);

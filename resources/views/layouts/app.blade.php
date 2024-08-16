@@ -99,32 +99,32 @@
                 <small class="my-2" style="color: rgb(255, 255, 255, 0.5);"><b>MANAGE REQUESTS</b></small>
 
                 <div class="mb-3">
-                    <a href="book_keeper.php" class="book_keeper_nav">
+                    <a href="/book-keeper" class="book_keeper_nav">
                         <i class="fas fa-book" style="height: 20px; width: 20px;"></i>
                         <small><b>Book Keeper</b></small>
                     </a>
                 </div>
 
                 <div class="mb-3">
-                    <a href="accountant.php" class="accountant_nav">
+                    <a href="/accountant" class="accountant_nav">
                         <i class="fas fa-file-invoice-dollar" style="height: 20px; width: 20px;"></i>
                         <small><b>Accountant</b></small>
                     </a>
                 </div>
                 <div class="mb-3">
-                    <a href="finance.php" class="finance_nav">
+                    <a href="/finance" class="finance_nav">
                         <i class="fas fa-landmark" style="height: 20px; width: 20px;"></i>
                         <small><b>Finance</b></small>
                     </a>
                 </div>
                 <div class="mb-3">
-                    <a href="president.php" class="president_nav">
+                    <a href="/president" class="president_nav">
                         <i class="fas fa-crown" style="height: 20px; width: 20px;"></i>
                         <small><b>President</b></small>
                     </a>
                 </div>
                 <div class="mb-3">
-                    <a href="auditor.php" class="auditor_nav">
+                    <a href="/auditor" class="auditor_nav">
                         <i class="fas fa-calculator" style="height: 20px; width: 20px;"></i>
                         <small><b>Auditor</b></small>
                     </a>
@@ -133,7 +133,7 @@
                 <small class="my-2" style="color: rgb(255, 255, 255, 0.5);"><b>EDIT OPTIONS</b></small>
 
                 <div class="mb-3">
-                    <a href="entity.php" class="entity_nav">
+                    <a href="/entity" class="entity_nav">
                         <i class="fas fa-code-branch" style="height: 20px; width: 20px;"></i>
                         <small><b>Entity</b></small>
                     </a>
