@@ -3,8 +3,8 @@
 namespace App\Http\Middleware;
 
 use App\Models\Bank;
-use App\Models\BankCode;
-use App\Models\BankName;
+use App\Models\Expense\BankCode;
+use App\Models\Expense\BankName;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
