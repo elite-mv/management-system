@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Income;
 
+use App\Models\Income\Customer;
+
 class CustomerController
 {
     public function index(){
 
+        $customers =  Customer::get();
+
         return view('income.customer', [
-            'data' => 'hi john',
-            'lovers' => ['joshua', 'jocelyn']
+            'customers' => $customers,
         ]);
     }
 
