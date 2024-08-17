@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Expense;
 
 use App\Enums\PaymentMethod;
-use App\Models\Bank;
 use App\Models\Expense\BankCode;
 use App\Models\Expense\BankDetail;
 use Illuminate\Http\Request;
@@ -75,9 +74,7 @@ class BankDetailController extends Controller
 
         }catch(\Exception $e){
             DB::rollback();
-            return response()->json(['message' =>  $e->getMessage()]);
-
-//            abort(500);
+            abort(500);
         }
     }
 }

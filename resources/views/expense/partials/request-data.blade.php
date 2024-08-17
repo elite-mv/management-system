@@ -8,7 +8,7 @@
         <td>{{ $request->status}}</td>
         <td>{{ $request->total}}</td>
         <td>
-            <a  target="_blank role="button" href="/request/{{$request->id}}" class="btn btn-primary">View</a>
+            <a  target="_blank role="button" href="/expense/request/{{$request->id}}" class="btn btn-primary">View</a>
         </td>
     </tr>
 @empty

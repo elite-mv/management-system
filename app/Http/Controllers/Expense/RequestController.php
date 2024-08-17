@@ -21,7 +21,7 @@ class RequestController extends Controller
         $measurements = Measurement::all();
         $jobOrders = JobOrder::all();
 
-        return view('request', [
+        return view('expense.request', [
             'companies' => $companies,
             'measurements' => $measurements,
             'jobOrders' => $jobOrders
@@ -66,7 +66,7 @@ class RequestController extends Controller
     }
 
     public function getRequests(Request $request){
-        return view('requests');
+        return view('expense.requests');
     }
 
     public function getRequestsData(Request $request){
@@ -88,7 +88,7 @@ class RequestController extends Controller
 
         $requests = $query->paginate($request->input('entries'));
 
-        return view('/partials/request-data', ['requests' => $requests]);
+        return view('expense.partials.request-data', ['requests' => $requests]);
 
     }
 
@@ -97,7 +97,7 @@ class RequestController extends Controller
 
         $expenseRequest = ModelsRequest::where('id',$id)->firstOrFail();
 
-        return view('printable-request-form', [
+        return view('expense.printable-request-form', [
             'request' => $expenseRequest
         ]);
 

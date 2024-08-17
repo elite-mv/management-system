@@ -48,6 +48,33 @@
 
 @section('body')
 
+
+    <div>
+        <input type="checkbox" id="test1" class="test">
+        <input type="checkbox" id="test2" class="test">
+
+    </div>
+
+    <div class="bg-secondary">
+        <input type="checkbox" id="testx1" class="testx">
+        <input type="checkbox" id="testx2" class="testx">
+        <input type="checkbox" id="testx3" class="testx">
+    </div>
+
+    <div class="form-check">
+        <input name="checkbox" class="form-check-input" type="checkbox" value="" id="flexCheckDisabled">
+        <label class="form-check-label" for="flexCheckDisabled">
+            Disabled checkbox
+        </label>
+    </div>
+    <div class="form-check">
+        <input name="checkbox"  class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" >
+        <label class="form-check-label" for="flexCheckCheckedDisabled">
+            Disabled checked checkbox
+        </label>
+    </div>
+
+
     <div class="container-fluid mx-auto" style="width: 13in;">
         <table class="table table-bordered border-dark">
             <tbody>
@@ -188,7 +215,7 @@
                     </select>
                 </td>
                 <td colspan="1" class="text-center" style="width: 32px">
-                    <input type="checkbox">
+                    <input class="groupCheck"  name="requestDeliveryStatus" id="requestDeliveryComplete"  type="checkbox">
                 </td>
                 <td colspan="3">Complete</td>
                 <td colspan="5">APPROVED</td>
@@ -209,7 +236,7 @@
                 <td colspan="3"></td>
                 <td colspan="1" class="text-center fw-bold bg-blue">BANK CODE</td>
                 <td colspan="1" class="text-center">
-                    <input type="checkbox">
+                    <input class="groupCheck" name="requestDeliveryStatus" id="requestDeliveryIncomplete" type="checkbox">
                 </td>
                 <td colspan="3">Incomplete</td>
                 <td colspan="5">2024-08-12 16:08</td>
@@ -2342,19 +2369,65 @@
 @section('script')
     <script>
 
-        let bankNameSelection = document.querySelector('#bankNameSelection');
-        let bankCodeSelection = document.querySelector('#bankCodeSelection');
-        let checkNumberInput = document.querySelector('#checkNumberInput');
+
+
+        const bankNameSelection = document.querySelector('#bankNameSelection');
+        const bankCodeSelection = document.querySelector('#bankCodeSelection');
+        const checkNumberInput = document.querySelector('#checkNumberInput');
+
+        const deliveryStatusInput = document.querySelectorAll('input[name="requestDeliveryStatus"]');
+
+        // const g1 = document.querySelectorAll('.groupCheck');
+
 
         bankNameSelection.addEventListener('change', updateBankDetails);
         bankCodeSelection.addEventListener('change', updateBankDetails);
         checkNumberInput.addEventListener('change', updateBankDetails);
 
+        function groupCheck(groupId){
+
+            const g1 = document.querySelectorAll(`.${groupId}`);
+
+            let gcheck = null;
+
+            g1.forEach(item =>{
+                item.addEventListener('change', (e)=>{
+
+                    if(gcheck === null){
+                        gcheck = e.target.id;
+                        return;
+                    }
+
+                    if(gcheck !== e.target.id){
+                        document.querySelector(`#${gcheck}`).checked = false;
+                        gcheck = e.target.id;
+                    }
+                });
+            })
+        }
+
+        groupCheck('test');
+        groupCheck('testx');
+
+        // $('#printable').find('input[name="Incomplete"]').on('change', function() {
+        //     if ($(this).prop('checked')) {
+        //         $('#printable').find('input[name="Complete"]').prop('checked', false);
+        //     }
+        //     update_deparment();
+        // });
+
+
+        $("input[type='checkbox'][name='options']").on('change', function() {
+            if (this.checked) {
+                $("input[type='checkbox'][name='options']").not(this).prop('checked', false);
+            }
+        });
+
         function updateBankDetails() {
 
             if (parseInt(bankNameSelection.value) === -1 && parseInt(bankCodeSelection.value) === -1) {
                 console.log('called')
-                fetch('/api/expense-request/bank-details/{{$request->id}}', {
+                fetch('/expense/api/expense-request/bank-details/{{$request->id}}', {
                     method: 'DELETE',
                     headers: {
                         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
@@ -2393,7 +2466,7 @@
             formData.append('checkNumber', checkNumberInput.value);
             formData.append('requestID', requestId);
 
-            fetch('/api/expense-request/bank-details', {
+            fetch('/expense/api/expense-request/bank-details', {
                 method: 'POST',
                 body: formData,
                 headers: {
