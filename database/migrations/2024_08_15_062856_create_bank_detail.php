@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('bank_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('request_id')->constrained();
-            $table->foreignId('bank_id')->constrained();
-            $table->string('check_number');
+            $table->string('check_number')->nullable();
             $table->timestamps();
         });
     }

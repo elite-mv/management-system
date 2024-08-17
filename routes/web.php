@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountantController;
 use App\Http\Controllers\AuditorController;
+use App\Http\Controllers\BankDetailController;
 use App\Http\Controllers\BookKeeperController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\FinanceController;
@@ -53,4 +54,8 @@ Route::middleware(['auth', SetGlobalVariables::class])->group(function () {
     Route::post('/api/request-item/{id}', [RequestItemController::class,'updateItem']);
 
     Route::post('/api/request-item/file/{id}', [RequestItemController::class,'addRequestItemImage']);
+
+    Route::post('/api/expense-request/bank-details', [BankDetailController::class,'addBankDetails']);
+    Route::delete('/api/expense-request/bank-details/{requestID}', [BankDetailController::class,'removeBankDetails']);
+
 });

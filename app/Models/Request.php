@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PaymentMethod;
 use App\Enums\RequestItemStatus;
 use App\Enums\RequestPriorityLevel;
 use Carbon\Carbon;
@@ -33,6 +34,7 @@ class Request extends Model
     {
         return [
             'priority_level' => RequestPriorityLevel::class,
+            'payment_method' => PaymentMethod::class,
         ];
     }
 
@@ -50,12 +52,12 @@ class Request extends Model
     }
 
     public function getReferenceAttribute(): string{
-        return Carbon::createFromDate($this->created_at)->format('Ymd') .'-'. $this->id; 
+        return Carbon::createFromDate($this->created_at)->format('Ymd') .'-'. $this->id;
     }
 
     public function company(): BelongsTo{
         return $this->belongsTo(Company::class);
-    
+
     }
 
     public function items(): HasMany{

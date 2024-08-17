@@ -3,6 +3,8 @@
 namespace App\Http\Middleware;
 
 use App\Models\Bank;
+use App\Models\BankCode;
+use App\Models\BankName;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,8 +19,8 @@ class SetGlobalVariables
     public function handle(Request $request, Closure $next): Response
     {
 
-        $bankNames = Bank::distinct()->pluck('name')->toArray();
-        $bankCodes = Bank::pluck('code')->toArray();
+        $bankNames = BankName::get();
+        $bankCodes = BankCode::get();
 
         view()->share('bank_names', $bankNames);
         view()->share('bank_codes',  $bankCodes);

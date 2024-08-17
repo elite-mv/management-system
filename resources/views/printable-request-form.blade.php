@@ -178,10 +178,10 @@ td{
                 </td>
                 <td colspan="3"></td>
                 <td colspan="1">
-                    <select class="w-100 h-100 border-0 box outline-0" disabled>
-                        <option disabled selected>SELECT AN OPTON</option>
-                        @foreach($bank_names as $name)
-                            <option class="text-dark" value="name">{{$name}}</option>
+                    <select id="bankNameSelection" class="w-100 h-100 border-0 box outline-0">
+                        <option value="-1" selected>SELECT AN OPTION</option>
+                        @foreach($bank_names as $bankName)
+                            <option class="text-dark" value="{{$bankName->id}}">{{$bankName->name}}</option>
                         @endforeach
                     </select>
                 </td>
@@ -227,10 +227,10 @@ td{
                 </td>
                 <td colspan="3"></td>
                 <td colspan="1">
-                    <select class="w-100 h-100 border-0 box outline-0" disabled>
-                        <option disabled selected>SELECT AN OPTON</option>
-                        @foreach($bank_codes as $name)
-                            <option class="text-dark" value="name">{{$name}}</option>
+                    <select id="bankCodeSelection" class="w-100 h-100 border-0 box outline-0">
+                        <option value="-1" selected>SELECT AN OPTON</option>
+                        @foreach($bank_codes as $bankCode)
+                            <option class="text-dark" value="{{$bankCode->id}}">{{$bankCode->code}}</option>
                         @endforeach
                     </select>
                 </td>
@@ -243,7 +243,7 @@ td{
                     <input type="checkbox">
                 </td>
                 <td colspan="3"></td>
-                <td colspan="1">CHECK NUMBER</td>
+                <td colspan="1" class="bg-blue fw-bold text-center">CHECK NUMBER</td>
                 <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
@@ -259,7 +259,9 @@ td{
                     <input type="checkbox">
                 </td>
                 <td colspan="3"></td>
-                <td colspan="1"></td>
+                <td colspan="1">
+                    <input id="checkNumberInput" class="w-100 border-0 outline-0">
+                </td>
                 <td colspan="1" class="text-center">
                     <input type="checkbox">
                 </td>
@@ -699,8 +701,8 @@ td{
                 </div>
                 <div class="col-4 text-start m-0 p-0 border border-dark" style="border-style: none solid solid none !important;">
                     <select class="w-100 rounded-0 border-0 px-2" name="payment_type" disabled="">
-                        @if($request->payment_method != 'NONE')
-                            <option selected>{{$request->payment_method}}</option>
+                        @if($request->payment_method != \App\Enums\PaymentMethod::NONE)
+                            <option selected>{{$request->payment_method->name}}</option>
                         @endif
                     </select>
                 </div>
@@ -1994,34 +1996,91 @@ td{
     </form>
     </div>
     </div>
-    </div></div>
+    </div>
+    </div>
     </div>
 </div>
 @endsection
 
 
-@section('javascript')
+@section('script')
     <script>
 
-        let bankSelection;
+        let bankNameSelection = document.querySelector('#bankNameSelection');
+        let bankCodeSelection = document.querySelector('#bankCodeSelection');
+        let checkNumberInput = document.querySelector('#checkNumberInput');
 
-        bankSelection.addEventListener('change', async ()=>{
+        bankNameSelection.addEventListener('change', updateBankDetails);
+        bankCodeSelection.addEventListener('change', updateBankDetails);
+        checkNumberInput.addEventListener('change', updateBankDetails);
+
+        function updateBankDetails(){
+
+            if(parseInt(bankNameSelection.value) === -1 && parseInt(bankCodeSelection.value) === -1){
+               console.log('called')
+                fetch('/api/expense-request/bank-details/{{$request->id}}', {
+                    method: 'DELETE',
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                }).then(response =>{
+
+                    if(!response.ok){
+                        throw new Error("Something went wrong!");
+                    }
+
+                    return response.json();
+
+                }).then(data => {
+                    bankNameSelection.classList.remove('bg-danger')
+                    bankCodeSelection.classList.remove('bg-danger')
+                    checkNumberInput.classList.remove('bg-danger')
+                    checkNumberInput.value = '';
+                }).catch(err => {
+                    bankNameSelection.classList.add('bg-danger')
+                    bankCodeSelection.classList.add('bg-danger')
+                    checkNumberInput.classList.add('bg-danger')
+                })
+
+                return;
+            }
+
+            if(!(bankNameSelection.value && bankCodeSelection.value && checkNumberInput.value)){
+                return;
+            }
 
             let formData = new FormData();
             let requestId = 1;
 
-            formData.append('request', requestId)
-            formData.append('bank', bankSelection.value)
+            formData.append('bankName', bankNameSelection.value);
+            formData.append('bankNumber', bankCodeSelection.value);
+            formData.append('checkNumber', checkNumberInput.value);
+            formData.append('requestID', requestId);
 
-            fetch('/api/expense-request/bank', {
+            fetch('/api/expense-request/bank-details', {
                 method: 'POST',
                 body: formData,
                 headers: {
                     "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
                 }
+            }).then(response =>{
+
+                if(!response.ok){
+                    throw new Error("Something went wrong!");
+                }
+
+                return response.json();
+
+            }).then(data => {
+                console.log(data);
+                bankNameSelection.classList.remove('bg-danger')
+                bankCodeSelection.classList.remove('bg-danger')
+                checkNumberInput.classList.remove('bg-danger')
+            }).catch(err => {
+                bankNameSelection.classList.add('bg-danger')
+                bankCodeSelection.classList.add('bg-danger')
+                checkNumberInput.classList.add('bg-danger')
             })
-
-        })
-
+        }
     </script>
 @endsection
