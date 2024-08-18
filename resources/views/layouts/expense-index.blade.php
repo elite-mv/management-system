@@ -31,6 +31,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    @yield('files')
     @yield('style')
 
     <style>
@@ -68,8 +69,8 @@
 
 <main>
     <div class="row mx-0">
-        <nav class="d-none d-md-block col-2 px-0">
-            <header class="bg-dark text-light collapse show" id="collapseLayouts">
+        <nav class="bg-dark d-none d-md-block col-2 px-0">
+            <header class="text-light collapse show" id="collapseLayouts">
                 <div class="w-100">
                     <a href="/expense/request">
                         <img class="d-block mx-auto" src="images/logos/ELITE_ACES_LOGO.jpg" height="75px"

@@ -36,7 +36,7 @@ class RequestItemController extends Controller
         $requestItems =  RequestItem::where('session_id', Session::getId())
         ->whereNull('request_id')->get();
 
-        return view('/partials/request-cart', [
+        return view('expense.partials.request-cart', [
             'requestItems' => $requestItems,
         ]);
     }

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Expense;
 
 use App\Enums\PaymentMethod;
+use App\Exceptions\Expense\InvalidBankDetails;
 use App\Models\Expense\BankCode;
 use App\Models\Expense\BankDetail;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -25,37 +27,56 @@ class BankDetailController extends Controller
                     PaymentMethod::CHECK->name,
                     PaymentMethod::ONLINE_TRANSFER->name,
                     PaymentMethod::CREDIT_CARD->name,
-                    ])
-                ->firstOrFail();
+                ])
+                ->first();
 
+            if (!isset($expenseRequest)) {
+                throw new InvalidBankDetails('Bank details are not required for the Cash payment method');
+            }
 
-            if($expenseRequest->payment_method == PaymentMethod::CREDIT_CARD || $expenseRequest->payment_method == PaymentMethod::ONLINE_TRANSFER){
-                if($checkNumber != null && $bankCode != null){
-                    throw new \Error('check number and bank code is not need for credit card/online transfer');
+            if ($expenseRequest->payment_method == PaymentMethod::CREDIT_CARD || $expenseRequest->payment_method == PaymentMethod::ONLINE_TRANSFER) {
+                if (!(empty($checkNumber) && $bankCode == -1)) {
+                    throw new InvalidBankDetails('check number and bank code is not need for credit card/online transfer');
                 }
             }
 
-            if($expenseRequest->payment_method == PaymentMethod::CHECK){
-                BankCode::where('id', $bankCode)
+            if ($expenseRequest->payment_method == PaymentMethod::CHECK) {
+
+                $valid = BankCode::where('id', $bankCode)
                     ->where('bank_name_id', $bankName)
-                    ->firstOrFail();
+                    ->first();
+
+                if (!isset($valid)) {
+                    throw new InvalidBankDetails('Bank Name and Bank Code does not match!');
+                }
             }
 
             DB::beginTransaction();
 
             $bankDetail = BankDetail::updateOrCreate(['request_id' => $requestID], [
                 'bank_name_id' => $bankName,
-                'bank_code_id' => $bankCode,
+                'bank_code_id' => $bankCode == -1 ? null : $bankCode,
                 'check_number' => $checkNumber,
             ]);
 
             DB::commit();
 
-            return response()->json(['message' => 'Bank details added successfully!']);
+            return response()->json([
+                'message' => 'Bank details added successfully!',
+                'status' => 200,
+            ]);
 
-        }catch(\Exception $e){
+        } catch (InvalidBankDetails $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => 400
+            ], 400);
+        } catch (\Exception $e) {
             DB::rollback();
-            abort(500);
+            return response()->json([
+                'message' => 'Something went wrong!, please contact developer',
+                'status' => 500
+            ], 500);
         }
     }
 
@@ -72,7 +93,7 @@ class BankDetailController extends Controller
 
             return response()->json(['message' => 'Bank details deleted successfully!']);
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             DB::rollback();
             abort(500);
         }
