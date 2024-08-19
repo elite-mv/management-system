@@ -1,14 +1,21 @@
 @extends('layouts.income-index')
 
-
-@section('title', 'Income')
-
-@section('bert')
-    <p>Hello world</p>
-@endsection
-
+@section('title', 'MS [ Income ] - Customer')
 
 @section('body')
-    <p>Hello world</p>
+
+    <div class="w-100 d-flex align-items-start border">
+        <div class="container-fluid p-3">
+            HOME
+        </div>
+    </div>
+
 @endsection
 
+@section('script')
+
+    <script>
+        
+    </script>
+
+@endsection

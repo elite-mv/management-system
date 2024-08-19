@@ -12,7 +12,6 @@ use App\Http\Controllers\Expense\RequestController;
 use App\Http\Controllers\Expense\RequestDeliveryController;
 use App\Http\Controllers\Expense\RequestItemController;
 use App\Http\Controllers\Income\CustomerController;
-use App\Http\Controllers\Income\ExpenseController;
 use App\Http\Middleware\SetGlobalVariables;
 use Illuminate\Support\Facades\Route;
 
@@ -20,16 +19,12 @@ Route::get('/', [AuthController::class, 'index'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 
-
-// All routes for income
 Route::prefix('income')->group(function () {
-
     Route::get('/customer', [CustomerController::class, 'index']);
-
-    //public access
-    Route::get('/', [ExpenseController::class, 'index']);
+    Route::post('/customer', [CustomerController::class, 'addCustomerData']);
+    Route::post('/salutation', [CustomerController::class, 'addSalutationData']);
+    Route::get('/salutation', [CustomerController::class, 'ReaddSalutationData']);
 });
-
 
 Route::prefix('expense')->group(function () {
 
