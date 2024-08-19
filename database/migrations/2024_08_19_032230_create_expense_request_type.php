@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('check_vouchers', function (Blueprint $table) {
+        Schema::create('request_expense_types', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('expense_category_id')->constrained();
             $table->foreignId('request_id')->constrained();
             $table->timestamps();
         });
@@ -23,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('check_vouchers');
+        Schema::dropIfExists('request_expense_types');
     }
 };

@@ -2,6 +2,9 @@
 
 namespace App\Models\Expense;
 
+use App\Enums\AccountingAttachment;
+use App\Enums\AccountingReceipt;
+use App\Enums\AccountingType;
 use App\Enums\PaymentMethod;
 use App\Enums\RequestItemStatus;
 use App\Enums\RequestPriorityLevel;
@@ -25,16 +28,21 @@ class Request extends Model
         'prepared_by',
         'priority_level',
         'priority',
-        'payment_method'
+        'payment_method',
+        'attachment',
+        'type',
+        'receipt',
     ];
 
     protected $appends = ['total', 'reference', 'fund', 'fund_item'];
-
     protected function casts(): array
     {
         return [
             'priority_level' => RequestPriorityLevel::class,
             'payment_method' => PaymentMethod::class,
+            'attachment' => AccountingAttachment::class,
+            'type' => AccountingType::class,
+            'receipt' => AccountingReceipt::class,
         ];
     }
 
@@ -52,7 +60,7 @@ class Request extends Model
     }
 
     public function getReferenceAttribute(): string{
-        return Carbon::createFromDate($this->created_at)->format('Ymd') .'-'. $this->id;
+        return Carbon::createFromDate($this->created_at)->format('Ymd') .'-'. $this->getPadIdAttribute();
     }
 
     public function company(): BelongsTo{
@@ -75,17 +83,20 @@ class Request extends Model
     public function checkVoucher(): HasOne{
         return $this->hasOne(CheckVoucher::class);
     }
-
     public function accountingDetail(): HasOne{
         return $this->hasOne(AccountingDetail::class);
     }
-
-    public function getForFundingItems(){
+    public function getFundItemAttribute(){
         return $this->items()
         ->whereIn('status', [
             RequestItemStatus::APPROVED->name,
             RequestItemStatus::PRIORITY->name
-        ]);
+        ])->get();
+    }
+
+    public function getPadIdAttribute()
+    {
+        return str_pad($this->id,3,"0",STR_PAD_LEFT);
     }
 
 }

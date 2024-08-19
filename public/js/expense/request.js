@@ -66,7 +66,7 @@ async function onSelectExpenseRequest(requestId) {
         selectedIndex = requestId;
         selectRow(selectedIndex);
 
-        let result = await fetch(`/api/request-item/${requestId}`, {
+        let result = await fetch(`/expense/api/request-item/${requestId}`, {
             headers: {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
             }
@@ -160,7 +160,7 @@ function unselectItem() {
 async function deleteItem() {
 
     try {
-        let result = await fetch(`/api/request-item/${selectedIndex}`, {
+        let result = await fetch(`/expense/api/request-item/${selectedIndex}`, {
             method: 'DELETE',
             headers: {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
@@ -197,7 +197,7 @@ async function updateItem() {
         formData.append('description', requestItemDescription.value);
         formData.append('cost', requestItemUnitCost.value);
 
-        let result = await fetch(`/api/request-item/${selectedIndex}`, {
+        let result = await fetch(`/expense/api/request-item/${selectedIndex}`, {
             method: 'POST',
             body: formData,
             headers: {
@@ -242,7 +242,7 @@ async function addItem() {
         formData.append('description', requestItemDescription.value);
         formData.append('cost', requestItemUnitCost.value);
 
-        let result = await fetch(`/api/request-item`, {
+        let result = await fetch(`/expense/api/request-item`, {
             method: 'POST',
             body: formData,
             headers: {
@@ -265,7 +265,7 @@ async function addItem() {
 
 async function viewCart() {
     try {
-        let result = await fetch(`/api/request-item`, {
+        let result = await fetch(`/expense/api/request-item`, {
             headers: {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
             }
@@ -293,7 +293,7 @@ async function viewCart() {
 async function calculateTotal() {
 
     try {
-        let result = await fetch(`/api/request-item/total`, {
+        let result = await fetch(`/expense/api/request-item/total`, {
             headers: {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
             }
@@ -325,7 +325,7 @@ uploadImageInput.addEventListener('change', async () => {
 
     try {
 
-        let result = await fetch(`/api/request-item/file/${selectedIndex}`, {
+        let result = await fetch(`/expense/api/request-item/file/${selectedIndex}`, {
             method: "POST",
             body: formData,
             headers: {

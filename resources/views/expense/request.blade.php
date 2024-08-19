@@ -27,7 +27,7 @@
 
 @section('body')
 
-    <form id="requestForm" method="POST" action="/request">
+    <form id="requestForm" method="POST" action="/expense/request">
 
         @csrf
         <div class="py-3 px-3 px-md-0">
@@ -236,9 +236,6 @@
     </form>
 @endsection
 
-
 @section('script')
-
-    <script type="text/javascript" src="./js/request.js"></script>
-    <script type="text/javascript" src="./js/header.js"></script>
+    <script type="text/javascript" src="/js/expense/request.js"></script>
 @endsection

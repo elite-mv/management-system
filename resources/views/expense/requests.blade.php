@@ -180,7 +180,7 @@
             let formData = new FormData(filterForm);
             const params = new URLSearchParams(formData);
 
-            fetch(`/api/my-requests?${params.toString()}`, {
+            fetch(`/expense/api/my-requests?${params.toString()}`, {
                 headers: {
                     "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
                 }

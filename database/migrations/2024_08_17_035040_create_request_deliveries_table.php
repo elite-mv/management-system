@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('request_deliveries', function (Blueprint $table) {
             $table->id();
-            $table->boolean('completed');
-            $table->boolean('supplier_verified');
+            $table->boolean('completed')->default(false);
+            $table->boolean('supplier_verified')->default(false);
             $table->foreignId('request_id')->constrained();
             $table->timestamps();
         });

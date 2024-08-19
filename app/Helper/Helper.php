@@ -2,10 +2,14 @@
 
 namespace App\Helper;
 
-class Helper{
+use NumberFormatter;
+use NumberToWords\NumberToWords;
 
-    public static function amountToWords($number) {
-       
+class Helper
+{
+
+    private static function convertNumberToWords($number)
+    {
         $words = '';
 
         $ones = array(
@@ -20,7 +24,7 @@ class Helper{
             8 => 'EIGHT',
             9 => 'NINE'
         );
-    
+
         $tens = array(
             10 => 'TEN',
             20 => 'TWENTY',
@@ -32,7 +36,7 @@ class Helper{
             80 => 'EIGHTY',
             90 => 'NINETY'
         );
-    
+
         $teens = array(
             10 => 'TEN',
             11 => 'ELEVEN',
@@ -45,7 +49,7 @@ class Helper{
             18 => 'EIGHTEEN',
             19 => 'NINETEEN'
         );
-    
+
         $hundreds = array(
             100 => 'HUNDRED',
             1000 => 'THOUSAND',
@@ -55,6 +59,7 @@ class Helper{
         );
 
         $parts = explode('.', $number);
+
         $integerPart = intval($parts[0]);
 
         if ($integerPart < 10) {
@@ -69,13 +74,13 @@ class Helper{
         } elseif ($integerPart < 1000) {
             $words .= $ones[$integerPart / 100] . ' ' . $hundreds[100];
             if ($integerPart % 100 != 0) {
-                $words .= ' ' . numberToWords($integerPart % 100);
+                $words .= ' ' . Helper::convertNumberToWords($integerPart % 100);
             }
         } else {
             foreach (array_reverse($hundreds, true) as $magnitude => $name) {
                 if ($integerPart >= $magnitude) {
                     $div = (int)($integerPart / $magnitude);
-                    $words .= numberToWords($div) . ' ' . $name;
+                    $words .= Helper::convertNumberToWords($div) . ' ' . $name;
                     $integerPart %= $magnitude;
                     if ($integerPart) {
                         $words .= ' ';
@@ -84,23 +89,34 @@ class Helper{
             }
 
             if ($integerPart) {
-                $words .= ' ' . numberToWords($integerPart) ;
+                $words .= ' ' . Helper::convertNumberToWords($integerPart);
             }
         }
 
         if (count($parts) == 2) {
             $decimalPart = intval($parts[1]);
             if ($decimalPart > 0) {
-                $words .= ' AND ' . numberToWords($decimalPart) . ' CENTAVOS';
+                $words .= ' AND ' . Helper::convertNumberToWords($decimalPart) . ' CENTAVOS';
             }
         }
 
-        // $numberAsString = str_replace(',', '', $formatted_approve_total);
-        // $words = numberToWords($numberAsString) . ' ONLY';
-        // $words = preg_replace('/^ AND /', '', $words);
-        
         return $words;
     }
+    public static function amountToWords($number)
+    {
+        return Helper::convertNumberToWords($number) . ' ONLY';
+    }
 
-   
+    public static function formatPeso($amount): string
+    {
+        $locale = 'en_PH';
+
+        // Create a NumberFormatter instance for currency formatting
+        $formatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
+
+        // Format the amount as currency
+        return $formatter->formatCurrency($amount, 'PHP');
+
+    }
+
 }

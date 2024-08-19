@@ -9,10 +9,15 @@ class RequestDelivery extends Model
 {
     use HasFactory;
 
-    protected $fillable= [
+    protected $fillable = [
         'request_id',
         'completed',
         'supplier_verified',
+    ];
+
+    protected $casts = [
+        'completed' => 'boolean',
+        'supplier_verified' => 'boolean',
     ];
 
 }
