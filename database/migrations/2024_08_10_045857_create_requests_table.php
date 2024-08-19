@@ -20,11 +20,11 @@ return new class extends Migration
             $table->string('request_by');
             $table->foreignId('prepared_by')->constrained('users');
             $table->foreignId('company_id')->constrained();
-            
+
             $table->enum('priority_level',[
                 RequestPriorityLevel::NONE->name,
                 RequestPriorityLevel::LOW->name,
-                RequestPriorityLevel::MEDUIM->name,
+                RequestPriorityLevel::MEDIUM->name,
                 RequestPriorityLevel::HIGH->name,
             ]);
 

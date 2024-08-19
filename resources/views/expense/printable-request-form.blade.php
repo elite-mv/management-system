@@ -150,7 +150,7 @@
                     </div>
                     <div class="border border-dark"
                          style="height: 100px; display: flex; align-items: center; justify-content: center;">
-                        <h1><b>{{ $request->id}}</b></h1>
+                        <h1><b>{{ $request->pad_id}}</b></h1>
                     </div>
                 </div>
 
@@ -162,7 +162,11 @@
                     <td colspan="4" class="small px-2">Date:</td>
                     <td colspan="8" class="small px-2">{{$request->created_at->format('Y-m-d H:m')}}</td>
                     <td colspan="2" class="small px-2">CV NO:</td>
-                    <td colspan="4" class="small px-2"></td>
+                    <td colspan="4" class="small px-2">
+                        @if(isset($request->checkVoucher))
+                            {{ $request->checkVoucher->reference }}
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="4" class="small px-2">Supplier:</td>
@@ -173,8 +177,8 @@
                             <small>[HIDDEN]</small>
                             @endmanagement
                     </td>
-                    <td colspan="2" class="small px-2">CV NO:</td>
-                    <td colspan="4" class="small px-2">123</td>
+                    <td colspan="2" class="small px-2">REF NO:</td>
+                    <td colspan="4" class="small px-2">{{ $request->reference }}</td>
                 </tr>
                 <tr>
                     <td colspan="4" class="small px-2">Paid to:</td>
@@ -267,25 +271,28 @@
                     <td colspan="3" class="small bg-yellow text-center fw-bold" style="width: 179px">TOTAL</td>
                 </tr>
 
-                @foreach ($request->getForFundingItems() as $item)
+                @foreach ($request->fund_item as $item)
                     <tr>
-                        <td colspan="2" class="small px-2 bg-transparent">{{$item->quantity}}</td>
-                        <td colspan="3" class="small px-2 bg-transparent">{{$item->measurement->name}}</td>
-                        <td colspan="2" class="small px-2 bg-transparent">{{$item->jobOrder->name}}</td>
-                        <td colspan="2" role="button" class="small px-2 pointer" data-bs-toggle="modal"
+                        <td colspan="4" class="small px-2 bg-transparent">{{$item->quantity}}</td>
+                        <td colspan="4" class="small px-2 bg-transparent">{{$item->measurement->name}}</td>
+                        <td colspan="1" class="small px-2 bg-transparent">{{$item->jobOrder->name}}</td>
+                        <td colspan="3" role="button" class="small px-2 pointer" data-bs-toggle="modal"
                             data-bs-target="#exampleModal">
                             <div class="d-flex align-items-center bg-transparent">
                                 <p class="m-0 p-0 text-truncate">{{$item->description}}</p>
                                 <i class="ms-auto fas fa-images"></i>
                             </div>
                         </td>
-                        <td colspan="2" class="small px-2 bg-transparent">{{number_format($item->cost, 2)}}</td>
-                        <td colspan="2" class="small px-2 bg-transparent">{{number_format($item->total, 2)}}</td>
+                        <td colspan="3"
+                            class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->cost) !!}</td>
+                        <td colspan="3"
+                            class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->cost) !!}</td>
                     </tr>
                 @endforeach
                 <tr>
                     <td colspan="15" class="px-2 small bg-yellow text-end fw-bold">TOTAL</td>
-                    <td colspan="4" class="px-2 small bg-yellow text-center fw-bold">123</td>
+                    <td colspan="4"
+                        class="px-2 small bg-yellow text-center fw-bold">{!! \App\Helper\Helper::formatPeso($request->fund) !!}</td>
                 </tr>
                 <tr>
                     <td class="small text-center bg-dark text-white" colspan="18">VOUCHER</td>
@@ -293,21 +300,52 @@
                 <tr>
                     <td colspan="4" class="px-2 small fw-bold bg-gray">Supplier:</td>
                     <td colspan="5" class="px-2 small">
+                        @if(isset($request->checkVoucher))
+                            @management
+                            <small>{{$request->supplier}}</small>
+                        @else
+                            <small>[HIDDEN]</small>
+                            @endmanagement
+                        @endif
                     </td>
                     <td colspan="3" class="px-2 small fw-bold bg-gray">Date:</td>
-                    <td colspan="6" class="px-2 small text-center"></td>
+                    <td colspan="6" class="px-2 small text-center">
+                        @if(isset($request->checkVoucher))
+                            {{ $request->checkVoucher->create_at->format('Y-m-d H:m') }}
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="4" class="px-2 small fw-bold bg-gray">Paid to:</td>
-                    <td colspan="5" class="px-2 small text-center"></td>
+                    <td colspan="5" class="px-2 small">
+                        @if(isset($request->checkVoucher))
+                            @management
+                            <small>{{$request->paid_to}}</small>
+                        @else
+                            <small>[HIDDEN]</small>
+                            @endmanagement
+                        @endif
+                    </td>
                     <td colspan="3" class="px-2 small fw-bold bg-gray">Paid amount:</td>
-                    <td colspan="6" class="px-2 small text-center"></td>
+                    <td colspan="6" class="px-2 small">
+                        @if(isset($request->checkVoucher))
+                            {!! \App\Helper\Helper::formatPeso($request->fund) !!}
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="4" class="px-2 small fw-bold bg-gray">Payment Type:</td>
-                    <td colspan="5" class="px-2 small text-center"></td>
+                    <td colspan="5" class="px-2 small">
+                        @if(isset($request->checkVoucher))
+                            {{str_replace('_', ' ', $request->payment_method->name) }}
+                        @endif
+                    </td>
                     <td colspan="3" class="px-2 small fw-bold bg-gray">Amount in words:</td>
-                    <td colspan="6" class="px-2 small text-center"></td>
+                    <td colspan="6" class="px-2 small">
+                        @if(isset($request->checkVoucher))
+                            {!! \App\Helper\Helper::amountToWords($request->fund) !!}
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="8" class="bg-yellow text-center small" style="width: 367px">RELEASED BY :</td>
@@ -340,14 +378,16 @@
                     <td colspan="4" class="text-center fw-bold bg-blue small">Type</td>
                     <td colspan="1" class="text-center fw-bold bg-blue small">BANK NAME</td>
                     <td colspan="4" class="fw-bold small px-2">ITEMS DELIVERY</td>
-                    <td colspan="5" class="text-center fw-bold small bg-blue" style="width: 268px">BOOK KEEPER</td>
+                    <td colspan="5" class="px-2 fw-bold small bg-blue" style="width: 268px">BOOK KEEPER</td>
                 </tr>
                 <tr>
                     <td colspan="1" class="text-center" style="width: 32px">
                         @if($request->priority_level === App\Enums\RequestPriorityLevel::LOW)
-                            <input type="checkbox" name="LOW" disabled="" checked>
+                            <input class="priorityLevel" value="{{App\Enums\RequestPriorityLevel::LOW->name}}"
+                                   type="checkbox" name="LOW" checked>
                         @else
-                            <input type="checkbox" name="LOW" disabled="">
+                            <input class="priorityLevel" value="{{App\Enums\RequestPriorityLevel::LOW->name}}"
+                                   type="checkbox" name="LOW">
                         @endif
                     </td>
                     <td colspan="2" class="small px-2">Low</td>
@@ -355,7 +395,14 @@
                     <td colspan="1" class="text-center" style="width: 32px">
                         <input type="checkbox">
                     </td>
-                    <td colspan="3" style="width: 146px"></td>
+                    <td colspan="3" class="small px-2" style="width: 146px">
+                        <select name="expenseCategory[]" class="w-100 border-0 outline-0">
+                            <option value=""></option>
+                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
+                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @endforeach
+                        </select>
+                    </td>
                     <td colspan="1">
                         <select id="bankNameSelection" class="w-100 h-100 border-0 box outline-0 small">
                             <option value="-1" selected>SELECT AN OPTION</option>
@@ -370,14 +417,22 @@
                                type="checkbox">
                     </td>
                     <td colspan="3" class="px-2 bg-green small">Complete</td>
-                    <td colspan="5" class="px-2 small">APPROVED</td>
+                    <td colspan="5" class="px-2 small">
+                        <select class="border-0 outline-0 w-100">
+                            @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
+                                <option value="{{$case->name}}">{{$case->name}}</option>
+                            @endforeach
+                        </select>
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="1" class="text-center">
-                        @if($request->priority_level === App\Enums\RequestPriorityLevel::MEDUIM)
-                            <input type="checkbox" name="MEDIUM" disabled="" checked>
+                        @if($request->priority_level === App\Enums\RequestPriorityLevel::MEDIUM)
+                            <input class="priorityLevel" value="{{App\Enums\RequestPriorityLevel::MEDIUM->name}}"
+                                   type="checkbox" name="MEDIUM" checked>
                         @else
-                            <input type="checkbox" name="MEDIUM" disabled="">
+                            <input class="priorityLevel" value="{{App\Enums\RequestPriorityLevel::MEDIUM->name}}"
+                                   type="checkbox" name="MEDIUM">
                         @endif
                     </td>
                     <td colspan="2" class="small px-2">Medium</td>
@@ -385,7 +440,14 @@
                     <td colspan="1" class="text-center">
                         <input type="checkbox">
                     </td>
-                    <td colspan="3"></td>
+                    <td colspan="3" class="small px-2">
+                        <select name="expenseCategory[]" class="w-100 border-0 outline-0">
+                            <option value=""></option>
+                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
+                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @endforeach
+                        </select>
+                    </td>
                     <td colspan="1" class="text-center fw-bold bg-blue small">BANK CODE</td>
                     <td colspan="1" class="text-center">
                         <input value="0" class="deliveryStatus" name="requestDeliveryStatus"
@@ -398,9 +460,11 @@
                 <tr>
                     <td colspan="1" class="text-center">
                         @if($request->priority_level === App\Enums\RequestPriorityLevel::HIGH)
-                            <input type="checkbox" name="HIGH" disabled="" checked>
+                            <input class="priorityLevel" value="{{App\Enums\RequestPriorityLevel::HIGH->name}}"
+                                   type="checkbox" name="HIGH" checked>
                         @else
-                            <input type="checkbox" name="HIGH" disabled="">
+                            <input class="priorityLevel" value="{{App\Enums\RequestPriorityLevel::HIGH->name}}"
+                                   type="checkbox" name="HIGH">
                         @endif
                     </td>
                     <td colspan="2" class="small px-2">High</td>
@@ -408,7 +472,14 @@
                     <td colspan="1" class="text-center">
                         <input type="checkbox">
                     </td>
-                    <td colspan="3"></td>
+                    <td colspan="3" class="small px-2">
+                        <select name="expenseCategory[]" class="w-100 border-0 outline-0">
+                            <option value=""></option>
+                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
+                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @endforeach
+                        </select>
+                    </td>
                     <td colspan="1">
                         <select id="bankCodeSelection" class="w-100 h-100 border-0 box outline-0 small">
                             <option value="-1" selected>SELECT AN OPTON</option>
@@ -418,30 +489,56 @@
                         </select>
                     </td>
                     <td colspan="4" class="fw-bold small px-2"> SUPPLIER VERIFICATION</td>
-                    <td colspan="5" class="px-2 small">ACCOUNTANT</td>
+                    <td colspan="5" class="fw-bold px-2 small bg-blue">ACCOUNTANT</td>
                 </tr>
                 <tr>
                     <td colspan="4" class="small px-2 fw-bold bg-red text-center">Attachment</td>
                     <td colspan="1" class="text-center">
                         <input type="checkbox">
                     </td>
-                    <td colspan="3"></td>
+                    <td colspan="3" class="small px-2">
+                        <select name="expenseCategory[]" class="w-100 border-0 outline-0">
+                            <option value=""></option>
+                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
+                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @endforeach
+                        </select>
+                    </td>
                     <td colspan="1" class="bg-blue fw-bold text-center small">CHECK NUMBER</td>
                     <td colspan="1" class="text-center">
                         <input value="1" class="deliverySupplier" type="checkbox">
                     </td>
                     <td colspan="3" class="small px-2">Yes</td>
-                    <td colspan="5" class="small px-2">Priority</td>
+                    <td colspan="5" class="small px-2">
+                        <select class="border-0 outline-0 w-100">
+                            @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
+                                <option value="{{$case->name}}">{{$case->name}}</option>
+                            @endforeach
+                        </select>
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="1" class="text-center">
-                        <input type="checkbox">
+                        @if($request->attachment == \App\Enums\AccountingAttachment::WITH)
+                            <input value="{{\App\Enums\AccountingAttachment::WITH->name}}" class="attachment"
+                                   type="checkbox" checked>
+                        @else
+                            <input value="{{\App\Enums\AccountingAttachment::WITH->name}}" class="attachment"
+                                   type="checkbox">
+                        @endif
                     </td>
                     <td colspan="3" class="small px-2">With</td>
                     <td colspan="1" class="text-center">
                         <input type="checkbox">
                     </td>
-                    <td colspan="3"></td>
+                    <td colspan="3" class="small px-2">
+                        <select name="expenseCategory[]" class="w-100 border-0 outline-0">
+                            <option value=""></option>
+                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
+                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @endforeach
+                        </select>
+                    </td>
                     <td colspan="1">
                         <input id="checkNumberInput" class="w-100 border-0 outline-0">
                     </td>
@@ -453,49 +550,102 @@
                 </tr>
                 <tr>
                     <td colspan="1" class="text-center">
-                        <input type="checkbox">
+                        @if($request->attachment == \App\Enums\AccountingAttachment::WITHOUT)
+                            <input value="{{\App\Enums\AccountingAttachment::WITHOUT->name}}" class="attachment"
+                                   type="checkbox" checked>
+                        @else
+                            <input value="{{\App\Enums\AccountingAttachment::WITHOUT->name}}" class="attachment"
+                                   type="checkbox">
+                        @endif
                     </td>
                     <td colspan="3" class="small px-2">Without</td>
                     <td colspan="1" class="text-center">
                         <input type="checkbox">
                     </td>
-                    <td colspan="3"></td>
+                    <td colspan="3" class="small px-2">
+                        <select name="expenseCategory[]" class="w-100 border-0 outline-0">
+                            <option value=""></option>
+                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
+                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @endforeach
+                        </select>
+                    </td>
                     <td colspan="1" rowspan="7"></td>
                     <td colspan="4" class="text-center fw-bold small">VAT INPUT AMOUNT</td>
-                    <td colspan="5" class="px-2 small">FINANCE</td>
+                    <td colspan="5" class="px-2 small fw-bold bg-blue">FINANCE</td>
                 </tr>
                 <tr>
                     <td colspan="4" class="small px-2 text-center bg-red fw-bold">Type</td>
                     <td colspan="1" class="text-center">
                         <input type="checkbox">
                     </td>
-                    <td colspan="3"></td>
+                    <td colspan="3" class="small px-2">
+                        <select  name="expenseCategory[]" class="w-100 border-0 outline-0">
+                            <option value=""></option>
+                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
+                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @endforeach
+                        </select>
+                    </td>
                     <td colspan="4" class="text-center fw-bold"></td>
-                    <td colspan="5" class="small px-2">Pending</td>
+                    <td colspan="5" class="small px-2">
+                        <select class="border-0 outline-0 w-100">
+                            @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
+                                <option value="{{$case->name}}">{{$case->name}}</option>
+                            @endforeach
+                        </select>
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="1" class="text-center">
-                        <input type="checkbox">
+                        @if($request->type == \App\Enums\AccountingType::OPEX)
+                            <input value="{{App\Enums\AccountingType::OPEX->name}}" class="attachmentType"
+                                   type="checkbox" checked>
+                        @else
+                            <input value="{{App\Enums\AccountingType::OPEX->name}}" class="attachmentType"
+                                   type="checkbox">
+                        @endif
                     </td>
                     <td colspan="3" class="small px-2">OPEX</td>
                     <td colspan="1" class="text-center">
                         <input type="checkbox">
                     </td>
-                    <td colspan="3"></td>
+                    <td colspan="3" class="small px-2">
+                        <select name="expenseCategory[]" class="w-100 border-0 outline-0">
+                            <option value=""></option>
+                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
+                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @endforeach
+                        </select>
+                    </td>
                     <td colspan="4" class="text-center fw-bold"></td>
                     <td colspan="5" class="small px-2"></td>
                 </tr>
                 <tr>
                     <td colspan="1" class="text-center">
-                        <input type="checkbox">
+                        @if($request->type == \App\Enums\AccountingType::NON_OPEX)
+                            <input value="{{App\Enums\AccountingType::NON_OPEX->name}}" class="attachmentType"
+                                   type="checkbox" checked>
+                        @else
+                            <input value="{{App\Enums\AccountingType::NON_OPEX->name}}" class="attachmentType"
+                                   type="checkbox">
+                        @endif
                     </td>
                     <td colspan="3" class="small px-2">NON OPEX</td>
                     <td colspan="1" class="text-center">
                         <input type="checkbox">
                     </td>
-                    <td colspan="3" class="small px-2"></td>
+                    <td colspan="3" class="small px-2">
+                        <select name="expenseCategory[]" class="w-100 border-0 outline-0">
+                            <option value=""></option>
+                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
+                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @endforeach
+                        </select></td>
                     <td colspan="2" class="small px-2 fw-bold">PO No.</td>
-                    <td colspan="2" class="small px-2"></td>
+                    <td colspan="2" class="small px-2">
+                        <input id="purchaseOrder" class="w-100 border-0 outline-0">
+                    </td>
                     <td colspan="5" class="small px-2 fw-bold bg-blue">AUDITOR</td>
                 </tr>
                 <tr>
@@ -503,35 +653,80 @@
                     <td colspan="1" class="text-center">
                         <input type="checkbox">
                     </td>
-                    <td colspan="3" class="small px-2"></td>
+                    <td colspan="3" class="small px-2">
+                        <select  name="expenseCategory[]" class="w-100 border-0 outline-0">
+                            <option value=""></option>
+                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
+                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @endforeach
+                        </select>
+                    </td>
                     <td colspan="2" class="small px-2 fw-bold">Invoice No</td>
-                    <td colspan="2" class="small px-2"></td>
-                    <td colspan="5" class="small px-2"></td>
+                    <td colspan="2" class="small px-2">
+                        <input id="invoiceNumber" class="w-100 border-0 outline-0">
+                    </td>
+                    <td colspan="5" class="small px-2">
+                        <select class="border-0 outline-0 w-100">
+                            @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
+                                <option value="{{$case->name}}">{{$case->name}}</option>
+                            @endforeach
+                        </select>
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="1" class="text-center">
-                        <input type="checkbox">
+                        @if($request->receipt == \App\Enums\AccountingReceipt::OFFICIAL_RECEIPT_VAT)
+                            <input value="{{\App\Enums\AccountingReceipt::OFFICIAL_RECEIPT_VAT->name}}"
+                                   class="attachmentReceipt" type="checkbox" checked>
+                        @else
+                            <input value="{{\App\Enums\AccountingReceipt::OFFICIAL_RECEIPT_VAT->name}}"
+                                   class="attachmentReceipt" type="checkbox">
+                        @endif
                     </td>
                     <td colspan="3" class="small px-2">Official Receipt VAT</td>
                     <td colspan="1" class="text-center">
                         <input type="checkbox">
                     </td>
-                    <td colspan="3" class="small px-2"></td>
+                    <td colspan="3" class="small px-2">
+                        <select name="expenseCategory[]" class="w-100 border-0 outline-0">
+                            <option value=""></option>
+                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
+                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @endforeach
+                        </select>
+                    </td>
                     <td colspan="2" class="fw-bold small px-2">Bill No.</td>
-                    <td colspan="2" class="small px-2"></td>
-                    <td colspan="5" class="small px-2">AUDITOR</td>
+                    <td colspan="2" class="small px-2">
+                        <input id="billNumber" class="w-100 border-0 outline-0">
+                    </td>
+                    <td colspan="5" class="small px-2"></td>
                 </tr>
                 <tr>
                     <td colspan="1" class="text-center">
-                        <input type="checkbox">
+                        @if($request->receipt == \App\Enums\AccountingReceipt::DELIVERY_RECEIPT)
+                            <input value="{{\App\Enums\AccountingReceipt::DELIVERY_RECEIPT->name}}"
+                                   class="attachmentReceipt" type="checkbox" checked>
+                        @else
+                            <input value="{{\App\Enums\AccountingReceipt::DELIVERY_RECEIPT->name}}"
+                                   class="attachmentReceipt" type="checkbox">
+                        @endif
                     </td>
                     <td colspan="3" class="small px-2">Delivery Receipt</td>
                     <td colspan="1" class="text-center">
                         <input type="checkbox">
                     </td>
-                    <td colspan="3" class="small px-2"></td>
+                    <td colspan="3" class="small px-2">
+                        <select name="expenseCategory[]" class="w-100 border-0 outline-0">
+                            <option value=""></option>
+                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
+                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @endforeach
+                        </select>
+                    </td>
                     <td colspan="2" class="fw-bold small px-2">OR No</td>
-                    <td colspan="2" class="small px-2"></td>
+                    <td colspan="2" class="small px-2">
+                        <input id="orNumber" class="w-100 border-0 outline-0">
+                    </td>
                     <td colspan="4" rowspan="2" class="small px-2" style="width: 171px"></td>
                     <td colspan="1" rowspan="2" class="text-center fw-bold align-middle">
                         RCA
@@ -539,7 +734,13 @@
                 </tr>
                 <tr>
                     <td colspan="1" class="text-center">
-                        <input type="checkbox">
+                        @if($request->receipt == \App\Enums\AccountingReceipt::NONE)
+                            <input value="{{\App\Enums\AccountingReceipt::NONE->name}}" class="attachmentReceipt"
+                                   type="checkbox" checked>
+                        @else
+                            <input value="{{\App\Enums\AccountingReceipt::NONE->name}}" class="attachmentReceipt"
+                                   type="checkbox">
+                        @endif
                     </td>
                     <td colspan="3" class="small px-2">None</td>
                     <td colspan="1" class="text-center">
@@ -552,7 +753,11 @@
                         </div>
                     </td>
                     <td colspan="2" class="fw-bold small px-2">Voucher No</td>
-                    <td colspan="2" class="small px-2"></td>
+                    <td colspan="2" class="small px-2">
+                        @if(isset($request->checkVoucher))
+                            {{$request->checkVoucher->padId}}
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <td class="text-center bg-dark text-white" colspan="18" style="height: 24px"></td>
@@ -564,7 +769,7 @@
 
     <!-- Toast Message For Errors -->
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-        <div id="errorToast" class="toast text-bg-red" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="errorToast" class="toast text-danger" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
                 <strong class="me-auto">Error</strong>
                 <small>Just now</small>
@@ -634,11 +839,22 @@
         const checkNumberInput = document.querySelector('#checkNumberInput');
         const requestPaymentMethodInput = document.querySelector('#paymentMethodInput');
 
+        const expenseCategoryInput = document.querySelectorAll('select[name="expenseCategory[]"]');
+
+        const selectedExpensesCategory = [];
+
+        expenseCategoryInput.forEach((category, index) =>{
+            category.addEventListener('change', ()=>{
+                selectedExpensesCategory[index] = category.value;
+                console.log(selectedExpensesCategory);
+            });
+        })
+
         bankNameSelection.addEventListener('change', updateBankDetails);
         bankCodeSelection.addEventListener('change', updateBankDetails);
         checkNumberInput.addEventListener('change', updateBankDetails);
 
-        requestPaymentMethodInput.addEventListener('change',()=>{
+        requestPaymentMethodInput.addEventListener('change', () => {
 
             const formData = new FormData();
             formData.append('mode', requestPaymentMethodInput.value);
@@ -652,8 +868,6 @@
             }).then(response => {
                 return response.json();
             }).then(data => {
-
-                console.log(data);
 
                 bankNameSelection.classList.add('bg-red')
                 bankCodeSelection.classList.add('bg-red')
@@ -681,7 +895,7 @@
             })
         })
 
-        function groupCheck(groupId, cb = null, optional = false) {
+        function groupCheck(groupId, cb = null, optional = null) {
 
             const g1 = document.querySelectorAll(`.${groupId}`);
 
@@ -711,11 +925,20 @@
                         gcheck = e.target;
                     }
                 });
+
+                if (item.checked) {
+                    gcheck = item;
+                }
             })
         }
 
         groupCheck('deliverySupplier', verifyDelivery, removeDelivery);
         groupCheck('deliveryStatus', setDeliveryStatus, deleteDeliveryStatus);
+
+        groupCheck('attachment', updateAttachment, removeAttachment);
+        groupCheck('attachmentType', updateType, removeType);
+        groupCheck('attachmentReceipt', updateReceipt, removeReceipt);
+        groupCheck('priorityLevel', updatePriorityLevel, removePriorityLevel);
 
         function updateBankDetails() {
 
@@ -938,5 +1161,306 @@
                 checkNumberInput.classList.add('bg-red')
             })
         }
+
+        function updateAttachment(target) {
+
+            const formData = new FormData();
+
+            formData.append('attachment', target.value);
+
+            fetch('/expense/api/expense-request/attachment/{{$request->id}}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                }
+            }).then(response => {
+
+                if (!response.ok) {
+                    throw new Error("Something went wrong!");
+                }
+
+                return response.json();
+
+            }).then(data => {
+
+                console.log(data.message);
+
+                bankNameSelection.classList.remove('bg-red')
+                bankCodeSelection.classList.remove('bg-red')
+                checkNumberInput.classList.remove('bg-red')
+                checkNumberInput.value = '';
+            }).catch(err => {
+
+                console.log(err.message);
+
+                bankNameSelection.classList.add('bg-red')
+                bankCodeSelection.classList.add('bg-red')
+                checkNumberInput.classList.add('bg-red')
+            })
+        }
+
+        function removeAttachment(target) {
+
+            const formData = new FormData();
+            formData.append('attachment', '{{\App\Enums\AccountingAttachment::DEFAULT->name}}');
+
+            fetch('/expense/api/expense-request/attachment/{{$request->id}}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                }
+            }).then(response => {
+
+                if (!response.ok) {
+                    throw new Error("Something went wrong!");
+                }
+
+                return response.json();
+
+            }).then(data => {
+
+                console.log(data);
+
+                bankNameSelection.classList.remove('bg-red')
+                bankCodeSelection.classList.remove('bg-red')
+                checkNumberInput.classList.remove('bg-red')
+                checkNumberInput.value = '';
+            }).catch(err => {
+
+                console.log(err.message);
+
+                bankNameSelection.classList.add('bg-red')
+                bankCodeSelection.classList.add('bg-red')
+                checkNumberInput.classList.add('bg-red')
+            })
+        }
+
+        function updateType(target) {
+
+            const formData = new FormData();
+
+            formData.append('type', target.value);
+
+            fetch('/expense/api/expense-request/type/{{$request->id}}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                }
+            }).then(response => {
+
+                if (!response.ok) {
+                    throw new Error("Something went wrong!");
+                }
+
+                return response.json();
+
+            }).then(data => {
+
+                console.log(data.message);
+
+                bankNameSelection.classList.remove('bg-red')
+                bankCodeSelection.classList.remove('bg-red')
+                checkNumberInput.classList.remove('bg-red')
+                checkNumberInput.value = '';
+            }).catch(err => {
+
+                console.log(err.message);
+
+                bankNameSelection.classList.add('bg-red')
+                bankCodeSelection.classList.add('bg-red')
+                checkNumberInput.classList.add('bg-red')
+            })
+        }
+
+        function removeType(target) {
+
+            const formData = new FormData();
+            formData.append('type', '{{\App\Enums\AccountingType::DEFAULT->name}}');
+
+            fetch('/expense/api/expense-request/type/{{$request->id}}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                }
+            }).then(response => {
+
+                if (!response.ok) {
+                    throw new Error("Something went wrong!");
+                }
+
+                return response.json();
+
+            }).then(data => {
+
+                console.log(data);
+
+                bankNameSelection.classList.remove('bg-red')
+                bankCodeSelection.classList.remove('bg-red')
+                checkNumberInput.classList.remove('bg-red')
+                checkNumberInput.value = '';
+            }).catch(err => {
+
+                console.log(err.message);
+
+                bankNameSelection.classList.add('bg-red')
+                bankCodeSelection.classList.add('bg-red')
+                checkNumberInput.classList.add('bg-red')
+            })
+        }
+
+        function updateReceipt(target) {
+
+            const formData = new FormData();
+
+            formData.append('receipt', target.value);
+
+            fetch('/expense/api/expense-request/receipt/{{$request->id}}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                }
+            }).then(response => {
+
+                // if (!response.ok) {
+                //     throw new Error("Something went wrong!");
+                // }
+
+                return response.json();
+
+            }).then(data => {
+
+                console.log(data.message);
+
+                bankNameSelection.classList.remove('bg-red')
+                bankCodeSelection.classList.remove('bg-red')
+                checkNumberInput.classList.remove('bg-red')
+                checkNumberInput.value = '';
+            }).catch(err => {
+
+                console.log(err.message);
+
+                bankNameSelection.classList.add('bg-red')
+                bankCodeSelection.classList.add('bg-red')
+                checkNumberInput.classList.add('bg-red')
+            })
+        }
+
+        function removeReceipt(target) {
+
+            const formData = new FormData();
+            formData.append('receipt', '{{\App\Enums\AccountingReceipt::DEFAULT->name}}');
+
+            fetch('/expense/api/expense-request/receipt/{{$request->id}}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                }
+            }).then(response => {
+
+                if (!response.ok) {
+                    throw new Error("Something went wrong!");
+                }
+
+                return response.json();
+
+            }).then(data => {
+
+                console.log(data);
+
+                bankNameSelection.classList.remove('bg-red')
+                bankCodeSelection.classList.remove('bg-red')
+                checkNumberInput.classList.remove('bg-red')
+                checkNumberInput.value = '';
+            }).catch(err => {
+
+                console.log(err.message);
+
+                bankNameSelection.classList.add('bg-red')
+                bankCodeSelection.classList.add('bg-red')
+                checkNumberInput.classList.add('bg-red')
+            })
+        }
+
+        function updatePriorityLevel(target) {
+
+            const formData = new FormData();
+
+            formData.append('priority_level', target.value);
+
+            fetch('/expense/api/expense-request/priority-level/{{$request->id}}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                }
+            }).then(response => {
+
+                if (!response.ok) {
+                    throw new Error("Something went wrong!");
+                }
+
+                return response.json();
+
+            }).then(data => {
+
+                console.log(data.message);
+
+                bankNameSelection.classList.remove('bg-red')
+                bankCodeSelection.classList.remove('bg-red')
+                checkNumberInput.classList.remove('bg-red')
+                checkNumberInput.value = '';
+            }).catch(err => {
+
+                console.log(err.message);
+
+                bankNameSelection.classList.add('bg-red')
+                bankCodeSelection.classList.add('bg-red')
+                checkNumberInput.classList.add('bg-red')
+            })
+        }
+
+        function removePriorityLevel(target) {
+
+            const formData = new FormData();
+            formData.append('priority_level', '{{\App\Enums\RequestPriorityLevel::NONE->name}}');
+
+            fetch('/expense/api/expense-request/priority-level/{{$request->id}}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                }
+            }).then(response => {
+
+                if (!response.ok) {
+                    throw new Error("Something went wrong!");
+                }
+
+                return response.json();
+
+            }).then(data => {
+
+                console.log(data);
+
+                bankNameSelection.classList.remove('bg-red')
+                bankCodeSelection.classList.remove('bg-red')
+                checkNumberInput.classList.remove('bg-red')
+                checkNumberInput.value = '';
+            }).catch(err => {
+
+                console.log(err.message);
+
+                bankNameSelection.classList.add('bg-red')
+                bankCodeSelection.classList.add('bg-red')
+                checkNumberInput.classList.add('bg-red')
+            })
+        }
+
     </script>
 @endsection

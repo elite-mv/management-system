@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Expense;
 
+use App\Enums\AccountingAttachment;
+use App\Enums\AccountingReceipt;
+use App\Enums\AccountingType;
 use App\Enums\PaymentMethod;
 use App\Enums\RequestPriorityLevel;
 use App\Models\Expense\Company;
@@ -100,7 +103,6 @@ class RequestController extends Controller
 
     }
 
-
     public function viewRequest(int $id)
     {
         $expenseRequest = ModelsRequest::where('id', $id)->firstOrFail();
@@ -146,4 +148,124 @@ class RequestController extends Controller
             );
         }
     }
+
+    public function updateAttachment(Request $request, $id)
+    {
+
+        try {
+            DB::beginTransaction();
+
+            $modelsRequest = ModelsRequest::where('id', $id)->firstOrFail();
+
+            $modelsRequest->attachment = AccountingAttachment::valueOf($request->input('attachment'));
+
+            $modelsRequest->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'ok',
+                'status' => '200',
+            ]);
+
+        }catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Something went wrong',
+                'status' => '200',
+            ], 500);
+        }
+
+    }
+    public function updateType(Request $request, $id)
+    {
+
+        try {
+            DB::beginTransaction();
+
+            $modelsRequest = ModelsRequest::where('id', $id)->firstOrFail();
+
+            $modelsRequest->type = AccountingType::valueOf($request->input('type'));
+
+            $modelsRequest->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'ok',
+                'status' => '200',
+            ]);
+
+        }catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Something went wrong',
+                'status' => '200',
+            ], 500);
+        }
+
+    }
+
+    public function updateReceipt(Request $request, $id)
+    {
+
+        try {
+            DB::beginTransaction();
+
+            $modelsRequest = ModelsRequest::where('id', $id)->firstOrFail();
+
+            $modelsRequest->receipt = AccountingReceipt::valueOf($request->input('receipt'));
+
+            $modelsRequest->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'ok',
+                'status' => '200',
+            ]);
+
+        }catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => '200',
+            ]);
+        }
+
+    }
+    public function updatePriorityLevel(Request $request, $id)
+    {
+        try {
+
+            DB::beginTransaction();
+
+            $modelsRequest = ModelsRequest::where('id', $id)->firstOrFail();
+
+            $modelsRequest->priority_level = RequestPriorityLevel::valueOf($request->input('priority_level'));
+
+            $modelsRequest->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'ok',
+                'status' => '200',
+            ]);
+
+        }catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => '200',
+            ], 500);
+        }
+
+    }
+
 }

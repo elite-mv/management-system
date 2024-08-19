@@ -8,9 +8,8 @@ use NumberToWords\NumberToWords;
 class Helper
 {
 
-    public static function amountToWords($number)
+    private static function convertNumberToWords($number)
     {
-
         $words = '';
 
         $ones = array(
@@ -75,13 +74,13 @@ class Helper
         } elseif ($integerPart < 1000) {
             $words .= $ones[$integerPart / 100] . ' ' . $hundreds[100];
             if ($integerPart % 100 != 0) {
-                $words .= ' ' . Helper::amountToWords($integerPart % 100);
+                $words .= ' ' . Helper::convertNumberToWords($integerPart % 100);
             }
         } else {
             foreach (array_reverse($hundreds, true) as $magnitude => $name) {
                 if ($integerPart >= $magnitude) {
                     $div = (int)($integerPart / $magnitude);
-                    $words .= Helper::amountToWords($div) . ' ' . $name;
+                    $words .= Helper::convertNumberToWords($div) . ' ' . $name;
                     $integerPart %= $magnitude;
                     if ($integerPart) {
                         $words .= ' ';
@@ -90,18 +89,22 @@ class Helper
             }
 
             if ($integerPart) {
-                $words .= ' ' . Helper::amountToWords($integerPart);
+                $words .= ' ' . Helper::convertNumberToWords($integerPart);
             }
         }
 
         if (count($parts) == 2) {
             $decimalPart = intval($parts[1]);
             if ($decimalPart > 0) {
-                $words .= ' AND ' . Helper::amountToWords($decimalPart) . ' CENTAVOS';
+                $words .= ' AND ' . Helper::convertNumberToWords($decimalPart) . ' CENTAVOS';
             }
         }
 
         return $words;
+    }
+    public static function amountToWords($number)
+    {
+        return Helper::convertNumberToWords($number) . ' ONLY';
     }
 
     public static function formatPeso($amount): string

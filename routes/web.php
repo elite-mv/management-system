@@ -24,11 +24,6 @@ Route::post('/logout', [AuthController::class, 'logout']);
 // All routes for income
 Route::prefix('income')->group(function () {
 
-    //need auth
-//    Route::middleware(['auth'])->group(function () {
-//
-//    });
-
     Route::get('/customer', [CustomerController::class, 'index']);
 
     //public access
@@ -87,12 +82,11 @@ Route::prefix('expense')->group(function () {
 
         Route::post('/api/expense-request/payment-method/{requestID}', [RequestController::class, 'updatePaymentMethod']);
 
+        Route::post('/api/expense-request/attachment/{id}', [RequestController::class, 'updateAttachment']);
+        Route::post('/api/expense-request/type/{id}', [RequestController::class, 'updateType']);
+        Route::post('/api/expense-request/receipt/{id}', [RequestController::class, 'updateReceipt']);
+        Route::post('/api/expense-request/priority-level/{id}', [RequestController::class, 'updatePriorityLevel']);
+
     });
-
-});
-
-
-Route::middleware(['auth', SetGlobalVariables::class])->group(function () {
-
 
 });

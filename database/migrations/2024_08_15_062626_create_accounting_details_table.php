@@ -19,9 +19,9 @@ return new class extends Migration
             $table->foreignId('request_id');
             $table->enum('type',[AccountingType::NON_OPEX->name, AccountingType::OPEX->name]);
             $table->enum('receipt',[
-                AccountingReceipt::NONE->name, 
-                AccountingReceipt::DELIVERY_RECEIPT->name, 
-                AccountingReceipt::OFFICAL_RECEIPT_VAT->name
+                AccountingReceipt::NONE->name,
+                AccountingReceipt::DELIVERY_RECEIPT->name,
+                AccountingReceipt::OFFICIAL_RECEIPT_VAT->name
             ]);
             $table->timestamps();
         });

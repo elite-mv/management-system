@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('check_vouchers', function (Blueprint $table) {
+        Schema::create('request_vats', function (Blueprint $table) {
             $table->id();
+            $table->string('purchase_order')->nullable();
+            $table->string('invoice')->nullable();
+            $table->string('bill')->nullable();
+            $table->string('official_receipt')->nullable();
             $table->foreignId('request_id')->constrained();
             $table->timestamps();
         });
@@ -23,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('check_vouchers');
+        Schema::dropIfExists('request_vats');
     }
 };
