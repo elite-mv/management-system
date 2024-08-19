@@ -13,18 +13,79 @@ class BankSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('banks')->insert([
-            ['name' => 'SECURITY BANK', 'code' => 'SB-GTI-9791'],
-            ['name' => 'SECURITY BANK', 'code' => 'SB-RCA-1810'],
-            ['name' => 'BDO', 'code' => 'BDO-Guntech-0559'],
-            ['name' => 'BDO', 'code' => 'BDO-GTI-3561'],
-            ['name' => 'BDO', 'code' => 'BDO-RCA-5143'],
-            ['name' => 'BDO', 'code' => 'BDO-NOV-2603'],
-            ['name' => 'METRO BANK', 'code' => 'MTB-GTI-1579'],
-            ['name' => 'METRO BANK', 'code' => 'MTB-GTIUSD-0619'],
-            ['name' => 'AUB', 'code' => 'AUB-Ballistic-0494'],
-            ['name' => 'AUB', 'code' => 'AUB-RCA-7916'],
-            ['name' => 'BPI', 'code' => 'BPI-RCA-1496'],
+        DB::table('bank_names')->insert([
+            [
+                'name' => 'SECURITY BANK',
+                'id' => '1'
+            ],
+            [
+                'name' => 'BDO',
+                'id' => 2,
+            ],
+            [
+                'name' => 'METRO BANK',
+                'id' => 3,
+            ],
+            [
+                'name' => 'AUB',
+                'id' => 4,
+            ],
+            [
+                'name' => 'BPI',
+                'id' => 5,
+            ],
+        ]);
+
+        DB::table('bank_codes')->insert([
+            [
+                'bank_name_id' => 1,
+                'code' => 'SB-GTI-9791'
+            ],
+            [
+                'bank_name_id' => 1,
+                'code' => 'SB-RCA-1810'
+            ],
+
+            [
+                'bank_name_id' => 2,
+                'code' => 'BDO-Guntech-0559'
+            ],
+            [
+                'bank_name_id' => 2,
+                'code' => 'BDO-GTI-3561'
+            ],
+            [
+                'bank_name_id' => 2,
+                'code' => 'BDO-RCA-5143'
+            ],
+            [
+                'bank_name_id' => 2,
+                'code' => 'BDO-NOV-2603'
+            ],
+
+            [
+                'bank_name_id' => 3,
+                'code' => 'MTB-GTI-1579'
+            ],
+
+            [
+                'bank_name_id' => 3,
+                'code' => 'MTB-GTIUSD-0619'
+            ],
+
+            [
+                'bank_name_id' => 4,
+                'code' => 'AUB-Ballistic-0494'
+            ],
+            [
+                'bank_name_id' => 4,
+                'code' => 'AUB-RCA-7916'
+            ],
+            [
+                'bank_name_id' => 5,
+                'code' => 'BPI-RCA-1496'
+            ],
+
         ]);
     }
 }

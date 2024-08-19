@@ -1,0 +1,64 @@
+* {
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+.income-with-nav {
+	display: flex;
+	flex-direction: row;
+}
+
+.income-with-nav > nav {
+	height: 100vh;
+	width: 	320px;
+	padding-top: 10px;
+	background-color: rgb(33, 38, 60, 1.0);
+	color: #fff;
+	display: flex;
+	gap: 4px 0;
+	flex-direction: column;
+
+	div {
+		width: 100%;
+	}
+
+	a {
+		margin-inline: 10px;
+		border-radius: 5px;
+		display: block;
+		padding-left: 10%;
+		padding-block: 5px;
+		text-decoration: none;
+		color: #fff;
+		position: relative;
+	}
+
+	a:hover {
+		background-color: rgb(24, 28, 46, 1.0);
+	}
+
+	.fa-chevron-right {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		right: 0;
+		margin-right: 20px;
+	}
+
+	#DD_SALES_Nav, #DD_PURCHASES_Nav {
+		height: 0;
+		overflow: hidden;
+	}
+
+	.nav_footer {
+		margin-top: auto;
+		text-align: center;
+		background-color: rgb(24, 28, 46, 1.0);
+
+		i {
+			padding: 10px;
+			cursor: pointer;
+		}
+	}
+}

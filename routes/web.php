@@ -1,21 +1,40 @@
 <?php
 
-use App\Http\Controllers\AccountantController;
-use App\Http\Controllers\AuditorController;
-use App\Http\Controllers\BookKeeperController;
-use App\Http\Controllers\CompanyController;
-use App\Http\Controllers\FinanceController;
-use App\Http\Controllers\PresidentController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\RequestController;
-use App\Http\Controllers\RequestItemController;
+use App\Http\Controllers\Expense\AccountantController;
+use App\Http\Controllers\Expense\AuditorController;
+use App\Http\Controllers\Expense\AuthController;
+use App\Http\Controllers\Expense\BankDetailController;
+use App\Http\Controllers\Expense\BookKeeperController;
+use App\Http\Controllers\Expense\CompanyController;
+use App\Http\Controllers\Expense\FinanceController;
+use App\Http\Controllers\Expense\PresidentController;
+use App\Http\Controllers\Expense\RequestController;
+use App\Http\Controllers\Expense\RequestItemController;
+use App\Http\Controllers\Income\CustomerController;
+use App\Http\Controllers\Income\ExpenseController;
 use App\Http\Middleware\SetGlobalVariables;
+use Illuminate\Support\Facades\Route;
 
-Route::get('/', [AuthController::class,'index'])->name('login');;
+Route::get('/', [AuthController::class,'index'])->name('login');
 Route::post('/login', [AuthController::class,'login']);
 
-Route::middleware(['auth', SetGlobalVariables::class])->group(function () {
+
+// All routes for income
+Route::prefix('income')->group(function () {
+
+    //need auth
+//    Route::middleware(['auth'])->group(function () {
+//
+//    });
+
+    Route::get('/customer', [CustomerController::class,'index']);
+
+    //public access
+    Route::get('/', [ExpenseController::class,'index']);
+});
+
+
+Route::prefix('income')->group(function () {
 
     Route::post('/logout', [AuthController::class,'logout']);
 
@@ -53,4 +72,17 @@ Route::middleware(['auth', SetGlobalVariables::class])->group(function () {
     Route::post('/api/request-item/{id}', [RequestItemController::class,'updateItem']);
 
     Route::post('/api/request-item/file/{id}', [RequestItemController::class,'addRequestItemImage']);
+
+    Route::post('/api/expense-request/bank-details', [BankDetailController::class,'addBankDetails']);
+    Route::delete('/api/expense-request/bank-details/{requestID}', [BankDetailController::class,'removeBankDetails']);
+});
+
+
+
+
+
+Route::middleware(['auth', SetGlobalVariables::class])->group(function () {
+
+
+
 });

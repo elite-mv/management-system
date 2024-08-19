@@ -6,15 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+
+
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('bank_details', function (Blueprint $table) {
+        Schema::create('customers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('request_id')->constrained();
-            $table->string('check_number')->nullable();
+            $table->string('name');
+            $table->string('company');
+            $table->string('email');
+            $table->string('contact_number');
+            $table->string('address');
+            $table->string('currency');
+            $table->string('position');
             $table->timestamps();
         });
     }
@@ -24,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bank_details');
+        Schema::dropIfExists('customers');
     }
 };
