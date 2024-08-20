@@ -20,7 +20,7 @@ class Request extends Model
 {
     use HasFactory;
 
-    protected $fillabable = [
+    protected $fillable = [
         'company_id',
         'supplier',
         'paid_to',

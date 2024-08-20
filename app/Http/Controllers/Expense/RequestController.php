@@ -82,22 +82,23 @@ class RequestController extends Controller
     public function getRequestsData(Request $request)
     {
 
-        $query = ModelsRequest::query();
-
-        $query->when($request->input('status'), function ($query) use ($request) {
-            if ($request->input('status') !== 'ALL') {
-                $query->where('status', $request->input('status'));
-            }
-        });
-
-        $query->when($request->input('search'), function ($query) use ($request) {
-            $query->where(function ($query) use ($request) {
-                $query->whereRaw("CONCAT(DATE_FORMAT(`created_at`, '%Y%m%d'), '-', `id`) = ?", [$request->input('search')]);
-                $query->orWhere('request_by', 'LIKE', $request->input('search'));
-            });
-        });
-
-        $requests = $query->paginate($request->input('entries'));
+//        $query = ModelsRequest::query();
+//
+//        $query->when($request->input('status'), function ($query) use ($request) {
+//            if ($request->input('status') !== 'ALL') {
+//                $query->where('status', $request->input('status'));
+//            }
+//        });
+//
+//        $query->when($request->input('search'), function ($query) use ($request) {
+//            $query->where(function ($query) use ($request) {
+//                $query->whereRaw("CONCAT(DATE_FORMAT(`created_at`, '%Y%m%d'), '-', `id`) = ?", [$request->input('search')]);
+//                $query->orWhere('request_by', 'LIKE', $request->input('search') . '%');
+//            });
+//        });
+//
+//        $requests = $query->paginate($request->input('entries'));
+        $requests = ModelsRequest::get();
 
         return view('expense.partials.request-data', ['requests' => $requests]);
 

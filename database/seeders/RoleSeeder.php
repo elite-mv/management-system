@@ -14,13 +14,34 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         DB::table('roles')->insert([
-            ['name' => 'developer'],
-            ['name' => 'book keeper'],
-            ['name' => 'accountant'],
-            ['name' => 'finance'],
-            ['name' => 'president'],
-            ['name' => 'auditor'],
-            ['name' => 'regular'],
+            [
+                'id' => 1,
+                'name' => 'developer'
+            ],
+            [
+                'id' => 2,
+                'name' => 'book keeper'
+            ],
+            [
+                'id' => 3,
+                'name' => 'accountant'
+            ],
+            [
+                'id' => 4,
+                'name' => 'finance'
+            ],
+            [
+                'id' => 5,
+                'name' => 'president'
+            ],
+            [
+                'id' => 6,
+                'name' => 'auditor'
+            ],
+            [
+                'id' => 7,
+                'name' => 'regular'
+            ],
         ]
         );
     }

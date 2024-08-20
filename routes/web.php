@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DataController;
 use App\Http\Controllers\Expense\AccountantController;
 use App\Http\Controllers\Expense\AuditorController;
 use App\Http\Controllers\Expense\AuthController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Expense\FinanceController;
 use App\Http\Controllers\Expense\PresidentController;
 use App\Http\Controllers\Expense\RequestController;
 use App\Http\Controllers\Expense\RequestDeliveryController;
+use App\Http\Controllers\Expense\RequestExpenseController;
 use App\Http\Controllers\Expense\RequestItemController;
 use App\Http\Controllers\Income\CustomerController;
 use App\Http\Middleware\SetGlobalVariables;
@@ -82,6 +84,10 @@ Route::prefix('expense')->group(function () {
         Route::post('/api/expense-request/receipt/{id}', [RequestController::class, 'updateReceipt']);
         Route::post('/api/expense-request/priority-level/{id}', [RequestController::class, 'updatePriorityLevel']);
 
+        Route::post('/api/expense-request/expense-type/{expenseRequest}', [RequestExpenseController::class, 'updateRequestExpense']);
+
     });
 
 });
+
+Route::get('/test', [DataController::class, 'index']);

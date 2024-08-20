@@ -14,12 +14,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('requests', function (Blueprint $table) {
+
             $table->id();
-            $table->string('supplier');
-            $table->string('paid_to');
-            $table->string('request_by');
-            $table->foreignId('prepared_by')->constrained('users');
-            $table->foreignId('company_id')->constrained();
+            $table->string('supplier')->nullable();
+            $table->string('paid_to')->nullable();
+            $table->string('request_by')->nullable();
+            $table->foreignId('prepared_by')->nullable()->constrained('users');
+            $table->foreignId('company_id')->nullable()->constrained();
 
             $table->enum('priority_level',[
                 RequestPriorityLevel::NONE->name,

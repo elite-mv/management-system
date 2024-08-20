@@ -398,8 +398,8 @@
                     <td colspan="3" class="small px-2" style="width: 146px">
                         <select name="expenseCategory[]" class="w-100 border-0 outline-0">
                             <option value=""></option>
-                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
-                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @foreach($expense_category as $case)
+                                <option value="{{$case->id}}">{{$case->name}}</option>
                             @endforeach
                         </select>
                     </td>
@@ -443,8 +443,8 @@
                     <td colspan="3" class="small px-2">
                         <select name="expenseCategory[]" class="w-100 border-0 outline-0">
                             <option value=""></option>
-                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
-                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @foreach($expense_category as $case)
+                                <option value="{{$case->id}}">{{$case->name}}</option>
                             @endforeach
                         </select>
                     </td>
@@ -475,8 +475,8 @@
                     <td colspan="3" class="small px-2">
                         <select name="expenseCategory[]" class="w-100 border-0 outline-0">
                             <option value=""></option>
-                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
-                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @foreach($expense_category as $case)
+                                <option value="{{$case->id}}">{{$case->name}}</option>
                             @endforeach
                         </select>
                     </td>
@@ -499,8 +499,8 @@
                     <td colspan="3" class="small px-2">
                         <select name="expenseCategory[]" class="w-100 border-0 outline-0">
                             <option value=""></option>
-                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
-                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @foreach($expense_category as $case)
+                                <option value="{{$case->id}}">{{$case->name}}</option>
                             @endforeach
                         </select>
                     </td>
@@ -534,8 +534,8 @@
                     <td colspan="3" class="small px-2">
                         <select name="expenseCategory[]" class="w-100 border-0 outline-0">
                             <option value=""></option>
-                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
-                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @foreach($expense_category as $case)
+                                <option value="{{$case->id}}">{{$case->name}}</option>
                             @endforeach
                         </select>
                     </td>
@@ -565,8 +565,8 @@
                     <td colspan="3" class="small px-2">
                         <select name="expenseCategory[]" class="w-100 border-0 outline-0">
                             <option value=""></option>
-                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
-                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @foreach($expense_category as $case)
+                                <option value="{{$case->id}}">{{$case->name}}</option>
                             @endforeach
                         </select>
                     </td>
@@ -582,8 +582,8 @@
                     <td colspan="3" class="small px-2">
                         <select  name="expenseCategory[]" class="w-100 border-0 outline-0">
                             <option value=""></option>
-                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
-                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @foreach($expense_category as $case)
+                                <option value="{{$case->id}}">{{$case->name}}</option>
                             @endforeach
                         </select>
                     </td>
@@ -613,8 +613,8 @@
                     <td colspan="3" class="small px-2">
                         <select name="expenseCategory[]" class="w-100 border-0 outline-0">
                             <option value=""></option>
-                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
-                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @foreach($expense_category as $case)
+                                <option value="{{$case->id}}">{{$case->name}}</option>
                             @endforeach
                         </select>
                     </td>
@@ -638,8 +638,8 @@
                     <td colspan="3" class="small px-2">
                         <select name="expenseCategory[]" class="w-100 border-0 outline-0">
                             <option value=""></option>
-                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
-                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @foreach($expense_category as $case)
+                                <option value="{{$case->id}}">{{$case->name}}</option>
                             @endforeach
                         </select></td>
                     <td colspan="2" class="small px-2 fw-bold">PO No.</td>
@@ -656,8 +656,8 @@
                     <td colspan="3" class="small px-2">
                         <select  name="expenseCategory[]" class="w-100 border-0 outline-0">
                             <option value=""></option>
-                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
-                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @foreach($expense_category as $case)
+                                <option value="{{$case->id}}">{{$case->name}}</option>
                             @endforeach
                         </select>
                     </td>
@@ -690,8 +690,8 @@
                     <td colspan="3" class="small px-2">
                         <select name="expenseCategory[]" class="w-100 border-0 outline-0">
                             <option value=""></option>
-                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
-                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @foreach($expense_category as $case)
+                                <option value="{{$case->id}}">{{$case->name}}</option>
                             @endforeach
                         </select>
                     </td>
@@ -718,8 +718,8 @@
                     <td colspan="3" class="small px-2">
                         <select name="expenseCategory[]" class="w-100 border-0 outline-0">
                             <option value=""></option>
-                            @foreach(\App\Enums\ExpenseCategory::cases() as $case)
-                                <option value="{{$case->name}}">{{$case->value}}</option>
+                            @foreach($expense_category as $case)
+                                <option value="{{$case->id}}">{{$case->name}}</option>
                             @endforeach
                         </select>
                     </td>
@@ -845,9 +845,57 @@
 
         expenseCategoryInput.forEach((category, index) =>{
             category.addEventListener('change', ()=>{
+
                 selectedExpensesCategory[index] = category.value;
-                console.log(selectedExpensesCategory);
+
+                const formData = new FormData();
+
+                selectedExpensesCategory.forEach(category =>{
+                    if(category.length){
+                        formData.append('category[]', category);
+                    }
+                })
+
+                fetch('/expense/api/expense-request/expense-type/{{$request->id}}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                }).then(response => {
+                    return response.json();
+                }).then(data => {
+
+                    console.log(data);
+
+                    bankNameSelection.classList.add('bg-red')
+                    bankCodeSelection.classList.add('bg-red')
+                    checkNumberInput.classList.add('bg-red')
+
+                    if (data.status === 400) {
+                        toastErrorBody.innerHTML = data.message;
+                        toastErrorModal.show();
+                        return;
+                    }
+
+                    if (data.status === 500) {
+                        throw new Error(data.message);
+                    }
+
+                    bankNameSelection.classList.remove('bg-red')
+                    bankCodeSelection.classList.remove('bg-red')
+                    checkNumberInput.classList.remove('bg-red')
+
+                }).catch(err => {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: err.message,
+                    });
+                })
+
             });
+
         })
 
         bankNameSelection.addEventListener('change', updateBankDetails);
