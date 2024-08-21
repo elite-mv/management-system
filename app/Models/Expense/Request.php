@@ -83,9 +83,39 @@ class Request extends Model
     public function checkVoucher(): HasOne{
         return $this->hasOne(CheckVoucher::class);
     }
+
+    public function delivery(): HasOne{
+        return $this->hasOne(RequestDelivery::class);
+    }
+
+    public function expenseTypes(): HasMany{
+        return $this->hasMany(RequestExpenseType::class);
+    }
+
     public function accountingDetail(): HasOne{
         return $this->hasOne(AccountingDetail::class);
     }
+
+    public function bookKeeperApproval(): HasOne{
+        return $this->hasOne(BookKeeperApproval::class);
+    }
+
+    public function vat(): HasOne{
+        return $this->hasOne(RequestVat::class);
+    }
+
+    public function accountantApproval(): HasOne{
+        return $this->hasOne(AccountantApproval::class);
+    }
+
+    public function financeApproval(): HasOne{
+        return $this->hasOne(FinanceApproval::class);
+    }
+
+    public function auditorApproval(): HasOne{
+        return $this->hasOne(AuditorApproval::class);
+    }
+
     public function getFundItemAttribute(){
         return $this->items()
         ->whereIn('status', [

@@ -57,11 +57,24 @@
             background-color: #f8f9fa;
         }
 
+        .selectable:hover{
+            cursor: pointer !important;
+            background-color: var(--gray);
+        }
+
+        select{
+            cursor: pointer;
+        }
 
     </style>
 @endsection
 
 @section('body')
+
+
+    @if($errors->any())
+        <h4>{{$errors->first()}}</h4>
+    @endif
 
     <div class="bg-light p-2">
         <button class="btn btn-success">
@@ -206,12 +219,11 @@
                     <td colspan="2" class="small text-center fw-bold bg-gray text-uppercase">REMARKS</td>
                 </tr>
                 @foreach ($request->items as $item)
-                    <tr>
-                        <td colspan="2" class="small px-2 bg-transparent">{{$item->quantity}}</td>
+                    <tr class="selectable" role="button" onclick="viewItem('{{$item->id}}')">
+                        <td colspan="2" class="small px-2 bg-transparent text-transparent">{{$item->quantity}}</td>
                         <td colspan="3" class="small px-2 bg-transparent">{{$item->measurement->name}}</td>
                         <td colspan="2" class="small px-2 bg-transparent">{{$item->jobOrder->name}}</td>
-                        <td colspan="2" role="button" class="small px-2 pointer" data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">
+                        <td colspan="2" class="small bg-transparent">
                             <div class="d-flex align-items-center bg-transparent">
                                 <p class="m-0 p-0" style="max-width: 200px">{{$item->description}}</p>
                                 <i class="ms-auto fas fa-images"></i>
@@ -396,10 +408,13 @@
                         <input type="checkbox">
                     </td>
                     <td colspan="3" class="small px-2" style="width: 146px">
-                        <select name="expenseCategory[]" class="w-100 border-0 outline-0">
-                            <option value=""></option>
+                        <select data-index="1" name="expenseCategory[]" class="w-100 border-0 outline-0">
                             @foreach($expense_category as $case)
-                                <option value="{{$case->id}}">{{$case->name}}</option>
+                                @if($request->expenseTypes->get(0) && $request->expenseTypes->get(0)->expense_category_id == $case->id)
+                                    <option value="{{$case->id}}" selected>{{$case->name}}</option>
+                                @else
+                                    <option value="{{$case->id}}">{{$case->name}}</option>
+                                @endif
                             @endforeach
                         </select>
                     </td>
@@ -412,17 +427,35 @@
                         </select>
                     </td>
                     <td colspan="1" class="text-center" style="width: 32px">
-                        <input value="1" class="deliveryStatus" name="requestDeliveryStatus"
-                               id="requestDeliveryComplete"
-                               type="checkbox">
+                        @if($request->delivery && $request->delivery->completed)
+                            <input value="1" class="deliveryStatus" name="requestDeliveryStatus"
+                                   id="requestDeliveryComplete"
+                                   type="checkbox" checked>
+                        @else
+                            <input value="1" class="deliveryStatus" name="requestDeliveryStatus"
+                                   id="requestDeliveryComplete"
+                                   type="checkbox">
+                        @endif
+
                     </td>
                     <td colspan="3" class="px-2 bg-green small">Complete</td>
                     <td colspan="5" class="px-2 small">
-                        <select class="border-0 outline-0 w-100">
-                            @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
-                                <option value="{{$case->name}}">{{$case->name}}</option>
-                            @endforeach
-                        </select>
+                        @if($request->priority)
+                            Priority
+                        @else
+                            <form id="bookerKeeperForm" method="POST" action="/expense/expense-request/book-keeper/approval/{{$request->id}}">
+                                @csrf
+                                <select id="bookerKeeperStatus" name="status" class="border-0 outline-0 w-100">
+                                    @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
+                                        @if($request->bookKeeperApproval && $request->bookKeeperApproval->status == $case)
+                                            <option value="{{$case->name}}" selected>{{$case->name}}</option>
+                                        @else
+                                            <option value="{{$case->name}}">{{$case->name}}</option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                            </form>
+                        @endif
                     </td>
                 </tr>
                 <tr>
@@ -441,21 +474,38 @@
                         <input type="checkbox">
                     </td>
                     <td colspan="3" class="small px-2">
-                        <select name="expenseCategory[]" class="w-100 border-0 outline-0">
-                            <option value=""></option>
+                        <select data-index="2"  name="expenseCategory[]" class="w-100 border-0 outline-0">
                             @foreach($expense_category as $case)
-                                <option value="{{$case->id}}">{{$case->name}}</option>
+                                @if($request->expenseTypes->get(1) && $request->expenseTypes->get(1)->expense_category_id == $case->id)
+                                    <option value="{{$case->id}}" selected>{{$case->name}}</option>
+                                @else
+                                    <option value="{{$case->id}}">{{$case->name}}</option>
+                                @endif
                             @endforeach
                         </select>
                     </td>
                     <td colspan="1" class="text-center fw-bold bg-blue small">BANK CODE</td>
                     <td colspan="1" class="text-center">
-                        <input value="0" class="deliveryStatus" name="requestDeliveryStatus"
-                               id="requestDeliveryIncomplete"
-                               type="checkbox">
+                        @if($request->delivery && !$request->delivery->completed)
+                            <input value="0" class="deliveryStatus" name="requestDeliveryStatus"
+                                   id="requestDeliveryIncomplete"
+                                   type="checkbox" checked>
+                        @else
+                            <input value="0" class="deliveryStatus" name="requestDeliveryStatus"
+                                   id="requestDeliveryIncomplete"
+                                   type="checkbox">
+                        @endif
                     </td>
                     <td colspan="3" class="px-2 bg-blue small">Incomplete</td>
-                    <td colspan="5" class="px-2 small">2024-08-12 16:08</td>
+                    <td colspan="5" class="px-2 small">
+                        @if($request->priority)
+                            {{  $request->created_at->format('Y-m-d H:m')}}
+                        @else
+                            @if($request->bookKeeperApproval)
+                                {{  $request->bookKeeperApproval->created_at->format('Y-m-d H:m')}}
+                            @endif
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="1" class="text-center">
@@ -473,10 +523,13 @@
                         <input type="checkbox">
                     </td>
                     <td colspan="3" class="small px-2">
-                        <select name="expenseCategory[]" class="w-100 border-0 outline-0">
-                            <option value=""></option>
+                        <select data-index="3"  name="expenseCategory[]" class="w-100 border-0 outline-0">
                             @foreach($expense_category as $case)
-                                <option value="{{$case->id}}">{{$case->name}}</option>
+                                @if($request->expenseTypes->get(2) && $request->expenseTypes->get(2)->expense_category_id == $case->id)
+                                    <option value="{{$case->id}}" selected>{{$case->name}}</option>
+                                @else
+                                    <option value="{{$case->id}}">{{$case->name}}</option>
+                                @endif
                             @endforeach
                         </select>
                     </td>
@@ -497,24 +550,42 @@
                         <input type="checkbox">
                     </td>
                     <td colspan="3" class="small px-2">
-                        <select name="expenseCategory[]" class="w-100 border-0 outline-0">
-                            <option value=""></option>
+                        <select data-index="4"  name="expenseCategory[]" class="w-100 border-0 outline-0">
                             @foreach($expense_category as $case)
-                                <option value="{{$case->id}}">{{$case->name}}</option>
+                                @if($request->expenseTypes->get(3) && $request->expenseTypes->get(3)->expense_category_id == $case->id)
+                                    <option value="{{$case->id}}" selected>{{$case->name}}</option>
+                                @else
+                                    <option value="{{$case->id}}">{{$case->name}}</option>
+                                @endif
                             @endforeach
                         </select>
                     </td>
                     <td colspan="1" class="bg-blue fw-bold text-center small">CHECK NUMBER</td>
                     <td colspan="1" class="text-center">
-                        <input value="1" class="deliverySupplier" type="checkbox">
+                        @if($request->delivery && $request->delivery->supplier_verified)
+                            <input value="1" class="deliverySupplier" type="checkbox" checked>
+                        @else
+                            <input value="1" class="deliverySupplier" type="checkbox">
+                        @endif
                     </td>
                     <td colspan="3" class="small px-2">Yes</td>
                     <td colspan="5" class="small px-2">
-                        <select class="border-0 outline-0 w-100">
-                            @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
-                                <option value="{{$case->name}}">{{$case->name}}</option>
-                            @endforeach
-                        </select>
+                        @if($request->priority)
+                            Priority
+                        @else
+                            <form id="accountantForm" method="POST" action="/expense/expense-request/accountant/approval/{{$request->id}}">
+                                @csrf
+                                    <select id="accountantStatus" name="status" class="border-0 outline-0 w-100">
+                                        @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
+                                            @if($request->accountantApproval && $request->accountantApproval->status == $case)
+                                                <option value="{{$case->name}}" selected>{{$case->name}}</option>
+                                            @else
+                                                <option value="{{$case->name}}">{{$case->name}}</option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                            </form>
+                        @endif
                     </td>
                 </tr>
                 <tr>
@@ -532,10 +603,13 @@
                         <input type="checkbox">
                     </td>
                     <td colspan="3" class="small px-2">
-                        <select name="expenseCategory[]" class="w-100 border-0 outline-0">
-                            <option value=""></option>
+                        <select  data-index="5"  name="expenseCategory[]" class="w-100 border-0 outline-0">
                             @foreach($expense_category as $case)
-                                <option value="{{$case->id}}">{{$case->name}}</option>
+                                @if($request->expenseTypes->get(4) && $request->expenseTypes->get(4)->expense_category_id == $case->id)
+                                    <option value="{{$case->id}}" selected>{{$case->name}}</option>
+                                @else
+                                    <option value="{{$case->id}}">{{$case->name}}</option>
+                                @endif
                             @endforeach
                         </select>
                     </td>
@@ -543,10 +617,22 @@
                         <input id="checkNumberInput" class="w-100 border-0 outline-0">
                     </td>
                     <td colspan="1" class="text-center">
-                        <input value="0" class="deliverySupplier" type="checkbox">
+                        @if($request->delivery && !$request->delivery->supplier_verified)
+                            <input value="0" class="deliverySupplier" type="checkbox" checked>
+                        @else
+                            <input value="0" class="deliverySupplier" type="checkbox">
+                        @endif
                     </td>
                     <td colspan="3" class="small px-2">No</td>
-                    <td colspan="5" class="small px-2">2024-08-12 16:08</td>
+                    <td colspan="5" class="small px-2">
+                        @if($request->priority)
+                            {{  $request->created_at->format('Y-m-d H:m')}}
+                        @else
+                            @if($request->accountantApproval)
+                                {{$request->accountantApproval->created_at->format('y-m-d H:m')}}
+                            @endif
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="1" class="text-center">
@@ -563,10 +649,13 @@
                         <input type="checkbox">
                     </td>
                     <td colspan="3" class="small px-2">
-                        <select name="expenseCategory[]" class="w-100 border-0 outline-0">
-                            <option value=""></option>
+                        <select  data-index="6"  name="expenseCategory[]" class="w-100 border-0 outline-0">
                             @foreach($expense_category as $case)
-                                <option value="{{$case->id}}">{{$case->name}}</option>
+                                @if($request->expenseTypes->get(5) && $request->expenseTypes->get(5)->expense_category_id == $case->id)
+                                    <option value="{{$case->id}}" selected>{{$case->name}}</option>
+                                @else
+                                    <option value="{{$case->id}}">{{$case->name}}</option>
+                                @endif
                             @endforeach
                         </select>
                     </td>
@@ -580,20 +669,36 @@
                         <input type="checkbox">
                     </td>
                     <td colspan="3" class="small px-2">
-                        <select  name="expenseCategory[]" class="w-100 border-0 outline-0">
-                            <option value=""></option>
+                        <select  data-index="7"   name="expenseCategory[]" class="w-100 border-0 outline-0">
                             @foreach($expense_category as $case)
-                                <option value="{{$case->id}}">{{$case->name}}</option>
+                                @if($request->expenseTypes->get(6) && $request->expenseTypes->get(6)->expense_category_id == $case->id)
+                                    <option value="{{$case->id}}" selected>{{$case->name}}</option>
+                                @else
+                                    <option value="{{$case->id}}">{{$case->name}}</option>
+                                @endif
                             @endforeach
                         </select>
                     </td>
-                    <td colspan="4" class="text-center fw-bold"></td>
+                    <td colspan="4" class="text-center small px-2">
+                        @if($request->vat)
+                            <input value="{{$request->vat->option_a}}" type="text" id="vatOption1" class="h-100 w-100 border-0 outline-0">
+                        @else
+                            <input type="text" id="vatOption1" class="h-100 w-100 border-0 outline-0">
+                        @endif
+                    </td>
                     <td colspan="5" class="small px-2">
-                        <select class="border-0 outline-0 w-100">
+                     <form id="financeForm" method="POST" action="/expense/expense-request/finance/approval/{{$request->id}}">
+                         @csrf
+                        <select id="financeStatus" name="status" class="border-0 outline-0 w-100">
                             @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
-                                <option value="{{$case->name}}">{{$case->name}}</option>
+                                    @if($request->financeApproval && $request->financeApproval->status == $case)
+                                        <option value="{{$case->name}}" selected>{{$case->name}}</option>
+                                    @else
+                                        <option value="{{$case->name}}">{{$case->name}}</option>
+                                    @endif
                             @endforeach
                         </select>
+                     </form>
                     </td>
                 </tr>
                 <tr>
@@ -611,15 +716,28 @@
                         <input type="checkbox">
                     </td>
                     <td colspan="3" class="small px-2">
-                        <select name="expenseCategory[]" class="w-100 border-0 outline-0">
-                            <option value=""></option>
+                        <select data-index="8"  name="expenseCategory[]" class="w-100 border-0 outline-0">
                             @foreach($expense_category as $case)
-                                <option value="{{$case->id}}">{{$case->name}}</option>
+                                @if($request->expenseTypes->get(7) && $request->expenseTypes->get(7)->expense_category_id == $case->id)
+                                    <option value="{{$case->id}}" selected>{{$case->name}}</option>
+                                @else
+                                    <option value="{{$case->id}}">{{$case->name}}</option>
+                                @endif
                             @endforeach
                         </select>
                     </td>
-                    <td colspan="4" class="text-center fw-bold"></td>
-                    <td colspan="5" class="small px-2"></td>
+                    <td colspan="4" class="text-center small px-2">
+                        @if($request->vat)
+                            <input value="{{$request->vat->option_b}}" type="text" id="vatOption2" class="h-100 w-100 border-0 outline-0">
+                        @else
+                            <input type="text" id="vatOption2" class="h-100 w-100 border-0 outline-0">
+                        @endif
+                    </td>
+                    <td colspan="5" class="small px-2">
+                        @if($request->financeApproval)
+                            {{$request->financeApproval->created_at->format('y-m-d H:m')}}
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="1" class="text-center">
@@ -636,15 +754,22 @@
                         <input type="checkbox">
                     </td>
                     <td colspan="3" class="small px-2">
-                        <select name="expenseCategory[]" class="w-100 border-0 outline-0">
-                            <option value=""></option>
+                        <select data-index="9"  name="expenseCategory[]" class="w-100 border-0 outline-0">
                             @foreach($expense_category as $case)
-                                <option value="{{$case->id}}">{{$case->name}}</option>
+                                @if($request->expenseTypes->get(8) && $request->expenseTypes->get(8)->expense_category_id == $case->id)
+                                    <option value="{{$case->id}}" selected>{{$case->name}}</option>
+                                @else
+                                    <option value="{{$case->id}}">{{$case->name}}</option>
+                                @endif
                             @endforeach
                         </select></td>
                     <td colspan="2" class="small px-2 fw-bold">PO No.</td>
                     <td colspan="2" class="small px-2">
-                        <input id="purchaseOrder" class="w-100 border-0 outline-0">
+                        @if($request->vat)
+                            <input value="{{$request->vat->purchase_order}}" id="purchaseOrderInput" class="w-100 border-0 outline-0">
+                        @else
+                            <input id="purchaseOrderInput" class="w-100 border-0 outline-0">
+                        @endif
                     </td>
                     <td colspan="5" class="small px-2 fw-bold bg-blue">AUDITOR</td>
                 </tr>
@@ -654,23 +779,37 @@
                         <input type="checkbox">
                     </td>
                     <td colspan="3" class="small px-2">
-                        <select  name="expenseCategory[]" class="w-100 border-0 outline-0">
-                            <option value=""></option>
+                        <select data-index="10"   name="expenseCategory[]" class="w-100 border-0 outline-0">
                             @foreach($expense_category as $case)
-                                <option value="{{$case->id}}">{{$case->name}}</option>
+                                @if($request->expenseTypes->get(9) && $request->expenseTypes->get(9)->expense_category_id == $case->id)
+                                    <option value="{{$case->id}}" selected>{{$case->name}}</option>
+                                @else
+                                    <option value="{{$case->id}}">{{$case->name}}</option>
+                                @endif
                             @endforeach
                         </select>
                     </td>
                     <td colspan="2" class="small px-2 fw-bold">Invoice No</td>
                     <td colspan="2" class="small px-2">
-                        <input id="invoiceNumber" class="w-100 border-0 outline-0">
+                        @if($request->vat)
+                            <input value="{{$request->vat->invoice}}" id="invoiceNumberInput" class="w-100 border-0 outline-0">
+                        @else
+                            <input id="invoiceNumberInput" class="w-100 border-0 outline-0">
+                        @endif
                     </td>
                     <td colspan="5" class="small px-2">
-                        <select class="border-0 outline-0 w-100">
-                            @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
-                                <option value="{{$case->name}}">{{$case->name}}</option>
-                            @endforeach
-                        </select>
+                        <form id="auditorForm" method="POST" action="/expense/expense-request/auditor/approval/{{$request->id}}">
+                            @csrf
+                            <select id="auditorStatus" name="status" class="border-0 outline-0 w-100">
+                                @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
+                                    @if($request->auditorApproval && $request->auditorApproval->status == $case)
+                                        <option value="{{$case->name}}" selected>{{$case->name}}</option>
+                                    @else
+                                        <option value="{{$case->name}}">{{$case->name}}</option>
+                                    @endif
+                                @endforeach
+                            </select>
+                        </form>
                     </td>
                 </tr>
                 <tr>
@@ -688,18 +827,29 @@
                         <input type="checkbox">
                     </td>
                     <td colspan="3" class="small px-2">
-                        <select name="expenseCategory[]" class="w-100 border-0 outline-0">
-                            <option value=""></option>
+                        <select data-index="11"  name="expenseCategory[]" class="w-100 border-0 outline-0">
                             @foreach($expense_category as $case)
-                                <option value="{{$case->id}}">{{$case->name}}</option>
+                                @if($request->expenseTypes->get(10) && $request->expenseTypes->get(10)->expense_category_id == $case->id)
+                                    <option value="{{$case->id}}" selected>{{$case->name}}</option>
+                                @else
+                                    <option value="{{$case->id}}">{{$case->name}}</option>
+                                @endif
                             @endforeach
                         </select>
                     </td>
                     <td colspan="2" class="fw-bold small px-2">Bill No.</td>
                     <td colspan="2" class="small px-2">
-                        <input id="billNumber" class="w-100 border-0 outline-0">
+                        @if($request->vat)
+                            <input value="{{$request->vat->bill}}" id="billNumberInput" class="w-100 border-0 outline-0">
+                        @else
+                            <input id="billNumberInput" class="w-100 border-0 outline-0">
+                        @endif
                     </td>
-                    <td colspan="5" class="small px-2"></td>
+                    <td colspan="5" class="small px-2">
+                        @if($request->auditorApproval)
+                            {{ $request->auditorApproval->created_at->format('Y-m-d H:m')}}
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="1" class="text-center">
@@ -715,17 +865,24 @@
                     <td colspan="1" class="text-center">
                         <input type="checkbox">
                     </td>
-                    <td colspan="3" class="small px-2">
-                        <select name="expenseCategory[]" class="w-100 border-0 outline-0">
-                            <option value=""></option>
+                    <td colspan="3" class="small px-2 selectable">
+                        <select data-index="12"  name="expenseCategory[]" class="bg-transparent w-100 border-0 outline-0">
                             @foreach($expense_category as $case)
-                                <option value="{{$case->id}}">{{$case->name}}</option>
+                                @if($request->expenseTypes->get(11) && $request->expenseTypes->get(11)->expense_category_id == $case->id)
+                                    <option value="{{$case->id}}" selected>{{$case->name}}</option>
+                                @else
+                                    <option value="{{$case->id}}">{{$case->name}}</option>
+                                @endif
                             @endforeach
                         </select>
                     </td>
                     <td colspan="2" class="fw-bold small px-2">OR No</td>
                     <td colspan="2" class="small px-2">
-                        <input id="orNumber" class="w-100 border-0 outline-0">
+                        @if($request->vat)
+                            <input value="{{$request->vat->official_receipt}}" id="orNumberInput" class="w-100 border-0 outline-0">
+                        @else
+                            <input id="orNumberInput" class="w-100 border-0 outline-0">
+                        @endif
                     </td>
                     <td colspan="4" rowspan="2" class="small px-2" style="width: 171px"></td>
                     <td colspan="1" rowspan="2" class="text-center fw-bold align-middle">
@@ -782,45 +939,112 @@
     </div>
 
     <!-- Modal For Request Item -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+    <div class="modal fade" id="editItemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Item</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form>
+                <form method="POST" id="editItemForm" class="container-fluid">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Item</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                            @csrf
+                            <input id="editItemId" type="hidden" class="d-none">
 
-                        <div class="form-group">
-                            <label class="form-label text-secondary">Description</label>
-                            <p>Lorem ipsum dolor sit amet.</p>
-                        </div>
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-2 text-center border border-dark" style="border-style: solid none none solid !important; background: rgba(0, 0, 0, 0.2); word-wrap: break-word;">
+                                        <b>QTY</b>
+                                    </div>
+                                    <div class="col-2 text-center border border-dark" style="border-style: solid none none solid !important; background: rgba(0, 0, 0, 0.2); word-wrap: break-word;">
+                                        <b>UOM</b>
+                                    </div>
+                                    <div class="col-2 text-center border border-dark" style="border-style: solid none none solid !important; background: rgba(0, 0, 0, 0.2); word-wrap: break-word;">
+                                        <b>JOB ORDER</b>
+                                    </div>
+                                    <div class="col-2 text-center border border-dark" style="border-style: solid none none solid !important; background: rgba(0, 0, 0, 0.2); word-wrap: break-word;">
+                                        <b>DESCRIPTION</b>
+                                    </div>
+                                    <div class="col-2 text-center border border-dark" style="border-style: solid none none solid !important; background: rgba(0, 0, 0, 0.2); word-wrap: break-word;">
+                                        <b>UNIT COST</b>
+                                    </div>
+                                    <div class="col-2 text-center border border-dark" style="border-style: solid solid none solid !important; background: rgba(0, 0, 0, 0.2); word-wrap: break-word;">
+                                        <b>TOTAL</b>
+                                    </div>
+                                </div>
 
-                        <div class="row">
+                                <div class="row">
+                                    <div class="col-2 m-0 p-0 small border-0">
+                                        <input id="editItemQuantity" type="text" class="p-2 h-100 w-100" name="quantity">
+                                    </div>
+                                    <div class="col-2 m-0 p-0 small border-0">
+                                        <select name="measurement" id="editItemUnitOfMeasurement" class="p-2 h-100 w-100">
+                                            @foreach($measurements as $measurement)
+                                                <option value="{{$measurement->id}}">{{$measurement->name}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-2 m-0 p-0 small border-0">
+                                        <select name="jobOrder" id="editItemJobOrder" class="p-2 h-100 w-100">
+                                            @foreach($jobOrders as $jobOrder)
+                                                <option value="{{$jobOrder->id}}">{{$jobOrder->reference}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-2 m-0 p-0 small border-0">
+                                        <input name="description" id="editItemDescription" type="text" class="p-2 h-100 w-100">
+                                    </div>
+                                    <div class="col-2 small border-0 m-0 p-0">
+                                        <input name="cost" id="editItemCost" type="text" class="p-2 h-100 w-100">
+                                    </div>
+                                    <div class="col-2 small border-0 m-0 p-0">
+                                        <input id="editItemTotal"  type="text" class="p-2 h-100 w-100" name="total">
+                                    </div>
+                                </div>
 
-                            <div class="col-4 form-group">
-                                <label class="form-label">QTY</label>
-                                <input type="number" class="form-control" name="qty" required>
+                                <div class="row mt-3 py-3 px-2 border border-dark">
+                                    <div class="col-sm-12 col-md-6 col-lg-6">
+                                        <input type="file" accept="image/*" multiple="" name="update_image" class="px-4 py-2 border border-dark w-100" style="border: 1px dashed !important; border-radius: 6px;">
+                                    </div>
+                                    <div class="col-sm-12 col-md-6 col-lg-6 p-2 border border-dark" style="display: flex; flex-direction: row; align-items: flex-start; gap: 5px; overflow: auto;" id="uploads">
+                                        <input type="hidden" name="id" value="105">
+
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-4 text-center border border-dark" style="border-style: solid none none solid !important; background: rgba(0, 0, 0, 0.2); word-wrap: break-word;">
+                                        <b>CURRENT STATUS</b>
+                                    </div>
+                                    <div class="col-4 text-center border border-dark" style="border-style: solid none none solid !important; background: rgba(0, 0, 0, 0.2); word-wrap: break-word;">
+                                        <b>STATUS</b>
+                                    </div>
+                                    <div class="col-4 text-center border border-dark" style="border-style: solid solid none solid !important; background: rgba(0, 0, 0, 0.2); word-wrap: break-word;">
+                                        <b>REMARKS</b>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4 text-center border border-dark" style="border-style: solid none solid solid !important; word-wrap: break-word; display: flex; align-items: center; justify-content: center;">
+                                        <small> Pending</small>
+                                    </div>
+                                    <div class="col-4 text-center border border-dark small " style="border-style: solid none solid solid !important; word-wrap: break-word; display: flex; align-items: center; justify-content: center;">
+                                        <select id="editItemStatus"  class="p-2" name="status">
+                                            @foreach(App\Enums\RequestItemStatus::status() as $requestStatus)
+                                                <option value="{{$requestStatus->name}}">{{$requestStatus->name}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-4 text-center p-0" style="word-wrap: break-word;">
+                                        <textarea id="editItemRemarks" rows="5" placeholder="Type here..." style="resize: none;" class="p-2 w-100 h-100 small" name="remarks"></textarea>
+                                    </div>
+                                </div>
                             </div>
-
-                            <div class="col-4 form-group">
-                                <label class="form-label">UNIT COST</label>
-                                <input type="number" class="form-control" name="unit_cost" step="0.01" required>
-                            </div>
-
-                            <div class="col-4 form-group">
-                                <label class="form-label">TOTAL</label>
-                                <input type="number" class="form-control" name="total" step="0.01" readonly>
-                            </div>
-                        </div>
-
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -830,6 +1054,21 @@
 
 @section('script')
     <script>
+
+        const editItemModal = new bootstrap.Modal(document.getElementById('editItemModal'), {
+            keyboard: false
+        })
+
+        const editItemForm = document.querySelector('#editItemForm');
+        const editItemId = document.querySelector('#editItemId');
+        const editItemQuantity = document.querySelector('#editItemQuantity');
+        const editItemDescription = document.querySelector('#editItemDescription');
+        const editItemJobOrder = document.querySelector('#editItemJobOrder');
+        const editItemUnitOfMeasurement = document.querySelector('#editItemUnitOfMeasurement');
+        const editItemCost = document.querySelector('#editItemCost');
+        const editItemTotal = document.querySelector('#editItemTotal');
+        const editItemStatus = document.querySelector('#editItemStatus');
+        const editItemRemarks = document.querySelector('#editItemRemarks');
 
         const toastErrorModal = new bootstrap.Toast(document.getElementById('errorToast'));
         const toastErrorBody = document.querySelector('.toast-body');
@@ -843,17 +1082,222 @@
 
         const selectedExpensesCategory = [];
 
+        const bookerKeeperStatus = document.querySelector('#bookerKeeperStatus');
+        const bookerKeeperForm = document.querySelector('#bookerKeeperForm');
+
+        const accountantStatus = document.querySelector('#accountantStatus');
+        const accountantForm = document.querySelector('#accountantForm');
+
+        const financeStatus = document.querySelector('#financeStatus');
+        const financeForm = document.querySelector('#financeForm');
+
+        const auditorStatus = document.querySelector('#auditorStatus');
+        const auditorForm = document.querySelector('#auditorForm');
+
+        const purchaseOrderInput = document.querySelector('#purchaseOrderInput');
+        const invoiceNumberInput = document.querySelector('#invoiceNumberInput');
+        const billNumberInput = document.querySelector('#billNumberInput');
+        const orNumberInput = document.querySelector('#orNumberInput');
+
+        const vatOptionA = document.querySelector('#vatOption1');
+        const vatOptionB = document.querySelector('#vatOption2');
+
+        purchaseOrderInput.addEventListener('change',()=>{
+
+            let formData = new FormData();
+
+            formData.append('purchaseOrder', purchaseOrderInput.value);
+
+            fetch('/expense/expense-request/expense/vat/purchase-order/{{$request->id}}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                }
+            }).then(response => {
+              return response.json();
+            }).then(data => {
+                if(data.status !== 200){
+                    throw new Error(data.message)
+                }
+            }).catch(err => {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: err.message,
+                });
+            });
+        })
+
+        invoiceNumberInput.addEventListener('change',()=>{
+
+            let formData = new FormData();
+
+            formData.append('invoice', invoiceNumberInput.value);
+
+            fetch('/expense/expense-request/expense/vat/invoice/{{$request->id}}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                }
+            }).then(response => {
+              return response.json();
+            }).then(data => {
+                if(data.status !== 200){
+                    throw new Error(data.message)
+                }
+            }).catch(err => {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: err.message,
+                });
+            });
+        })
+
+        billNumberInput.addEventListener('change',()=>{
+
+            let formData = new FormData();
+
+            formData.append('bill', billNumberInput.value);
+
+            fetch('/expense/expense-request/expense/vat/bill/{{$request->id}}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                }
+            }).then(response => {
+              return response.json();
+            }).then(data => {
+                if(data.status !== 200){
+                    throw new Error(data.message)
+                }
+            }).catch(err => {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: err.message,
+                });
+            });
+        })
+
+        orNumberInput.addEventListener('change',()=>{
+
+            let formData = new FormData();
+
+            formData.append('receipt', orNumberInput.value);
+
+            fetch('/expense/expense-request/expense/vat/official-receipt/{{$request->id}}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                }
+            }).then(response => {
+              return response.json();
+            }).then(data => {
+                if(data.status !== 200){
+                    throw new Error(data.message)
+                }
+            }).catch(err => {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: err.message,
+                });
+            });
+        })
+
+        vatOptionA.addEventListener('change',()=>{
+
+            let formData = new FormData();
+
+            formData.append('option', vatOptionA.value);
+
+            fetch('/expense/expense-request/expense/vat/option-a/{{$request->id}}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                }
+            }).then(response => {
+              return response.json();
+            }).then(data => {
+                if(data.status !== 200){
+                    throw new Error(data.message)
+                }
+            }).catch(err => {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: err.message,
+                });
+            });
+        })
+
+        vatOptionB.addEventListener('change',()=>{
+
+            let formData = new FormData();
+
+            formData.append('option', vatOptionB.value);
+
+            fetch('/expense/expense-request/expense/vat/option-b/{{$request->id}}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                }
+            }).then(response => {
+              return response.json();
+            }).then(data => {
+                if(data.status !== 200){
+                    throw new Error(data.message)
+                }
+            }).catch(err => {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: err.message,
+                });
+            });
+        })
+
+        if(bookerKeeperStatus){
+            bookerKeeperStatus.addEventListener('change',()=>{
+                bookerKeeperForm.submit();
+            })
+        }
+
+        if(accountantStatus){
+            accountantStatus.addEventListener('change',()=>{
+                accountantForm.submit();
+            })
+        }
+
+        financeStatus.addEventListener('change',()=>{
+            financeForm.submit();
+        })
+
+        auditorStatus.addEventListener('change',()=>{
+            auditorForm.submit();
+        })
+
         expenseCategoryInput.forEach((category, index) =>{
-            category.addEventListener('change', ()=>{
+
+            if(category.value){
+                selectedExpensesCategory[index] = category.value;
+            }
+
+            category.addEventListener('input', async ()=>{
 
                 selectedExpensesCategory[index] = category.value;
 
                 const formData = new FormData();
 
                 selectedExpensesCategory.forEach(category =>{
-                    if(category.length){
-                        formData.append('category[]', category);
-                    }
+                    formData.append('category[]', category);
                 })
 
                 fetch('/expense/api/expense-request/expense-type/{{$request->id}}', {
@@ -988,6 +1432,38 @@
         groupCheck('attachmentReceipt', updateReceipt, removeReceipt);
         groupCheck('priorityLevel', updatePriorityLevel, removePriorityLevel);
 
+        async function viewItem(id){
+
+            try {
+                const result = await fetch(`/expense/api/request-item/${id}`);
+
+                const data = await result.json();
+
+                if(!result.ok){
+                    throw new Error(data.message);
+                }
+
+                editItemForm.action = `/expense/api/request-item/update/${data.id}`;
+
+                editItemQuantity.value = data.quantity;
+                editItemDescription.value = data.description;
+                editItemJobOrder.value = data.job_order_id;
+                editItemUnitOfMeasurement.value = data.measurement_id;
+                editItemCost.value = data.cost;
+                editItemTotal.value = data.total;
+                editItemStatus.value = data.status;
+                editItemRemarks.value = data.remarks;
+
+                editItemModal.show();
+
+                console.info(data);
+
+            }catch (error){
+                console.error(error)
+            }
+
+        }
+
         function updateBankDetails() {
 
             if (parseInt(bankNameSelection.value) === -1 && parseInt(bankCodeSelection.value) === -1) {
@@ -996,12 +1472,11 @@
             }
 
             let formData = new FormData();
-            let requestId = 1;
 
             formData.append('bankName', bankNameSelection.value);
             formData.append('bankNumber', bankCodeSelection.value);
             formData.append('checkNumber', checkNumberInput.value);
-            formData.append('requestID', requestId);
+            formData.append('requestID', {{$request->id}});
 
             fetch('/expense/api/expense-request/bank-details', {
                 method: 'POST',

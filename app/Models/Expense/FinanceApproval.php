@@ -2,20 +2,21 @@
 
 namespace App\Models\Expense;
 
+use App\Enums\RequestApprovalStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class RequestVat extends Model
+class FinanceApproval extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'purchase_order',
-        'invoice',
-        'bill',
-        'official_receipt',
         'request_id',
-        'option_a',
-        'option_b',
+        'user_id',
+        'status',
+    ];
+
+    protected  $casts = [
+        'status' => RequestApprovalStatus::class
     ];
 }

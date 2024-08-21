@@ -27,7 +27,7 @@ class RequestExpenseController
 
             return response()->json([
                 'message' => 'ok',
-                'status' => '200',
+                'status' => 200,
             ]);
 
         }catch (\Exception $e){
@@ -36,7 +36,7 @@ class RequestExpenseController
 
             return response()->json([
                 'message' => $e->getMessage(),
-                'status' => '500',
+                'status' => 500,
             ],500);
         }
     }

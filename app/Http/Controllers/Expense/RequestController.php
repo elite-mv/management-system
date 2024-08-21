@@ -112,8 +112,13 @@ class RequestController extends Controller
             abort(403);
         }
 
+        $measurements = Measurement::get();
+        $jobOrder = JobOrder::get();
+
         return view('expense.printable-request-form', [
-            'request' => $expenseRequest
+            'request' => $expenseRequest,
+            'measurements' => $measurements,
+            'jobOrders' => $jobOrder,
         ]);
 
     }
