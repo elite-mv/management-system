@@ -17,8 +17,10 @@ use App\Http\Controllers\Expense\RequestController;
 use App\Http\Controllers\Expense\RequestDeliveryController;
 use App\Http\Controllers\Expense\RequestExpenseController;
 use App\Http\Controllers\Expense\RequestItemController;
+use App\Http\Controllers\Expense\RequestVoucher;
 use App\Http\Controllers\Expense\VatController;
 use App\Http\Controllers\Income\CustomerController;
+use App\Http\Controllers\PdfController;
 use App\Http\Middleware\SetGlobalVariables;
 use Illuminate\Support\Facades\Route;
 
@@ -33,12 +35,19 @@ Route::prefix('income')->group(function () {
     Route::get('/salutation', [CustomerController::class, 'ReaddSalutationData']);
 });
 
+
+Route::get('/pdf', [PdfController::class, 'index']);
+
 Route::prefix('expense')->group(function () {
 
     Route::middleware(['auth', SetGlobalVariables::class])->group(function () {
 
         Route::get('/request', [RequestController::class, 'index']);
         Route::get('/requests', [RequestController::class, 'getRequests']);
+        Route::post('/api/request/status/{expenseRequest}', [RequestController::class, 'updateRequestStatus']);
+
+        Route::post('/api/request/voucher/{expenseRequest}', [RequestVoucher::class, 'generate']);
+
         Route::get('/api/my-requests', [RequestController::class, 'getRequestsData']);
 
         Route::get('/book-keeper', [BookKeeperController::class, 'index']);

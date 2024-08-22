@@ -7,6 +7,7 @@ use App\Enums\AccountingReceipt;
 use App\Enums\AccountingType;
 use App\Enums\PaymentMethod;
 use App\Enums\RequestPriorityLevel;
+use App\Enums\RequestStatus;
 use App\Models\Expense\Company;
 use App\Models\Expense\JobOrder;
 use App\Models\Expense\Measurement;
@@ -269,6 +270,34 @@ class RequestController extends Controller
             return response()->json([
                 'message' => $e->getMessage(),
                 'status' => '200',
+            ], 500);
+        }
+
+    }
+
+    public function updateRequestStatus(Request $request, ModelsRequest $expenseRequest)
+    {
+        try {
+
+            DB::beginTransaction();
+
+            $expenseRequest->status = RequestStatus::valueOf($request->input('status'));
+
+            $expenseRequest->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'ok',
+                'status' => 200,
+            ]);
+
+        }catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => 200,
             ], 500);
         }
 

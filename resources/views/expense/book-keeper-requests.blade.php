@@ -11,13 +11,9 @@
                 <label class="form-label mb-0" for="status">Filter</label>
                 <select name="status" class="form-control inputs" id="status">
                     <option value="ALL">All</option>
-                    <option value="PENDING">Pending</option>
-                    <option value="TO_RETURN">To Return</option>
-                    <option value="HOLD">Hold</option>
-                    <option value="TO_PROCESS">To Process</option>
-                    <option value="PROCESSING">Processing</option>
-                    <option value="FOR_FUNDING">For Funding</option>
-                    <option value="RELEASED">Released</option>
+                    @foreach(\App\Enums\RequestApprovalStatus::status() as $status)
+                        <option value="{{$status->name}}">{{$status->name}}</option>
+                    @endforeach
                 </select>
             </div>
 
@@ -180,7 +176,9 @@
             let formData = new FormData(filterForm);
             const params = new URLSearchParams(formData);
 
-            fetch(`/api/book-keeper?${params.toString()}`, {
+            console.log('searching');
+
+            fetch(`/expense/api/book-keeper?${params.toString()}`, {
                 headers: {
                     "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
                 }

@@ -9,6 +9,10 @@ class CheckVoucher extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'request_id'
+    ];
+
     public function getPadIdAttribute()
     {
         return str_pad($this->id,3,"0",STR_PAD_LEFT);

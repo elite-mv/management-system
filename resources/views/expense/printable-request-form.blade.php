@@ -95,7 +95,6 @@
         <div class="mx-auto px-4 py-2">
 
             <div class="d-flex mb-4">
-
                 <div>
                     <div class="border border-dark"
                          style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
@@ -109,7 +108,16 @@
                 </div>
 
                 <div style="font-size: 70px;"
-                     class="m-0 ms-5 px-5 border border-5 border-danger text-danger text-center">PENDING
+                     class="m-0 ms-2 px-5 border border-5 border-danger">
+                    <select id="requestStatus" class="w-100 h-100 border-0 outline-0 text-danger text-center">
+                        @foreach(\App\Enums\RequestStatus::cases() as $status)
+                            @if($status == $request->status)
+                                <option style="font-size: 20px" value="{{$status->name}}" selected>{{$status->value}}</option>
+                            @else
+                                <option style="font-size: 20px" value="{{$status->name}}">{{$status->value}}</option>
+                            @endif
+                        @endforeach
+                    </select>
                 </div>
 
                 <div class="ms-auto">
@@ -321,9 +329,9 @@
                         @endif
                     </td>
                     <td colspan="3" class="px-2 small fw-bold bg-gray">Date:</td>
-                    <td colspan="6" class="px-2 small text-center">
+                    <td colspan="6" class="px-2 small">
                         @if(isset($request->checkVoucher))
-                            {{ $request->checkVoucher->create_at->format('Y-m-d H:m') }}
+                            {{ $request->checkVoucher->created_at->format('Y-m-d H:m') }}
                         @endif
                     </td>
                 </tr>
@@ -366,10 +374,15 @@
                 </tr>
                 <tr style="height: 80px">
                     <td colspan="8" class="text-center align-bottom fw-bold small" style="height: 24px">
-                        MR. RYLAN C. ALINGAROG
+                        <input readonly value="MR. RYLAN C. ALINGAROG" class="border-0 outline-0 w-100 small fw-bold text-uppercase text-center">
+
                     </td>
-                    <td colspan="4" class="text-center align-bottom fw-bold small" style="height: 24px"></td>
-                    <td colspan="6" class="text-center align-bottom fw-bold small" style="height: 24px"></td>
+                    <td colspan="4" class="text-center align-bottom fw-bold small" style="height: 24px">
+                        <input class="border-0 outline-0 w-100 small fw-bold text-uppercase text-center">
+                    </td>
+                    <td colspan="6" class="text-center align-bottom fw-bold small" style="height: 24px">
+                        <input class="border-0 outline-0 w-100 small fw-bold text-uppercase text-center">
+                    </td>
                 </tr>
 
                 <tr>
@@ -1049,6 +1062,7 @@
         </div>
     </div>
 
+
 @endsection
 
 
@@ -1101,6 +1115,8 @@
 
         const vatOptionA = document.querySelector('#vatOption1');
         const vatOptionB = document.querySelector('#vatOption2');
+
+        const requestStatus = document.querySelector('#requestStatus');
 
         purchaseOrderInput.addEventListener('change',()=>{
 
@@ -1346,20 +1362,21 @@
         bankCodeSelection.addEventListener('change', updateBankDetails);
         checkNumberInput.addEventListener('change', updateBankDetails);
 
-        requestPaymentMethodInput.addEventListener('change', () => {
+        requestPaymentMethodInput.addEventListener('change',  async () => {
+            try {
 
-            const formData = new FormData();
-            formData.append('mode', requestPaymentMethodInput.value);
+                const formData = new FormData();
+                formData.append('mode', requestPaymentMethodInput.value);
 
-            fetch('/expense/api/expense-request/payment-method/{{$request->id}}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
-                return response.json();
-            }).then(data => {
+                const result = await fetch('/expense/api/expense-request/payment-method/{{$request->id}}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                const data = await result.json();
 
                 bankNameSelection.classList.add('bg-red')
                 bankCodeSelection.classList.add('bg-red')
@@ -1378,14 +1395,66 @@
                 bankNameSelection.classList.remove('bg-red')
                 bankCodeSelection.classList.remove('bg-red')
                 checkNumberInput.classList.remove('bg-red')
-            }).catch(err => {
+
+                await generateVoucher();
+
+            }catch (error){
+
+                console.error(error);
+
+                // Swal.fire({
+                //     icon: "error",
+                //     title: "Oops...",
+                //     text: error.message,
+                // });
+            }
+        })
+
+        async function generateVoucher(){
+            try {
+
+                const result = await fetch('/expense/api/request/voucher/{{$request->id}}', {
+                    method: 'POST',
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                const data = await  result.json();
+
+                console.log(data);
+
+                if (!result.ok) {
+                    throw new Error('something went wrong');
+                }
+
+                Swal.fire({
+                    title: "Voucher",
+                    html: "Generating Voucher",
+                    timer: 1000,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                    willClose: () => {
+                            location.reload()
+                    }
+                }).then((result) => {
+                    /* Read more about handling dismissals below */
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        console.log("I was closed by the timer");
+                    }
+                });
+
+
+            }catch (error){
                 Swal.fire({
                     icon: "error",
                     title: "Oops...",
-                    text: err.message,
+                    text: error.message,
                 });
-            })
-        })
+            }
+        }
 
         function groupCheck(groupId, cb = null, optional = null) {
 
@@ -1431,6 +1500,34 @@
         groupCheck('attachmentType', updateType, removeType);
         groupCheck('attachmentReceipt', updateReceipt, removeReceipt);
         groupCheck('priorityLevel', updatePriorityLevel, removePriorityLevel);
+
+        requestStatus.addEventListener('change', async ()=>{
+
+            try {
+
+                const formData = new FormData();
+
+                formData.append('status', requestStatus.value);
+
+                const result = await fetch(`/expense/api/request/status/{{$request->id}}`,{
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                const data = await result.json();
+
+                if(!result.ok){
+                    throw new Error(data.message);
+                }
+
+                console.info(data);
+            }catch (error){
+                console.error(error)
+            }
+        })
 
         async function viewItem(id){
 

@@ -125,6 +125,6 @@ return [
 
     'aliases' => [
         'Helper' => App\Helper\Helper::class,
-    ]
+    ],
 
 ];

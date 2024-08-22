@@ -8,6 +8,7 @@ use App\Enums\AccountingType;
 use App\Enums\PaymentMethod;
 use App\Enums\RequestItemStatus;
 use App\Enums\RequestPriorityLevel;
+use App\Enums\RequestStatus;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -43,6 +44,7 @@ class Request extends Model
             'attachment' => AccountingAttachment::class,
             'type' => AccountingType::class,
             'receipt' => AccountingReceipt::class,
+            'status' => RequestStatus::class,
         ];
     }
 
@@ -65,8 +67,8 @@ class Request extends Model
 
     public function company(): BelongsTo{
         return $this->belongsTo(Company::class);
-
     }
+
 
     public function items(): HasMany{
         return $this->hasMany(RequestItem::class);
@@ -86,6 +88,10 @@ class Request extends Model
 
     public function delivery(): HasOne{
         return $this->hasOne(RequestDelivery::class);
+    }
+
+    public function bankDetails(): HasOne{
+        return $this->hasOne(BankDetail::class);
     }
 
     public function expenseTypes(): HasMany{
