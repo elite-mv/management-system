@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Expense Request Form</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{public_path('css/bootstrap/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{asset('css/bootstrap/bootstrap.min.css')}}">
 
     <style>
-
         :root {
             --blue: rgba(173, 216, 230, 1.0);
             --red: rgba(255, 0, 0, 0.4);
@@ -34,12 +33,13 @@
             background-color: var(--blue) !important;
         }
 
-        .bg-gray {
-            background-color: var(--gray) !important;
+        *{
+            font-size: 14px;
+            padding: 0 !important;
         }
 
-        td {
-            padding: 2px;
+        .bg-gray {
+            background-color: var(--gray) !important;
         }
 
         .box-shadow-none {
@@ -66,11 +66,22 @@
             cursor: pointer;
         }
 
+        .border-0{
+            border: none;
+        }
+        .outline-0{
+            outline: none;
+        }
+
+        .border-bottom{
+            border-bottom: 1px solid black;
+        }
+
     </style>
 </head>
 <body>
-    <div id="parent" class="mx-auto px-4 py-2" style="width: 8in">
-        <table  class="table table-bordered border-dark mx-auto">
+    <div id="parent" class="mx-auto px-4 py-2">
+        <table class="table table-bordered border-dark mx-auto">
             <tbody>
             <tr>
                 <td colspan="4" class="small px-2">Date:</td>
@@ -800,7 +811,7 @@
                 <td colspan="4" class="px-2">
                     <div class="d-flex gap-1 align-items-center mb-1">
                         <label class="small">Others:</label>
-                        <input class="small w-100 outline-0 border-1 border-top-0 border-start-0 border-end-0">
+                        <input class="small w-100 outline-0 border-0 border-bottom">
                     </div>
                 </td>
                 <td colspan="2" class="fw-bold small px-2">Voucher No</td>

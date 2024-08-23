@@ -37,8 +37,6 @@ class PdfController
         $bankCodes = BankCode::get();
         $expenseCategory = ExpenseCategory::get();
 
-        $bootstrap5 = file_get_contents(public_path() . '/css/bootstrap.min.css');
-
         $pdf = PDF::loadView('expense.pdf.expense-request-form',  [
             'bank_names' => $bankNames,
             'bank_codes' => $bankCodes,
@@ -46,10 +44,7 @@ class PdfController
             'request' => $expenseRequest,
             'measurements' => $measurements,
             'jobOrders' => $jobOrder,
-            'css' => $bootstrap5,
-        ])->setPaper('legal');
-
-//        $pdf->setCss("/www/public/css/");
+        ])->setPaper('A4');
 
 
         return $pdf->download('invoice.pdf');
