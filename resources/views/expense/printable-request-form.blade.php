@@ -2,7 +2,7 @@
 
 
 @section('files')
-    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 @endsection
 
 @section('title', 'View Request')
@@ -40,6 +40,7 @@
 
         td {
             padding: 0 !important;
+            border: 1px solid black;
         }
 
         .box-shadow-none {
@@ -77,7 +78,7 @@
     @endif
 
     <div class="bg-light p-2">
-        <button class="btn btn-success">
+        <button class="btn btn-success" onclick="generatePDF()">
             <i class="fas fa-download"></i>
             Download
         </button>
@@ -92,7 +93,7 @@
     </div>
 
     <div class="container-fluid mx-auto bg-white">
-        <div class="mx-auto px-4 py-2">
+        <div class="mx-auto px-4 py-2" id="printable">
 
             <div class="d-flex mb-4">
                 <div>
@@ -131,7 +132,7 @@
                         <div class="w-100" style="display: flex; flex-direction: row;">
                             <div class="w-25 text-center border border-dark"
                                  style="border-style: none solid solid none !important;">
-                                <input type="checkbox" name="FUNDED" disabled="">
+                                <input @checked($request->fund_status == \App\Enums\RequestFundStatus::FUNDED )  value="{{\App\Enums\RequestFundStatus::FUNDED->value}}" class="fundStatus" type="checkbox" name="FUNDED">
                             </div>
                             <div class="w-75 text-start border border-dark px-2"
                                  style="border-style: none none solid none !important;">
@@ -142,7 +143,7 @@
                         <div class="w-100" style="display: flex; flex-direction: row;">
                             <div class="w-25 text-center border border-dark"
                                  style="border-style: none solid none none !important;">
-                                <input type="checkbox" name="DECLINED" disabled="">
+                                <input @checked($request->fund_status == \App\Enums\RequestFundStatus::DECLINED ) value="{{\App\Enums\RequestFundStatus::DECLINED->value}}" class="fundStatus" type="checkbox" name="FUNDED">
                             </div>
                             <div class="w-75 text-start border border-dark px-2"
                                  style="border-style: none none none none !important;">
@@ -267,7 +268,13 @@
                     <td colspan="3" class="px-2 small bg-gray">Payment Type</td>
                     <td colspan="6" class="px-2 small">
                         <select id="paymentMethodInput" class="w-100 border-0 outline-0 ">
+
+                            @if(\App\Enums\PaymentMethod::NONE == $request->payment_method)
+                                <option selected disabled></option>
+                            @endif
+
                             @foreach(App\Enums\PaymentMethod::modes() as $type)
+
                                 @if($type == $request->payment_method)
                                     <option class="text-uppercase" value="{{ $type->name }}" selected>
                                         {{ str_replace('_', ' ',$type->name)  }}
@@ -453,6 +460,7 @@
                     </td>
                     <td colspan="3" class="px-2 bg-green small">Complete</td>
                     <td colspan="5" class="px-2 small">
+
                         @if($request->priority)
                             Priority
                         @else
@@ -460,7 +468,7 @@
                                 @csrf
                                 <select id="bookerKeeperStatus" name="status" class="border-0 outline-0 w-100">
                                     @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
-                                        @if($request->bookKeeperApproval && $request->bookKeeperApproval->status == $case)
+                                        @if($request->bookKeeper && $request->bookKeeper->status == $case)
                                             <option value="{{$case->name}}" selected>{{$case->name}}</option>
                                         @else
                                             <option value="{{$case->name}}">{{$case->name}}</option>
@@ -514,8 +522,8 @@
                         @if($request->priority)
                             {{  $request->created_at->format('Y-m-d H:m')}}
                         @else
-                            @if($request->bookKeeperApproval)
-                                {{  $request->bookKeeperApproval->created_at->format('Y-m-d H:m')}}
+                            @if($request->bookKeeper)
+                                {{  $request->bookKeeper->created_at->format('Y-m-d H:m')}}
                             @endif
                         @endif
                     </td>
@@ -590,7 +598,7 @@
                                 @csrf
                                     <select id="accountantStatus" name="status" class="border-0 outline-0 w-100">
                                         @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
-                                            @if($request->accountantApproval && $request->accountantApproval->status == $case)
+                                            @if($request->accountant && $request->accountant->status == $case)
                                                 <option value="{{$case->name}}" selected>{{$case->name}}</option>
                                             @else
                                                 <option value="{{$case->name}}">{{$case->name}}</option>
@@ -641,8 +649,8 @@
                         @if($request->priority)
                             {{  $request->created_at->format('Y-m-d H:m')}}
                         @else
-                            @if($request->accountantApproval)
-                                {{$request->accountantApproval->created_at->format('y-m-d H:m')}}
+                            @if($request->accountant)
+                                {{$request->accountant->created_at->format('y-m-d H:m')}}
                             @endif
                         @endif
                     </td>
@@ -704,7 +712,7 @@
                          @csrf
                         <select id="financeStatus" name="status" class="border-0 outline-0 w-100">
                             @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
-                                    @if($request->financeApproval && $request->financeApproval->status == $case)
+                                    @if($request->finance && $request->finance->status == $case)
                                         <option value="{{$case->name}}" selected>{{$case->name}}</option>
                                     @else
                                         <option value="{{$case->name}}">{{$case->name}}</option>
@@ -747,8 +755,8 @@
                         @endif
                     </td>
                     <td colspan="5" class="small px-2">
-                        @if($request->financeApproval)
-                            {{$request->financeApproval->created_at->format('y-m-d H:m')}}
+                        @if($request->finance)
+                            {{$request->finance->created_at->format('y-m-d H:m')}}
                         @endif
                     </td>
                 </tr>
@@ -815,7 +823,7 @@
                             @csrf
                             <select id="auditorStatus" name="status" class="border-0 outline-0 w-100">
                                 @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
-                                    @if($request->auditorApproval && $request->auditorApproval->status == $case)
+                                    @if($request->auditor && $request->auditor->status == $case)
                                         <option value="{{$case->name}}" selected>{{$case->name}}</option>
                                     @else
                                         <option value="{{$case->name}}">{{$case->name}}</option>
@@ -859,8 +867,8 @@
                         @endif
                     </td>
                     <td colspan="5" class="small px-2">
-                        @if($request->auditorApproval)
-                            {{ $request->auditorApproval->created_at->format('Y-m-d H:m')}}
+                        @if($request->auditor)
+                            {{ $request->auditor->created_at->format('Y-m-d H:m')}}
                         @endif
                     </td>
                 </tr>
@@ -934,6 +942,35 @@
                 </tr>
                 </tbody>
             </table>
+        </div>
+
+        <!-- COMMENTS -->
+
+        <div class="row m-0 mt-3 py-4 px-2 bg-white w-100" id="comment">
+            <div class="container px-4">
+                <div class="row border border-dark text-start" style="display: flex; flex-direction: column; height: 600px;">
+                    <div class="overflow-y-auto d-flex flex-column justify-content-end bg-dark text-center text-white py-2">COMMENT SECTION</div>
+                    <div class="p-2" style="overflow-x:hidden; overflow-y:auto; flex: 1;" id="commentsHolder">
+                        <!-- COMMENTS ARE GENERATED HERE! -->
+                    </div>
+                    <div class="p-0">
+                        <form id="commentForm">
+                            <div class="comment-area">
+                                <div class="bg-dark"
+                                     style="display: flex; justify-content: center; align-items: center; flex-direction: row; margin: 0; padding: 0;">
+                                    <div class="w-100 p-1">
+                                <textarea class="form-control rounded-pill" placeholder="Type your message here."
+                                          rows="1" name="message" required=""></textarea>
+                                    </div>
+                                    <div class="w-50 p-1 d-flex align-items-center">
+                                        <button type="submit" class="btn btn-sm btn-danger py-1 w-100 rounded-pill">Send</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1117,6 +1154,10 @@
         const vatOptionB = document.querySelector('#vatOption2');
 
         const requestStatus = document.querySelector('#requestStatus');
+
+        const commentForm = document.querySelector('#commentForm');
+        const commentHolder = document.querySelector('#commentsHolder');
+        let initialLoad = true;
 
         purchaseOrderInput.addEventListener('change',()=>{
 
@@ -1410,6 +1451,35 @@
             }
         })
 
+        commentForm.addEventListener('submit', async (e)=>{
+
+            e.preventDefault();
+
+            const formData = new FormData(commentForm);
+
+            try{
+
+                commentForm.reset();
+
+                const result = await fetch('/expense/expense-request/comment/{{$request->id}}', {
+                    body: formData,
+                    method: "POST",
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                })
+
+                if(!result.ok){
+                    throw new Error('Message not sent!');
+                }
+
+                initialLoad = true;
+
+            }catch (error){
+                console.error(error)
+            }
+        })
+
         async function generateVoucher(){
             try {
 
@@ -1500,6 +1570,7 @@
         groupCheck('attachmentType', updateType, removeType);
         groupCheck('attachmentReceipt', updateReceipt, removeReceipt);
         groupCheck('priorityLevel', updatePriorityLevel, removePriorityLevel);
+        groupCheck('fundStatus', updateFundStatus, removeFundStatus);
 
         requestStatus.addEventListener('change', async ()=>{
 
@@ -2080,6 +2151,139 @@
                 bankCodeSelection.classList.add('bg-red')
                 checkNumberInput.classList.add('bg-red')
             })
+        }
+
+
+        function updateFundStatus(target) {
+
+            const formData = new FormData();
+
+            formData.append('status', target.value);
+
+            fetch('/expense/api/expense-request/fund-status/{{$request->id}}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                }
+            }).then(response => {
+
+                if (!response.ok) {
+                    throw new Error("Something went wrong!");
+                }
+
+                return response.json();
+
+            }).then(data => {
+
+                console.log(data.message);
+
+                bankNameSelection.classList.remove('bg-red')
+                bankCodeSelection.classList.remove('bg-red')
+                checkNumberInput.classList.remove('bg-red')
+                checkNumberInput.value = '';
+            }).catch(err => {
+
+                console.log(err.message);
+
+                bankNameSelection.classList.add('bg-red')
+                bankCodeSelection.classList.add('bg-red')
+                checkNumberInput.classList.add('bg-red')
+            })
+        }
+
+        function removeFundStatus(target) {
+
+            const formData = new FormData();
+
+            formData.append('status', '{{\App\Enums\RequestFundStatus::NONE}}');
+
+
+            fetch('/expense/api/expense-request/fund-status/{{$request->id}}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                }
+            }).then(response => {
+
+                if (!response.ok) {
+                    throw new Error("Something went wrong!");
+                }
+
+                return response.json();
+
+            }).then(data => {
+
+                console.log(data);
+
+                bankNameSelection.classList.remove('bg-red')
+                bankCodeSelection.classList.remove('bg-red')
+                checkNumberInput.classList.remove('bg-red')
+                checkNumberInput.value = '';
+            }).catch(err => {
+
+                console.log(err.message);
+
+                bankNameSelection.classList.add('bg-red')
+                bankCodeSelection.classList.add('bg-red')
+                checkNumberInput.classList.add('bg-red')
+            })
+        }
+
+        function loadComments(){
+            fetch('/expense/expense-request/comments/{{$request->id}}', {
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                }
+            }).then(response => {
+
+                if (!response.ok) {
+                    throw new Error("Something went wrong!");
+                }
+
+                return response.text();
+
+            }).then(data => {
+
+                commentHolder.innerHTML = data;
+
+                if(initialLoad){
+                    commentHolder.scrollTop = commentHolder.scrollHeight - commentHolder.clientHeight;
+                    initialLoad = false;
+                }
+
+            }).catch(err => {
+
+                console.log(err.message);
+
+                bankNameSelection.classList.add('bg-red')
+                bankCodeSelection.classList.add('bg-red')
+                checkNumberInput.classList.add('bg-red')
+            })
+        }
+
+        window.addEventListener('load',()=>{
+
+            loadComments();
+
+            setInterval(loadComments, 1000);
+        })
+
+
+        const expenseRequestPrintable = document.getElementById('printable');
+
+        const expenseRequestPrintableOption = {
+            margin:       0,
+            filename:     '{{$request->reference}}.pdf',
+            image:        { type: 'jpeg', quality: 1 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'in', format: 'A3', orientation: 'portrait' }
+        };
+
+
+        function generatePDF(){
+            html2pdf().set(expenseRequestPrintableOption).from(expenseRequestPrintable).save();
         }
 
     </script>

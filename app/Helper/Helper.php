@@ -7,6 +7,19 @@ use NumberToWords\NumberToWords;
 
 class Helper
 {
+    public static function padID($id): string
+    {
+        return str_pad($id,3,"0",STR_PAD_LEFT);
+    }
+
+    public static function rawID($reference, $separator = '-'): string
+    {
+        $parts = explode($separator, $reference);
+
+        $value = trim($parts[1] ?? $parts[0]);
+
+        return trim($value, "0");
+    }
 
     private static function convertNumberToWords($number)
     {

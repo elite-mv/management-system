@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\RequestApprovalStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -10,20 +9,19 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-
     public function up(): void
     {
-
-        Schema::create('request_approvals', function (Blueprint $table) {
+        Schema::create('request_comments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('request_id')->constrained();
-            $table->foreignId('role_id')->constrained();
-            $table->foreignId('user_id')->nullable()->constrained();
-            $table->enum('status', [
-                RequestApprovalStatus::PENDING->name,
-                RequestApprovalStatus::APPROVED->name,
-                RequestApprovalStatus::DISAPPROVE->name
+            $table->enum('type',[
+                \App\Enums\RequestCommentType::TEXT->value,
+                \App\Enums\RequestCommentType::URL->value,
+                \App\Enums\RequestCommentType::FILE->value,
+                \App\Enums\RequestCommentType::IMG->value,
             ]);
+            $table->text('message');
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }
@@ -33,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('request_approvals');
+        Schema::dropIfExists('request_comments');
     }
 };

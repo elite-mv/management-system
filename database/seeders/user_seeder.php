@@ -214,6 +214,6 @@ class user_seeder extends Seeder
                 'role_id' => 3,
                 'name' => 'MR. AURELIO CRUZIN',
             ]
-                ]);
+        ]);
     }
 }

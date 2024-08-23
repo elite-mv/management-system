@@ -6,13 +6,18 @@ use App\Enums\AccountingAttachment;
 use App\Enums\AccountingReceipt;
 use App\Enums\AccountingType;
 use App\Enums\PaymentMethod;
+use App\Enums\RequestApprovalStatus;
+use App\Enums\RequestFundStatus;
 use App\Enums\RequestPriorityLevel;
 use App\Enums\RequestStatus;
+use App\Enums\UserRole;
 use App\Models\Expense\Company;
 use App\Models\Expense\JobOrder;
 use App\Models\Expense\Measurement;
 use App\Models\Expense\Request as ModelsRequest;
+use App\Models\Expense\RequestApproval;
 use App\Models\Expense\RequestItem;
+use App\Models\Expense\Role;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -64,8 +69,22 @@ class RequestController extends Controller
                 $item->save();
             }
 
-            DB::commit();
+            $roles = [
+                UserRole::BOOK_KEEPER->value,
+                UserRole::ACCOUNTANT->value,
+                UserRole::FINANCE->value,
+                UserRole::AUDITOR->value,
+            ];
 
+            foreach ($roles as $roleName) {
+                RequestApproval::create([
+                    'request_id' => $expenseRequest->id,
+                    'status' => RequestApprovalStatus::PENDING,
+                    'role_id' => Role::where('name', $roleName)->pluck('id')->first(),
+                ]);
+            }
+
+            DB::commit();
 
             return ['message' => 'expense request added'];
 
@@ -303,4 +322,35 @@ class RequestController extends Controller
 
     }
 
+    public function updateFundStatus(Request $request, $requestID)
+    {
+        try {
+
+            DB::beginTransaction();
+
+            $requestModel = ModelsRequest::where('id', $requestID)->firstOrFail();
+
+            $requestModel->fund_status = RequestFundStatus::valueOf($request->input('status'));
+
+            $requestModel->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'ok',
+                'status' => '200',
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => '500',
+            ],
+                500
+            );
+        }
+    }
 }

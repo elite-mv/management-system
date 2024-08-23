@@ -8,6 +8,7 @@
         "php": "^8.2",
         "ext-intl": "*",
         "bacon/bacon-qr-code": "^3.0",
+        "barryvdh/laravel-dompdf": "*",
         "codedge/laravel-fpdf": "^1.12",
         "kwn/number-to-words": "^2.9",
         "laravel/framework": "^11.9",

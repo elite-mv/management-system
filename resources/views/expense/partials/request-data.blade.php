@@ -2,7 +2,7 @@
 @forelse ($requests as $request)
     <tr>
         <td>{{ $request->reference}}</td>
-        <td>{!! \App\Helper\Helper::formatPeso( $request->amount) !!}</td>
+        <td>{{$request->timeLapse}}</td>
         <td>{{ $request->company->name}}</td>
         <td>{{ $request->request_by}}</td>
         <td>{{ $request->status}}</td>
