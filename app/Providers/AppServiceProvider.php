@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Enums\UserRole;
 use App\Models\Expense\Request as ModelsRequest;
 use App\Models\Expense\User;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Blade;
@@ -28,6 +29,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
+        Paginator::useBootstrapFive();
+
         Gate::define('view-request', function (User $user, ModelsRequest $modelRequest) {
 
             if ($user->id === $modelRequest->prepared_by) {

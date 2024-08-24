@@ -3,6 +3,7 @@
 namespace App\Enums;
 
 enum RequestStatus: string {
+
     case PENDING = 'PENDING';
     case TO_RETURN = 'TO RETURN';
     case HOLD = 'HOLD';

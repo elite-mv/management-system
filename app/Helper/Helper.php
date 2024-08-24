@@ -21,6 +21,13 @@ class Helper
         return trim($value, "0");
     }
 
+    public static function rawReference($reference, $separator = '-'): string
+    {
+        $parts = explode($separator, $reference);
+
+        return trim($parts[0]);
+    }
+
     private static function convertNumberToWords($number)
     {
         $words = '';

@@ -318,7 +318,7 @@
                 @endforeach
                 <tr>
                     <td colspan="15" class="px-2 small bg-yellow text-end fw-bold">TOTAL</td>
-                    <td colspan="4"
+                    <td colspan="3"
                         class="px-2 small bg-yellow text-center fw-bold">{!! \App\Helper\Helper::formatPeso($request->fund) !!}</td>
                 </tr>
                 <tr>

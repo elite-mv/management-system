@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Expense;
 
 use App\Enums\RequestApprovalStatus;
+use App\Enums\RequestItemStatus;
 use App\Enums\RequestStatus;
 use App\Enums\UserRole;
 use App\Helper\Helper;
 use App\Models\Expense\BookKeeperApproval;
 use App\Models\Expense\Request as ModelsRequest;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use function PHPUnit\TestFixture\func;
 
 class BookKeeperController extends Controller
@@ -52,6 +55,28 @@ class BookKeeperController extends Controller
         $query->when($request->input('search'), function ($qb) use ($request) {
             $qb->where('id',Helper::rawID($request->input('search')));
             $qb->orWhere('request_by', 'LIKE', $request->input('search') . '%');
+
+            $qb->orWhereRaw("DATE_FORMAT(created_at, '%Y%m%d') LIKE ?", [Helper::rawReference($request->input('search'))]);
+        });
+
+        $query->when($request->input('entity'), function ($qb) use ($request) {
+            if($request->input('entity') != 'ALL') {
+                $qb->where('company_id',$request->input('entity'));
+            }
+        });
+
+        $query->when($request->input('paymentStatus'), function ($qb) use ($request) {
+            if($request->input('paymentStatus') != 'ALL') {
+                $qb->where('status',$request->input('paymentStatus'));
+            }
+        });
+
+        $query->when($request->input('from'), function ($qb) use ($request) {
+            $qb->whereDate('created_at', '>=', Carbon::createFromFormat('Y-m-d',$request->input('from'))->toDateString());
+        });
+
+        $query->when($request->input('to'), function ($qb) use ($request) {
+            $qb->whereDate('created_at', '<=', Carbon::createFromFormat('Y-m-d',$request->input('to'))->toDateString());
         });
 
         $query->whereHas('approvals', function ($qb) use ($request) {
@@ -63,11 +88,19 @@ class BookKeeperController extends Controller
             $qb->whereHas('role', function ($q){
                 $q->where('name', UserRole::BOOK_KEEPER->value);
             });
+
         });
 
-        $requests = $query->paginate($request->input('entries'));
+        $total = $query->get()->sum(fn($item) => $item->fund);
 
-        return view('expense.partials.request-data', ['requests' => $requests]);
+        $requests = $query->paginate(1);
+
+        return view('expense.partials.request-data',
+            [
+                'requests' => $requests,
+                'total' => $total,
+            ]
+        );
     }
 
     private function search($query, $data)
@@ -80,3 +113,4 @@ class BookKeeperController extends Controller
         });
     }
 }
+

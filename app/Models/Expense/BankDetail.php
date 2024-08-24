@@ -4,6 +4,7 @@ namespace App\Models\Expense;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BankDetail extends Model
 {
@@ -15,5 +16,16 @@ class BankDetail extends Model
         'bank_code_id',
         'check_number'
     ];
+
+    public function bank(): BelongsTo
+    {
+        return $this->belongsTo(BankName::class, 'bank_name_id');
+    }
+
+    public function code(): BelongsTo
+    {
+        return $this->belongsTo(BankCode::class, 'bank_code_id');
+    }
+
 
 }
