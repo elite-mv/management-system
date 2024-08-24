@@ -93,12 +93,13 @@ class BookKeeperController extends Controller
 
         $total = $query->get()->sum(fn($item) => $item->fund);
 
-        $requests = $query->paginate(1);
+        $requests = $query->paginate($request->input('entries') ?? 10, ['*'],  'page',   $request->input('page') ?? 1);
 
         return view('expense.partials.request-data',
             [
                 'requests' => $requests,
                 'total' => $total,
+                'page' => $request->input('page'),
             ]
         );
     }

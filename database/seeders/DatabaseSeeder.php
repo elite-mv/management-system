@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
             CompanySeeder::class,
             JobOrderSeeder::class,
             MeasurementSeeder::class,
-            RequestItemSeeder::class,
             RoleSeeder::class,
             user_seeder::class,
             BankSeeder::class,

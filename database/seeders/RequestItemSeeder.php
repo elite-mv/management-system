@@ -2,7 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Expense\Request;
+use App\Models\Expense\RequestApproval;
+use App\Models\Expense\RequestItem;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Seeder;
 
 class RequestItemSeeder extends Seeder
@@ -12,6 +15,10 @@ class RequestItemSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Request::factory()
+            ->count(10000)
+            ->has(RequestItem::factory()->count(10), 'items')
+            ->has(RequestApproval::factory(),'approvals')
+            ->create();
     }
 }

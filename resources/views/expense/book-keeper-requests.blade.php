@@ -171,12 +171,15 @@
             getData();
         }
 
-        function getData() {
+        function getData(cb = null) {
 
             let formData = new FormData(filterForm);
-            const params = new URLSearchParams(formData);
 
-            console.log('searching');
+            if(cb){
+                cb(formData);
+            }
+
+            const params = new URLSearchParams(formData);
 
             fetch(`/expense/api/book-keeper?${params.toString()}`, {
                 headers: {
@@ -212,7 +215,7 @@
 
                     sorttable.makeSortable( document.getElementById('sortableTable'));
 
-
+                    setupPageLinks();
 
                 }).catch(err => {
                 console.error(err)
@@ -221,7 +224,25 @@
 
         }
 
+        function setupPageLinks(){
 
+            const links = document.querySelectorAll('.page-link');
+
+
+            links.forEach(link =>{
+                link.addEventListener('click',(e)=>{
+
+                    e.preventDefault();
+
+                    const url = new URL(e.target.href);
+
+                    getData(formData =>{
+                        formData.append('page', url.searchParams.get("page") ?? 1);
+                    });
+
+                })
+            })
+        }
     </script>
 
     <script type="text/javascript" src="/js/sortable.js"></script>
