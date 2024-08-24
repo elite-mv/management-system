@@ -21,6 +21,14 @@ class user_seeder extends Seeder
             'role_id' => 1,
             'email_verified_at' => Carbon::now()->toDateTime(),
             'password' => bcrypt('testpassword123'),
-        ]);
+        ],
+        [
+            'name' => 'Tester',
+            'email' => 'test@president.com',
+            'role_id' => 7,
+            'email_verified_at' => Carbon::now()->toDateTime(),
+            'password' => bcrypt('qazws123'),
+        ]
+    );
     }
 }

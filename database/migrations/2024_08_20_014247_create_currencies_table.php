@@ -6,22 +6,15 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
-
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('customers', function (Blueprint $table) {
+        Schema::create('currencies', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->string('company')->nullable();
-            $table->string('email')->unique();
-            $table->string('contact_number')->nullable();
-            $table->string('address')->nullable();
-            $table->string('currency')->nullable();
-            $table->string('position')->nullable();
+            $table->string('symbol')->nullable();
             $table->timestamps();
         });
     }
@@ -31,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('customers');
+        Schema::dropIfExists('currencies');
     }
 };
