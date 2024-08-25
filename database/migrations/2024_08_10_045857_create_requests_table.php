@@ -18,7 +18,7 @@ return new class extends Migration
             $table->id();
             $table->string('supplier')->nullable();
             $table->string('paid_to')->nullable();
-            $table->string('request_by')->nullable();
+            $table->string('request_by')->index()->nullable();
             $table->foreignId('prepared_by')->nullable()->constrained('users');
             $table->foreignId('company_id')->nullable()->constrained();
 

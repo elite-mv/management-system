@@ -47,4 +47,8 @@ class RequestItem extends Model
         return $this->belongsTo(Measurement::class);
     }
 
+    public function request(): BelongsTo
+    {
+        return $this->belongsTo(Request::class,'request_id');
+    }
 }

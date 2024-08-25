@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('bank_codes', function (Blueprint $table) {
             $table->id();
-            $table->string('code')->unique();
-            $table->foreignId('bank_name_id')->constrained('bank_names');
+            $table->string('code')->index()->unique();
+            $table->foreignId('bank_name_id')->index()->constrained('bank_names');
             $table->timestamps();
         });
     }

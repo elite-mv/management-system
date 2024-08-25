@@ -99,9 +99,45 @@
 
         </form>
 
-        <div class="row mb-3" id="requestData">
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-6 text-start">
+                                <i class="fas fa-table me-1"></i>
+                                <b>Requests</b>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body overflow-x-auto" >
+                        <table class="table sortable" id="sortableTable">
+
+                            <thead>
+                            <tr>
+                                <th class="sorttable_nosort">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="requestAllInput">
+                                    </div>
+                                </th>
+                                <th>REFERENCE</th>
+                                <th>DURATION</th>
+                                <th>ENTITY</th>
+                                <th>REQUESTED BY</th>
+                                <th>STATUS</th>
+                                <th>TOTAL</th>
+                                <th>ACTION</th>
+                            </tr>
+                            </thead>
+                            <tbody  id="requestData">
 
 
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
         </div>
     </div>
 @endsection
@@ -122,7 +158,6 @@
 
         let requestAllInput;
         let requestInputSelections = [];
-
 
         function addSelectionEvent(){
             requestInputSelections.forEach(selection =>{
@@ -213,21 +248,15 @@
                         }
                     }
 
-                    sorttable.makeSortable( document.getElementById('sortableTable'));
-
                     setupPageLinks();
-
                 }).catch(err => {
                 console.error(err)
             })
-
-
         }
 
         function setupPageLinks(){
 
             const links = document.querySelectorAll('.page-link');
-
 
             links.forEach(link =>{
                 link.addEventListener('click',(e)=>{

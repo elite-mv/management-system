@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('bank_names', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('name')->index()->unique();
             $table->timestamps();
         });
     }

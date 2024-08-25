@@ -234,7 +234,7 @@
                         <td colspan="2" class="small px-2 bg-transparent">{{$item->jobOrder->name}}</td>
                         <td colspan="2" class="small bg-transparent">
                             <div class="d-flex align-items-center bg-transparent">
-                                <p class="m-0 p-0" style="max-width: 200px">{{$item->description}}</p>
+                                <p class="m-0 p-0 text-ellipsis" style="max-width: 45ch">{{$item->description}}</p>
                                 <i class="ms-auto fas fa-images"></i>
                             </div>
                         </td>
@@ -303,17 +303,13 @@
                         <td colspan="4" class="small px-2 bg-transparent">{{$item->quantity}}</td>
                         <td colspan="4" class="small px-2 bg-transparent">{{$item->measurement->name}}</td>
                         <td colspan="1" class="small px-2 bg-transparent">{{$item->jobOrder->name}}</td>
-                        <td colspan="3" role="button" class="small px-2 pointer" data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">
-                            <div class="d-flex align-items-center bg-transparent">
+                        <td colspan="3" class="small px-2 pointer" style="max-width: 45ch">
                                 <p class="m-0 p-0 text-truncate">{{$item->description}}</p>
-                                <i class="ms-auto fas fa-images"></i>
-                            </div>
                         </td>
                         <td colspan="3"
                             class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->cost) !!}</td>
                         <td colspan="3"
-                            class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->cost) !!}</td>
+                            class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->total) !!}</td>
                     </tr>
                 @endforeach
                 <tr>

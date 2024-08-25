@@ -21,7 +21,8 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             user_seeder::class,
             BankSeeder::class,
-            ExpenseCategorySeeder::class
+            ExpenseCategorySeeder::class,
+            RequestItemSeeder::class
         ]);
 
     }

@@ -16,9 +16,9 @@ return new class extends Migration
 
         Schema::create('request_approvals', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('request_id')->constrained();
-            $table->foreignId('role_id')->constrained();
-            $table->foreignId('user_id')->nullable()->constrained();
+            $table->foreignId('request_id')->index()->constrained();
+            $table->foreignId('role_id')->index()->constrained();
+            $table->foreignId('user_id')->index()->nullable()->constrained();
             $table->enum('status', [
                 RequestApprovalStatus::PENDING->name,
                 RequestApprovalStatus::APPROVED->name,

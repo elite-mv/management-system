@@ -39,11 +39,11 @@ class AppServiceProvider extends ServiceProvider
             }
 
             $isAllowed = in_array($user->role->name, [
-                UserRole::BOOK_KEEPER,
-                UserRole::AUDITOR,
-                UserRole::ACCOUNTANT,
-                UserRole::FINANCE,
-                UserRole::PRESIDENT,
+                UserRole::BOOK_KEEPER->value,
+                UserRole::AUDITOR->value,
+                UserRole::ACCOUNTANT->value,
+                UserRole::FINANCE->value,
+                UserRole::PRESIDENT->value,
             ]);
 
             return $isAllowed;

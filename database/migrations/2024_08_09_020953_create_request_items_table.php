@@ -16,8 +16,8 @@ return new class extends Migration
             $table->integer('quantity');
             $table->float('cost');
             $table->text('description');
-            $table->foreignId('measurement_id')->constrained();
-            $table->foreignId('job_order_id')->constrained();
+            $table->foreignId('measurement_id')->index()->constrained();
+            $table->foreignId('job_order_id')->index()->constrained();
             $table->timestamps();
         });
     }
