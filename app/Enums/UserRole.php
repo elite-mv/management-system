@@ -2,13 +2,16 @@
 
 namespace App\Enums;
 
-enum UserRole {
-    const DEVELOPER = "developer";
-    const BOOK_KEEPER = "book keeper";
-    const ACCOUNTANT = "accountant";
-    const FINANCE = "finance";
-    const PRESIDENT = "president";
-    const AUDITOR = "auditor";
-    const STAFF = "staff";
-    const USER = "regular";
+enum UserRole: string{
+    case DEVELOPER = "developer";
+    case BOOK_KEEPER = "book keeper";
+    case ACCOUNTANT = "accountant";
+    case FINANCE = "finance";
+    case PRESIDENT = "president";
+    case AUDITOR = "auditor";
+    case STAFF = "staff";
+    case USER = "regular";
+    case MODERATOR = "moderator";
+    case SALES_OFFICER = "sales officer";
+
 }

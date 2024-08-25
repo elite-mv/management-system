@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Expense;
 
-use App\Enums\RequestPaymentStatus;
+use App\Enums\RequestStatus;
 use App\Models\Expense\Request as ModelsRequest;
 
 class FinanceController extends Controller
@@ -15,7 +15,7 @@ class FinanceController extends Controller
     public function getRequests()
     {
         $requests = ModelsRequest::where('priority', true)
-        ->where('status', RequestPaymentStatus::PENDING->name)->get();
+        ->where('status', RequestStatus::PENDING->name)->get();
 
         return view('/partials/request-data', ['requests' => $requests]);
     }

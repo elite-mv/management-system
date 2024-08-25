@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Expense;
 
+use App\Enums\RequestItemStatus;
 use App\Models\Expense\Measurement;
 use App\Models\Expense\RequestItem;
 use App\Models\Expense\RequestItemImage;
@@ -29,6 +30,32 @@ class RequestItemController extends Controller
         $requestItem->save();
 
         return ['message' => 'item added'];
+    }
+
+    public function updateRequestItem(Request $request, RequestItem $requestItem){
+
+        try{
+            DB::beginTransaction();
+
+            $requestItem->job_order_id = $request->input('jobOrder');
+            $requestItem->measurement_id = $request->input('measurement');
+            $requestItem->quantity = $request->input('quantity');
+            $requestItem->cost = $request->input('cost');
+            $requestItem->description = $request->input('description');
+            $requestItem->remarks = $request->input('remarks');
+
+            $requestItem->status = RequestItemStatus::valueOf($request->input('status'))->name;
+            $requestItem->save();
+
+            Db::commit();
+
+            return redirect()->route('request', ['id' => $requestItem->request_id]);
+
+        }catch (\Exception $exception){
+            DB::rollBack();
+            return redirect()->route('request', ['id' => $requestItem->request_id])->withErrors();
+        }
+
     }
 
     public function getRequestItems(){

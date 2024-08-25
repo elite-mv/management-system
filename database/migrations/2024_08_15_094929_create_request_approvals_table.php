@@ -13,12 +13,12 @@ return new class extends Migration
 
     public function up(): void
     {
-        
+
         Schema::create('request_approvals', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('request_id');
-            $table->foreignId('role_id');
-            $table->foreignId('user_id');
+            $table->foreignId('request_id')->index()->constrained();
+            $table->foreignId('role_id')->index()->constrained();
+            $table->foreignId('user_id')->index()->nullable()->constrained();
             $table->enum('status', [
                 RequestApprovalStatus::PENDING->name,
                 RequestApprovalStatus::APPROVED->name,

@@ -16,6 +16,7 @@ class ExpenseCategorySeeder extends Seeder
     {
         // Define the expense categories
         $expenseCategories = [
+            '',
             'Cost of Sales',
             'Supplies and materials',
             'Cost of labour',

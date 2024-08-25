@@ -5,9 +5,14 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 input[type="number"] {
+    appearance: textfield;
     -moz-appearance: textfield;
 }
 
 input[name="search"]:focus{
  	outline: none;
+}
+
+table > tbody > *:hover {
+    cursor: pointer;
 }
