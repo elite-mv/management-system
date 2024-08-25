@@ -16,7 +16,7 @@ class RequestItemSeeder extends Seeder
     public function run(): void
     {
         Request::factory()
-            ->count(10000)
+            ->count(100)
             ->has(RequestItem::factory()->count(10), 'items')
             ->has(RequestApproval::factory(),'approvals')
             ->create();

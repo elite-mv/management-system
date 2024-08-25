@@ -22,14 +22,14 @@ class DatabaseSeeder extends Seeder
             CompanySeeder::class,
             JobOrderSeeder::class,
             MeasurementSeeder::class,
-            RequestItemSeeder::class,
             RoleSeeder::class,
             user_seeder::class,
             BankSeeder::class,
             ExpenseCategorySeeder::class,
             CustomerSeeder::class,
             CurrencySeeder::class,
-            SalutationSeeder::class
+            SalutationSeeder::class,
+            RequestItemSeeder::class,
         ]);
 
     }
