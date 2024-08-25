@@ -11,9 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('salutations', function (Blueprint $table) {
+        Schema::create('quotation_items', function (Blueprint $table) {
             $table->id();
-            $table->string('salutation')->unique();
+            $table->foreignId('quotation_id')->constrained('quotation_lists');
+            $table->string('unit_detail');
+            $table->float('quantity');
+            $table->float('unit_cost');
+            $table->float('discount');
+            $table->float('amount');
             $table->timestamps();
         });
     }
@@ -23,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('salutations');
+        Schema::dropIfExists('quotation_items');
     }
 };

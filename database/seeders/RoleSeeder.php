@@ -43,6 +43,10 @@ class RoleSeeder extends Seeder
                     'id' => 7,
                     'name' => UserRole::STAFF->value
                 ],
+                [
+                    'id' => 8,
+                    'name' => UserRole::SALES_OFFICER->value
+                ],
             ]
         );
     }

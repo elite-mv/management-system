@@ -44,7 +44,7 @@
 
             <nav>
                 <div>
-                    <a href="home.php">
+                    <a href="/income/" class="home">
                         <small>
                             <i class="fas fa-home me-4"></i>
                             <span class="hidable">
@@ -65,27 +65,27 @@
                         </small>
                     </a>
                     <div id="DD_SALES_Nav">
-                        <a href="/income/customer">
+                        <a href="/income/customer" class="customer">
                             <small class="ps-4">
                                 CUSTOMERS
                             </small>
                         </a>
-                        <a href="quotes.php">
+                        <a href="/income/quote" class="quote">
                             <small class="ps-4">
                                 QUOTES
                             </small>
                         </a>
-                        <a href="invoices.php">
+                        <a href="/income/invoice" class="invoice">
                             <small class="ps-4">
                                 INVOICES
                             </small>
                         </a>
-                        <a href="soa.php">
+                        <a href="/income/soa" class="soa">
                             <small class="ps-4">
                                 STATEMENT OF ACCOUNT
                             </small>
                         </a>
-                        <a href="contracts.php">
+                        <a href="/income/contract" class="contract">
                             <small class="ps-4">
                                 CONTRACTS
                             </small>
@@ -104,17 +104,17 @@
                         </small>
                     </a>
                     <div id="DD_PURCHASES_Nav">
-                        <a href="vendor.php">
+                        <a href="/income/vendor" class="vendor">
                             <small class="ps-4">
                                 VENDORS
                             </small>
                         </a>
-                        <a href="pos.php">
+                        <a href="/income/purchase_order" class="purchase_order">
                             <small class="ps-4">
                                 PURCHASE ORDERS
                             </small>
                         </a>
-                        <a href="jos.php">
+                        <a href="/income/job_order" class="job_order">
                             <small class="ps-4">
                                 JOB ORDERS
                             </small>
@@ -123,7 +123,7 @@
                 </div>
 
                 <div>
-                    <a href="reports.php">
+                    <a href="/income/report" class="report">
                         <small>
                             <i class="far fa-chart-bar me-4"></i>
                             <span class="hidable">

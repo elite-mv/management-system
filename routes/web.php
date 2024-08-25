@@ -18,6 +18,9 @@ use App\Http\Controllers\Expense\RequestItemController;
 use App\Http\Controllers\Expense\RequestVoucher;
 use App\Http\Controllers\Expense\VatController;
 use App\Http\Controllers\Income\CustomerController;
+use App\Http\Controllers\Income\IncomeController;
+use App\Http\Controllers\Income\QuoteController;
+use App\Http\Controllers\Income\InvoiceController;
 use App\Http\Controllers\PdfController;
 use App\Http\Middleware\SetGlobalVariables;
 use Illuminate\Support\Facades\Route;
@@ -27,10 +30,29 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 
 Route::prefix('income')->group(function () {
+    Route::get('/', [IncomeController::class, 'index']);
+
     Route::get('/customer', [CustomerController::class, 'index']);
-    Route::post('/customer', [CustomerController::class, 'addCustomerData']);
-    Route::post('/salutation', [CustomerController::class, 'addSalutationData']);
-    Route::get('/salutation', [CustomerController::class, 'ReaddSalutationData']);
+    Route::post('/customer/add', [CustomerController::class, 'addCustomerData']);
+    Route::put('/customer/update', [CustomerController::class, 'updateCustomerData']);
+    Route::get('/customer/get', [CustomerController::class, 'ReaddCustomerData']);
+    Route::get('/customer/select', [CustomerController::class, 'selectCustomerData']);
+    Route::post('/customer/salutation/add', [CustomerController::class, 'addSalutationData']);
+    Route::get('/customer/salutation/get', [CustomerController::class, 'ReaddSalutationData']);
+    Route::post('/customer/currency/add', [CustomerController::class, 'addCurrencyData']);
+    Route::get('/customer/currency/get', [CustomerController::class, 'ReaddCurrencyData']);
+
+    Route::get('/quote', [QuoteController::class, 'index']);
+    Route::post('/quote/addList', [QuoteController::class, 'addQuotationList']);
+    Route::post('/quote/ReaddList', [QuoteController::class, 'ReaddQuotationList']);
+    Route::post('/quote/addItem', [QuoteController::class, 'addQuotationItem']);
+    Route::get('/quote/selectList', [QuoteController::class, 'getQuotationList']);
+    Route::get('/quote/selectItem', [QuoteController::class, 'getQuotationItem']);
+    Route::get('/quote/selectNavigation', [QuoteController::class, 'getQuotationNavigation']);
+    Route::post('/quote/customer/add', [QuoteController::class, 'addCustomerData']);
+    Route::get('/quote/customer/get', [QuoteController::class, 'ReaddCustomerData']);
+
+    Route::get('/invoice', [InvoiceController::class, 'index']);
 });
 
 

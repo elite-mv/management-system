@@ -12,5 +12,6 @@ enum UserRole: string{
     case STAFF = "staff";
     case USER = "regular";
     case MODERATOR = "moderator";
+    case SALES_OFFICER = "sales officer";
 
 }
