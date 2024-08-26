@@ -2347,7 +2347,19 @@
 
                 let files = await result.json();
 
-                console.log(files);
+                files.images.forEach(attachment =>{
+
+                    let imageSrc = (attachment.split('/'))[1];
+
+                    const thumbnail = $('<img>').attr('src', '/storage/' + imageSrc).addClass('uploaded-img');
+
+                    $('#uploads').append(thumbnail);
+
+                });
+
+                console.log(files.images);
+
+                viewer.update();
 
             } catch (error) {
                 Swal.fire({
