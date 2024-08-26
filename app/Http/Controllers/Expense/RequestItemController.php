@@ -70,9 +70,12 @@ class RequestItemController extends Controller
 
     public function getRequestItem($id){
 
-        $requestItem =  RequestItem::where('id', $id)->firstOrFail();
+        $requestItem =  RequestItem::where('id', $id)->with('attachments')->firstOrFail();
 
-        return $requestItem;
+        return response()->json([
+            'item' => $requestItem,
+        ]);
+
     }
 
     public function updateItem(Request $request, $id){

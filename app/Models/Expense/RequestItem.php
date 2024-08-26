@@ -6,6 +6,7 @@ use App\Enums\RequestItemStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class RequestItem extends Model
 {
@@ -50,5 +51,10 @@ class RequestItem extends Model
     public function request(): BelongsTo
     {
         return $this->belongsTo(Request::class,'request_id');
+    }
+
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(RequestItemImage::class);
     }
 }
