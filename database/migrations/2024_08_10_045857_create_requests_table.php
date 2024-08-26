@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('supplier')->nullable();
             $table->string('paid_to')->nullable();
             $table->string('request_by')->index()->nullable();
+            $table->string('reference')->index()->nullable();
             $table->foreignId('prepared_by')->nullable()->constrained('users');
             $table->foreignId('company_id')->nullable()->constrained();
 

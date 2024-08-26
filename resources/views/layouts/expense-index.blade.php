@@ -175,7 +175,7 @@
                 <div class="mb-3">
                     <a href="exp.php" class="exp_nav">
                         <i class="fas fa-folder-open" style="height: 20px; width: 20px;"></i>
-                        <small><b>Expected Events</b></small>
+                        <small><b>Logs</b></small>
                     </a>
                 </div>
 
@@ -187,28 +187,12 @@
                 </div>
 
                 <div class="mb-3">
-                    <a href="calculator.php" class="calculator_nav">
-                        <i class="fas fa-calculator" style="height: 20px; width: 20px;"></i>
-                        <small><b>Calculator</b></small>
+                    <a href="downloadable_forms.php" class="dl_forms_nav">
+                        <i class="fas fa-download" style="height: 20px; width: 20px;"></i>
+                        <small><b>Downloadable Forms</b></small>
                     </a>
                 </div>
 
-                <div class="mt-1" style="height: 1px; background-color: rgb(255, 255, 255, 0.5); width: 100%;"></div>
-                <small class="my-2" style="color: rgb(255, 255, 255, 0.5);"><b>REPORTS</b></small>
-
-                <div class="mb-3">
-                    <a href="analytics.php" class="analytics_nav">
-                        <i class="fas fa-file-signature" style="height: 20px; width: 20px;"></i>
-                        <small><b>Analytics</b></small>
-                    </a>
-                </div>
-
-                <div class="mb-3">
-                    <a href="calculator.php" class="calculator_nav">
-                        <i class="fas fa-calculator" style="height: 20px; width: 20px;"></i>
-                        <small><b>Calculator</b></small>
-                    </a>
-                </div>
                 <div class="mt-1" style="height: 1px; background-color: rgb(255, 255, 255, 0.5); width: 100%;"></div>
                 <small class="my-2" style="color: rgb(255, 255, 255, 0.5);"><b>MESSAGES</b></small>
 

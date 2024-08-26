@@ -36,6 +36,7 @@ class Request extends Model
         'type',
         'receipt',
         'fund_status',
+        'reference',
     ];
 
     protected $appends = ['total', 'reference', 'fund', 'fund_item'];
@@ -52,6 +53,15 @@ class Request extends Model
         ];
     }
 
+    protected static function booted()
+    {
+        static::created(function ($request) {
+            $request->reference = $request->created_at->format('Ymd') . '-' . str_pad($request->id,3,"0",STR_PAD_LEFT);;
+            $request->save();
+        });
+    }
+
+
     public function getTotalAttribute(): float{
         return $this->items()->sum(DB::raw('quantity * cost'));
     }
@@ -63,10 +73,6 @@ class Request extends Model
             RequestItemStatus::PRIORITY->name
         ])
         ->sum(DB::raw('quantity * cost'));
-    }
-
-    public function getReferenceAttribute(): string{
-        return Carbon::createFromDate($this->created_at)->format('Ymd') .'-'. $this->getPadIdAttribute();
     }
 
     public function company(): BelongsTo{
@@ -119,7 +125,6 @@ class Request extends Model
                 $query->where('name', UserRole::ACCOUNTANT->value);
             })->first();
     }
-
 
     public function getFinanceAttribute(){
         return $this->approvals()

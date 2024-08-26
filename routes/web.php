@@ -33,14 +33,17 @@ Route::prefix('income')->group(function () {
     Route::get('/', [IncomeController::class, 'index']);
 
     Route::get('/customer', [CustomerController::class, 'index']);
-    Route::post('/customer/add', [CustomerController::class, 'addCustomerData']);
-    Route::put('/customer/update', [CustomerController::class, 'updateCustomerData']);
-    Route::get('/customer/get', [CustomerController::class, 'ReaddCustomerData']);
-    Route::get('/customer/select', [CustomerController::class, 'selectCustomerData']);
-    Route::post('/customer/salutation/add', [CustomerController::class, 'addSalutationData']);
-    Route::get('/customer/salutation/get', [CustomerController::class, 'ReaddSalutationData']);
-    Route::post('/customer/currency/add', [CustomerController::class, 'addCurrencyData']);
-    Route::get('/customer/currency/get', [CustomerController::class, 'ReaddCurrencyData']);
+
+    Route::post('/customer/add', [CustomerController::class, 'customer_add']);
+    Route::get('/customer/get', [CustomerController::class, 'customer_get']);
+    Route::get('/customer/select', [CustomerController::class, 'customer_select']);
+    Route::put('/customer/update', [CustomerController::class, 'customer_update']);
+
+    Route::post('/customer/salutation/add', [CustomerController::class, 'salutation_add']);
+    Route::get('/customer/salutation/get', [CustomerController::class, 'salutation_get']);
+
+    Route::post('/customer/currency/add', [CustomerController::class, 'currency_add']);
+    Route::get('/customer/currency/get', [CustomerController::class, 'currency_get']);
 
     Route::get('/quote', [QuoteController::class, 'index']);
     Route::post('/quote/addList', [QuoteController::class, 'addQuotationList']);

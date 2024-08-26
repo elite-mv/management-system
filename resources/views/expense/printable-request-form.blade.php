@@ -1050,11 +1050,9 @@
 
                                 <div class="row mt-3 py-3 px-2 border border-dark">
                                     <div class="col-sm-12 col-md-6 col-lg-6">
-                                        <input type="file" accept="image/*" multiple="" name="update_image" class="px-4 py-2 border border-dark w-100" style="border: 1px dashed !important; border-radius: 6px;">
+                                        <input  data-id="0" id="fileUpload" type="file" accept="image/*" multiple="" name="files[]" class="px-4 py-2 border border-dark w-100" style="border: 1px dashed !important; border-radius: 6px;">
                                     </div>
                                     <div class="col-sm-12 col-md-6 col-lg-6 p-2 border border-dark" style="display: flex; flex-direction: row; align-items: flex-start; gap: 5px; overflow: auto;" id="uploads">
-                                        <input type="hidden" name="id" value="105">
-
                                     </div>
                                 </div>
 
@@ -1105,6 +1103,8 @@
         const editItemModal = new bootstrap.Modal(document.getElementById('editItemModal'), {
             keyboard: false
         })
+
+        const fileUpload = document.querySelector('#fileUpload');
 
         const editItemForm = document.querySelector('#editItemForm');
         const editItemId = document.querySelector('#editItemId');
@@ -1606,6 +1606,9 @@
                 if(!result.ok){
                     throw new Error(data.message);
                 }
+
+
+                fileUpload.setAttribute("data-id", id);
 
                 editItemForm.action = `/expense/api/request-item/update/${data.id}`;
 
@@ -2266,7 +2269,6 @@
             setInterval(loadComments, 1000);
         })
 
-
         const expenseRequestPrintable = document.getElementById('printable');
 
         const expenseRequestPrintableOption = {
@@ -2277,10 +2279,62 @@
             jsPDF:        { unit: 'in', format: 'A3', orientation: 'portrait' }
         };
 
-
         function generatePDF(){
             html2pdf().set(expenseRequestPrintableOption).from(expenseRequestPrintable).save();
         }
+
+
+        fileUpload.addEventListener('change', async ()=>{
+
+            let formData = new FormData();
+
+            const files = fileUpload.files;
+            const itemId = fileUpload.dataset.id;
+
+            Array.from(files).forEach(file => {
+                formData.append('files[]', file);
+            });
+
+            try {
+
+                let result = await fetch(`/expense/api/request-item/file/${itemId}`, {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                })
+
+                if (!result.ok) {
+
+                    let data = await result.json();
+
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: 'An error occurred while uploading attachment',
+                    });
+
+                    console.log(data);
+
+                    return;
+                }
+
+                let files = await result.json();
+
+                console.log(files);
+
+            } catch (error) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: error.message,
+                })
+
+            } finally {
+                fileUpload.value = null;
+            }
+        })
 
     </script>
 @endsection
