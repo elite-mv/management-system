@@ -14,7 +14,7 @@
         <td>{{ $request->status}}</td>
         <td>{!! \App\Helper\Helper::formatPeso( $request->total) !!}</td>
         <td>
-            <a target="_blank role=" role="button" href="/expense/request/{{$request->id}}" class="btn btn-primary">View</a>
+            <a target="_blank"  role="button" href="/expense/request/{{$request->id}}" class="btn btn-primary">View</a>
         </td>
     </tr>
 @empty

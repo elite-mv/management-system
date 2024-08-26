@@ -11,6 +11,7 @@ use App\Enums\RequestFundStatus;
 use App\Enums\RequestPriorityLevel;
 use App\Enums\RequestStatus;
 use App\Enums\UserRole;
+use App\Helper\Helper;
 use App\Models\Expense\Company;
 use App\Models\Expense\JobOrder;
 use App\Models\Expense\Measurement;
@@ -18,6 +19,7 @@ use App\Models\Expense\Request as ModelsRequest;
 use App\Models\Expense\RequestApproval;
 use App\Models\Expense\RequestItem;
 use App\Models\Expense\Role;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -103,26 +105,37 @@ class RequestController extends Controller
     public function getRequestsData(Request $request)
     {
 
-//        $query = ModelsRequest::query();
-//
-//        $query->when($request->input('status'), function ($query) use ($request) {
-//            if ($request->input('status') !== 'ALL') {
-//                $query->where('status', $request->input('status'));
-//            }
-//        });
-//
-//        $query->when($request->input('search'), function ($query) use ($request) {
-//            $query->where(function ($query) use ($request) {
-//                $query->whereRaw("CONCAT(DATE_FORMAT(`created_at`, '%Y%m%d'), '-', `id`) = ?", [$request->input('search')]);
-//                $query->orWhere('request_by', 'LIKE', $request->input('search') . '%');
-//            });
-//        });
-//
-//        $requests = $query->paginate($request->input('entries'));
-        $requests = ModelsRequest::get();
+        $query = ModelsRequest::query();
+
+        $query->when($request->input('search'), function ($qb) use ($request) {
+            $qb->where(function ($qb) use ($request) {
+                $qb->where('id', Helper::rawID($request->input('search')));
+                $qb->orWhere('request_by', 'LIKE', $request->input('search') . '%');
+                $qb->orWhere('reference', 'LIKE', $request->input('search') . '%');
+            });
+        });
+
+        $query->when($request->input('entity') && $request->input('entity') != 'ALL', function ($qb) use ($request) {
+            $qb->where('company_id', $request->input('entity'));
+        });
+
+        $query->when($request->input('paymentStatus') && $request->input('paymentStatus') != 'ALL', function ($qb) use ($request) {
+            $qb->where('status', $request->input('paymentStatus'));
+        });
+
+        $query->when($request->input('from'), function ($qb) use ($request) {
+            $qb->whereDate('created_at', '>=', Carbon::createFromFormat('Y-m-d', $request->input('from'))->toDateString());
+        });
+
+        $query->when($request->input('to'), function ($qb) use ($request) {
+            $qb->whereDate('created_at', '<=', Carbon::createFromFormat('Y-m-d', $request->input('to'))->toDateString());
+        });
+
+        $query->where('prepared_by', Auth::id());
+
+        $requests = $query->paginate($request->input('entries') ?? 10, ['*'], 'page', $request->input('page') ?? 1);
 
         return view('expense.partials.request-data', ['requests' => $requests]);
-
     }
 
     public function viewRequest(int $id)
