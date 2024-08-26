@@ -21,11 +21,20 @@ use App\Http\Controllers\Income\CustomerController;
 use App\Http\Controllers\Income\IncomeController;
 use App\Http\Controllers\Income\QuoteController;
 use App\Http\Controllers\Income\InvoiceController;
+use App\Http\Controllers\NavigationController;
 use App\Http\Controllers\PdfController;
+use App\Http\Middleware\CheckUserPin;
 use App\Http\Middleware\SetGlobalVariables;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'index'])->name('login');
+
+Route::middleware([CheckUserPin::class])->get('/navigation', [NavigationController::class, 'index']);
+
+Route::get('/pin', [NavigationController::class, 'pin'])->name('pin');
+Route::post('/pin', [NavigationController::class, 'verifyPin']);
+
+
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 
