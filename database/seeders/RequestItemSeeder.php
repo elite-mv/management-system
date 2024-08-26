@@ -18,7 +18,13 @@ class RequestItemSeeder extends Seeder
         Request::factory()
             ->count(100)
             ->has(RequestItem::factory()->count(10), 'items')
-            ->has(RequestApproval::factory(),'approvals')
+            ->has(RequestApproval::factory()->count(5)->sequence(
+                ['role_id' => 2],
+                ['role_id' => 3],
+                ['role_id' => 4],
+                ['role_id' => 5],
+                ['role_id' => 6],
+            ),'approvals')
             ->create();
     }
 }

@@ -7,7 +7,6 @@
         <td><input id="requestInput{{$request->id}}" type="checkbox"
                    class="form-check-input request-input-selection">
         </td>
-        <td>{{ $total}}</td>
         <td>{{ $request->reference}}</td>
         <td>{{$request->timeLapse}}</td>
         <td>{{ $request->company->name}}</td>
@@ -20,7 +19,7 @@
     </tr>
 @empty
     <tr>
-        <td class="text-center" colspan='7'>
+        <td class="text-center" colspan='8'>
             <p class="text-secondary">
                 EMPTY TABLE
             </p>

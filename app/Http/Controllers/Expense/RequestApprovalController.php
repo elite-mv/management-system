@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Expense;
 
 use App\Enums\RequestApprovalStatus;
+use App\Enums\RequestItemStatus;
 use App\Enums\UserRole;
 use App\Models\Expense\RequestApproval;
+use App\Models\Expense\RequestItem;
 use App\Models\Expense\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -65,6 +67,10 @@ class RequestApprovalController
                     'status' => RequestApprovalStatus::valueOf($request->input('status'))
                 ]
             );
+
+            RequestItem::where('request_id',$expenseRequestID)
+            ->where('status', RequestItemStatus::PENDING->name)
+                ->update(['status' => RequestItemStatus::valueOf($request->input('status'))]);
 
             DB::commit();
 

@@ -18,9 +18,9 @@ class RequestApprovalFactory extends Factory
     public function definition(): array
     {
         return [
-            'role_id' => 2,
-            'user_id' => 1,
-            'status' => RequestStatus::PENDING->value,
+                'role_id' => 2,
+                'user_id' => 1,
+                'status' => RequestStatus::PENDING->value,
         ];
     }
 }
