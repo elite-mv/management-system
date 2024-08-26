@@ -30,6 +30,16 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 
 Route::prefix('income')->group(function () {
+
+    Route::prefix('/gti')->middleware([\App\Http\Middleware\GTI::class])->group(function () {
+        Route::get('/', [IncomeController::class, 'index']);
+    });
+
+    Route::prefix('/gun-tech')->group(function () {
+        Route::get('/', [IncomeController::class, 'index']);
+    });
+
+
     Route::get('/', [IncomeController::class, 'index']);
 
     Route::get('/customer', [CustomerController::class, 'index']);

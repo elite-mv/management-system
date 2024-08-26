@@ -17,6 +17,10 @@
     <div class="w-100 d-flex align-items-start border">
         <div class="container-fluid p-3">
             DASHBOARD HERE
+
+            @if($company)
+            {{$company->name}}
+            @endif
         </div>
     </div>
 
@@ -25,7 +29,7 @@
 @section('script')
 
     <script>
-        
+
     </script>
 
 @endsection
