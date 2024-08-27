@@ -5,7 +5,7 @@
 @extends('layouts.expense-index')
 
 
-@section('title', 'Job Order')
+@section('title', 'Unit of Measure')
 
 @section('body')
 
@@ -41,27 +41,25 @@
                         <table class="table sortable">
                             <thead>
                             <tr>
-                                <th>Number</th>
-                                <th>NAME</th>
-                                <th>Client</th>
+                                <th>Measurement</th>
+                                <th>Priority</th>
                                 <th>ACTION</th>
                             </tr>
                             </thead>
                             <tbody id="requestData">
-                            @forelse ($jobOrders as $jobOrder)
+                            @forelse ($measurements as $measurement)
                                 <tr>
-                                    <td>{{ $jobOrder->reference }}</td>
-                                    <td>{{ $jobOrder->name }}</td>
-                                    <td>{{ $jobOrder->client }}</td>
+                                    <td>{{ $measurement->name }}</td>
+                                    <td>{{ $measurement->priority }}</td>
                                     <td>
                                         <div class="d-flex gap-2 align-items-center">
 
                                             <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
-                                                    data-bs-target="#editEntity{{$jobOrder->id}}">Edit
+                                                    data-bs-target="#editEntity{{$measurement->id}}">Edit
                                             </button>
 
-                                            <form data-entity-name="{{$jobOrder->name }}" class="delete-form"
-                                                  method="POST" action="/expense/job-order/{{$jobOrder->id}}">
+                                            <form data-entity-name="{{$measurement->name }}" class="delete-form"
+                                                  method="POST" action="/expense/unit-of-measure/{{$measurement->id}}">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button role="button" type="submit" class="btn btn-danger">Delete
@@ -71,37 +69,30 @@
                                     </td>
                                 </tr>
 
-                                <div class="modal fade" id="editEntity{{$jobOrder->id}}" tabindex="-1"
+                                <div class="modal fade" id="editEntity{{$measurement->id}}" tabindex="-1"
                                      aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
-                                        <form method="POST" action="/expense/job-order/{{$jobOrder->id}}"
-                                              enctype="multipart/form-data">
+                                        <form method="POST" action="/expense/unit-of-measure/{{$measurement->id}}">
                                             @csrf
                                             @method('PATCH')
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">Edit Job Order</h5>
+                                                    <h5 class="modal-title" id="exampleModalLabel">Edit Measurement</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
                                                     <div class="form-group">
-                                                        <label for="priority">Number</label>
-                                                        <input value="{{$jobOrder->reference}}" name="reference"
+                                                        <label for="priority">Priority</label>
+                                                        <input value="{{$measurement->priority}}" name="priority"
+                                                               class="text-uppercase form-control text-uppercase"
+                                                               id="priority" type="number" required>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="name">Measurement</label>
+                                                        <input value="{{$measurement->name}}" name="name"
                                                                class="form-control" id="priority" type="text"
                                                                required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="name">Name</label>
-                                                        <input value="{{$jobOrder->name}}" name="name"
-                                                               class="text-uppercase form-control text-uppercase"
-                                                               id="name" type="text" required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="logo">Client</label>
-                                                        <input value="{{$jobOrder->client}}" name="client"
-                                                               class="text-uppercase form-control text-uppercase"
-                                                               id="name" type="text" required>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
@@ -128,7 +119,7 @@
                     </div>
 
                     <div class="container-fluid">
-                        {{$jobOrders->links()}}
+                        {{$measurements->links()}}
                     </div>
                 </div>
             </div>
@@ -138,25 +129,21 @@
     <!-- Modal -->
     <div class="modal  fade" id="addEntityModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form method="POST" action="/expense/job-order">
+            <form method="POST" action="/expense/unit-of-measure">
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Add Job Order</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">Add Measurement</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="priority">Number</label>
-                            <input name="reference" class="form-control" id="priority" type="text"  required>
+                            <label for="priority">Priority</label>
+                            <input name="priority" class="form-control" id="priority" type="text"  required>
                         </div>
                         <div class="form-group">
                             <label for="name">Name</label>
                             <input name="name" class="form-control text-uppercase" id="name" type="text" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="client">Client</label>
-                            <input name="client" class="form-control" id="logo" type="text" required>
                         </div>
                     </div>
                     <div class="modal-footer">
