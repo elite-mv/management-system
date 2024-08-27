@@ -25,6 +25,7 @@ use App\Http\Controllers\Income\InvoiceController;
 use App\Http\Controllers\NavigationController;
 use App\Http\Controllers\PdfController;
 use App\Http\Middleware\CheckUserPin;
+use App\Http\Middleware\CompanyMiddleware;
 use App\Http\Middleware\SetGlobalVariables;
 use Illuminate\Support\Facades\Route;
 
@@ -39,16 +40,7 @@ Route::post('/pin', [NavigationController::class, 'verifyPin']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 
-Route::prefix('income')->group(function () {
-
-    Route::prefix('/gti')->middleware([\App\Http\Middleware\GTI::class])->group(function () {
-        Route::get('/', [IncomeController::class, 'index']);
-    });
-
-    Route::prefix('/gun-tech')->group(function () {
-        Route::get('/', [IncomeController::class, 'index']);
-    });
-
+Route::prefix('income')->middleware([CompanyMiddleware::class])->group(function () {
 
     Route::get('/', [IncomeController::class, 'index']);
 
@@ -70,6 +62,8 @@ Route::prefix('income')->group(function () {
     Route::get('/quote/get_navigation_item', [QuoteController::class, 'get_navigation_item']);
     Route::get('/quote/get_navigation', [QuoteController::class, 'get_navigation']);
     Route::get('/quote/customer/get', [QuoteController::class, 'customer_get']);
+
+    Route::get('/search-customer', [CustomerController::class, 'searchCustomer']);
 
     Route::get('/invoice', [InvoiceController::class, 'index']);
 });

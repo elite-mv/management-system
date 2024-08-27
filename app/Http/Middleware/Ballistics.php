@@ -21,6 +21,8 @@ class Ballistics
 
         $request->attributes->set('company', $company);
 
+        view()->share('company', $company);
+
         return $next($request);
     }
 }

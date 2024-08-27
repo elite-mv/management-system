@@ -5,9 +5,10 @@ namespace App\Http\Middleware;
 use App\Models\Expense\Company;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class Soteria
+class CompanyMiddleware
 {
     /**
      * Handle an incoming request.
@@ -17,11 +18,11 @@ class Soteria
     public function handle(Request $request, Closure $next): Response
     {
 
-        $company = Company::where('name',  \App\Enums\Company::SOTERIA->value)->first();
+        $company = Company::where('id', Auth::user()->company_id)->first();
 
-        $request->attributes->set('company', $company);
+        $request->attributes->set('selected_company', $company);
 
-        view()->share('company', $company);
+        view()->share('selected_company', $company);
 
         return $next($request);
     }

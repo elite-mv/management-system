@@ -143,7 +143,7 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <table id="customer">
+                            <table id="customer" class="table table-bordered">
                                 <thead>
                                     <tr>
                                         <th scope="col">Name</th>
@@ -163,12 +163,13 @@
                                             <td><small onclick="open_customer({{ $customer->id }});">{{$customer->company}}</small></td>
                                             <td><small onclick="open_customer({{ $customer->id }});">{{$customer->contact_number}}</small></td>
                                             <td><small onclick="open_customer({{ $customer->id }});">{{$customer->address}}</small></td>
-                                            <td><small onclick="open_customer({{ $customer->id }});">{{$customer->currency}}</small></td>
+                                            <td><small onclick="open_customer({{ $customer->id }});">{{$customer->currency->name}}</small></td>
                                             <td><small onclick="open_customer({{ $customer->id }});">Sales Officer</small></td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
+                            {{$customers->links()}}
                         </div>
                     </div>
                 </div>
@@ -427,7 +428,7 @@
 
     <script>
         $(window).on('load', function() {
-            Get_Customer();
+            // Get_Customer();
         })
 
         $('input[name="customer_salutation"], input[name="update_salutation"]').on('input', function() {
@@ -462,7 +463,7 @@
 
                             $('#customerModal').find('input[name="customer_salutation"]').val($('#salutationForm').find('input[name="salutation_salutation"]').val());
                             $('#updateModal').find('input[name="update_salutation"]').val($('#salutationForm').find('input[name="salutation_salutation"]').val());
-                            
+
                             $('#salutationModal').find('#salutation_salutation').append(
                                 '<div>' +
                                     '<b>' + $('#salutationForm').find('input[name="salutation_salutation"]').val() + '</b>' +
@@ -471,7 +472,7 @@
                                     '</em>' +
                                 '</div>'
                             );
-                             
+
                             $('#updateModal').find('#update_salutation').html('');
                             $('#updateModal').find('#update_salutation').html(data.options);
                             $('#updateModal').find('#update_salutation').append('<option value="Add New">Add New</option>');
@@ -531,7 +532,7 @@
 
                             $('#customerModal').find('input[name="customer_currency"]').val($('#currencyForm').find('input[name="currency_currency"]').val());
                             $('#updateModal').find('input[name="update_currency"]').val($('#currencyForm').find('input[name="currency_currency"]').val());
-                            
+
                             $('#currencyModal').find('#currency_currency').append(
                                 '<div>' +
                                     '<b>' + $('#currencyForm').find('input[name="currency_currency"]').val() + '</b>' +
@@ -684,9 +685,9 @@
 
                 headers.forEach((header, index) => {
                     header.style.width = columnWidths[index];
-                    header.style.fontWeight = 
-                        ['Name', 'Position', 'Company', 'Contact Number', 'Address', 'Currency', 'Added By'].includes(header.textContent.trim()) 
-                        ? 'bold' 
+                    header.style.fontWeight =
+                        ['Name', 'Position', 'Company', 'Contact Number', 'Address', 'Currency', 'Added By'].includes(header.textContent.trim())
+                        ? 'bold'
                         : 'normal';
                 });
             }

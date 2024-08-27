@@ -20,7 +20,7 @@ class user_seeder extends Seeder
                 'password' => bcrypt('qazws123'),
                 'role_id' => 1,
                 'name' => '[DEVELOPER]',
-                'company_id' => 1,
+                'company_id' => 3,
             ],
             [
                 'email' => 'jocelyn@eliteacesinc.com',

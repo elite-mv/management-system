@@ -21,6 +21,9 @@ class GTI
 
         $request->attributes->set('company', $company);
 
+        view()->share('company', $company);
+
+
         return $next($request);
     }
 }

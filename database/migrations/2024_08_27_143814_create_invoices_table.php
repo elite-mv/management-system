@@ -31,6 +31,7 @@ return new class extends Migration
             $table->foreignId('currency_id')->index()->constrained('currencies');
             $table->foreignId('sales_officer')->index()->constrained('users');
             $table->foreignId('discount_id')->nullable()->index()->constrained('discounts');
+            $table->foreignId('company_id')->index()->constrained('companies');
             $table->timestamps();
         });
     }

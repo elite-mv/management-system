@@ -7,15 +7,20 @@ use App\Models\Income\Customer;
 use App\Models\Income\Salutation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use function PHPUnit\TestFixture\func;
 
 
 class CustomerController
 {
     public function index(){
 
-        $customers =  Customer::get();
-        $salutations =  Salutation::get();
-        $currencies =  Currency::get();
+        $customers =  Customer::with(['currency' => function ($query) {
+            $query->select(['id', 'name']);
+        }])
+            ->paginate(25);
+
+        $salutations =  Salutation::select(['id', 'salutation'])->get();
+        $currencies =  Currency::select(['id', 'name'])->get();
 
         return view('income.customer', [
             'customers' => $customers,
@@ -107,7 +112,6 @@ class CustomerController
                 </tr>
             ';
         }
-
         return response()->json(['options' => $optionsHtml]);
     }
 
@@ -138,15 +142,41 @@ class CustomerController
         $customer = Customer::find($request->input('id'));
 
         if ($customer) {
-            
+
             $customer->update($validatedData);
-    
+
             return response()->json(['success' => true], 200);
         } else {
             return response()->json(['error' => 'Customer not found'], 404);
         }
     }
 
-    
+    public  function searchCustomer(Request $request)
+    {
+
+        try {
+
+            $query = Customer::query();
+
+            $query->when($request->input('search'), function ($query) use ($request) {
+                $query->where(function ($query) use ($request) {
+                    $query->where('name', 'like', '%' . $request->input('search'));
+                });
+            });
+
+            $query->take(20);
+
+            $query->whereHas('clientOf', function ($query) use ($request) {
+                $query->where('user_id', Auth::id());
+            }, '>=',1);
+
+            return response()->json($query->get());
+
+
+        }catch (\Exception $exception){
+            return response()->json(['message' => $exception->getMessage()], 500);
+        }
+
+    }
 
 }

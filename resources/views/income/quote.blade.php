@@ -23,6 +23,11 @@
 
 @section('body')
 
+
+    <form id="customerSearchForm">
+        <input type="text" name="search" id="customerSearchInput" class="form-control">
+    </form>
+
     <div class="w-100 d-flex align-items-start border">
         <div class="container-fluid p-3">
             {{-- <div class="row">
@@ -274,7 +279,7 @@
                                                     <b id="sub_total">0.00</b>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="d-flex" style="justify-content: left;">
                                                 <div class="d-flex flex-direction-row align-items-center">
                                                     <small>Discount</small>
@@ -521,7 +526,7 @@
                                             <small>Noveleta,</small>
                                             <small>Cavite,</small>
                                             <small>Philippines</small>
-                                            
+
                                         </div>
                                         <div>
                                             <b name="reference">-</b>
@@ -633,6 +638,29 @@
 @section('script')
 
     <script>
+
+
+        const customerSearchForm = document.querySelector('#customerSearchForm');
+        const customerSearchInput = document.querySelector('#customerSearchInput');
+
+        customerSearchInput.addEventListener('input',async  (e)=>{
+
+            console.log('change detected');
+
+            const formData = new FormData(customerSearchForm);
+
+            const params = new URLSearchParams(formData);
+
+            const data = await fetch(`/income/search-customer?${params.toString()}`);
+
+            const result = await  data.json();
+
+            console.log(result);
+            console.log(data);
+
+        })
+
+
         window.addEventListener('load', function() {
             Get_Quote();
             const today = new Date();
@@ -915,7 +943,7 @@
                         },
                         success: function (data) {
                             $('#quotationModal form').trigger('reset');
-                            
+
                             $.ajax({
                                 url: "/income/quote/get_list",
                                 headers: {
@@ -923,7 +951,7 @@
                                 },
                                 method: "POST",
                                 success: function (response) {
-                                    
+
                                     $('#quote tbody').html('');
                                     $('#quote tbody').html(response.options);
 
@@ -940,9 +968,9 @@
                                                     $('#view_navigation').append(`
                                                         <div class="quote-selected p-3 d-flex flex-column">
                                                             <div class="d-flex justify-content-between">
-                                                                <b>${quotation.customer_name}</b>    
+                                                                <b>${quotation.customer_name}</b>
                                                             </div>
-                                                            
+
                                                             <div>
                                                                 <small>QT-${quotation.start_date.replace(/-/g, '')}-${String(quotation.id).padStart(3, '0')}</small>
                                                                 <small class="text-secondary">| ${quotation.start_date}</small>
@@ -954,9 +982,9 @@
                                                     $('#view_navigation').append(`
                                                         <div class="quote-item p-3 d-flex flex-column">
                                                             <div class="d-flex justify-content-between">
-                                                                <b>${quotation.customer_name}</b>    
+                                                                <b>${quotation.customer_name}</b>
                                                             </div>
-                                                            
+
                                                             <div>
                                                                 <small>QT-${quotation.start_date.replace(/-/g, '')}-${String(quotation.id).padStart(3, '0')}</small>
                                                                 <small class="text-secondary">| ${quotation.start_date}</small>
@@ -1075,9 +1103,9 @@
                                                                                 $('#view_navigation').append(`
                                                                                     <div class="quote-selected p-3 d-flex flex-column">
                                                                                         <div class="d-flex justify-content-between">
-                                                                                            <b>${quotation.customer_name}</b>    
+                                                                                            <b>${quotation.customer_name}</b>
                                                                                         </div>
-                                                                                        
+
                                                                                         <div>
                                                                                             <small>QT-${quotation.start_date.replace(/-/g, '')}-${String(quotation.id).padStart(3, '0')}</small>
                                                                                             <small class="text-secondary">| ${quotation.start_date}</small>
@@ -1089,9 +1117,9 @@
                                                                                 $('#view_navigation').append(`
                                                                                     <div class="quote-item p-3 d-flex flex-column">
                                                                                         <div class="d-flex justify-content-between">
-                                                                                            <b>${quotation.customer_name}</b>    
+                                                                                            <b>${quotation.customer_name}</b>
                                                                                         </div>
-                                                                                        
+
                                                                                         <div>
                                                                                             <small>QT-${quotation.start_date.replace(/-/g, '')}-${String(quotation.id).padStart(3, '0')}</small>
                                                                                             <small class="text-secondary">| ${quotation.start_date}</small>
@@ -1126,7 +1154,7 @@
                                             console.error('Error:', textStatus, errorThrown);
                                         }
                                     });
-                                    
+
                                 },
                                 error: function (jqXHR, textStatus, errorThrown) {
                                     console.error('Error:', textStatus, errorThrown);
@@ -1345,7 +1373,7 @@
 
                                     $('#viewModal').find('b[name="total"]').html(data.currency + ' ' + total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
                                 }
-                                
+
                                 $.ajax({
                                     url: "/income/quote/get_navigation",
                                     headers: {
@@ -1359,7 +1387,7 @@
                                                 $('#view_navigation').append(`
                                                     <div class="quote-selected p-3 d-flex flex-column">
                                                         <div class="d-flex justify-content-between">
-                                                            <b>${quotation.customer_name}</b>    
+                                                            <b>${quotation.customer_name}</b>
                                                         </div>
                                                         <div>
                                                             <small>QT-${quotation.start_date.replace(/-/g, '')}-${String(quotation.id).padStart(3, '0')}</small>
@@ -1372,7 +1400,7 @@
                                                 $('#view_navigation').append(`
                                                     <div class="quote-item p-3 d-flex flex-column">
                                                         <div class="d-flex justify-content-between">
-                                                            <b>${quotation.customer_name}</b>    
+                                                            <b>${quotation.customer_name}</b>
                                                         </div>
                                                         <div>
                                                             <small>QT-${quotation.start_date.replace(/-/g, '')}-${String(quotation.id).padStart(3, '0')}</small>
@@ -1509,9 +1537,9 @@
                                             $('#view_navigation').append(`
                                                 <div class="quote-selected p-3 d-flex flex-column">
                                                     <div class="d-flex justify-content-between">
-                                                        <b>${quotation.customer_name}</b>    
+                                                        <b>${quotation.customer_name}</b>
                                                     </div>
-                                                    
+
                                                     <div>
                                                         <small>QT-${quotation.start_date.replace(/-/g, '')}-${String(quotation.id).padStart(3, '0')}</small>
                                                         <small class="text-secondary">| ${quotation.start_date}</small>
@@ -1523,9 +1551,9 @@
                                             $('#view_navigation').append(`
                                                 <div class="quote-item p-3 d-flex flex-column">
                                                     <div class="d-flex justify-content-between">
-                                                        <b>${quotation.customer_name}</b>    
+                                                        <b>${quotation.customer_name}</b>
                                                     </div>
-                                                    
+
                                                     <div>
                                                         <small>QT-${quotation.start_date.replace(/-/g, '')}-${String(quotation.id).padStart(3, '0')}</small>
                                                         <small class="text-secondary">| ${quotation.start_date}</small>
@@ -1582,9 +1610,9 @@
 
                 headers.forEach((header, index) => {
                     header.style.width = columnWidths[index];
-                    header.style.fontWeight = 
-                        ['QT#', 'Sales Officer', 'Customer', 'Unit', 'Amount'].includes(header.textContent.trim()) 
-                        ? 'bold' 
+                    header.style.fontWeight =
+                        ['QT#', 'Sales Officer', 'Customer', 'Unit', 'Amount'].includes(header.textContent.trim())
+                        ? 'bold'
                         : 'normal';
                 });
             }

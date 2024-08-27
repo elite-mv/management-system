@@ -8,7 +8,7 @@ class IncomeController
 
     public function index(Request $request){
 
-        $company = $request->attributes->get('company');
+        $company = $request->attributes->get('selected_company');
 
         return view('income.home', [
             'company' => $company
