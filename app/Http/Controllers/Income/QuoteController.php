@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Income;
 use App\Models\Income\Currency;
 use App\Models\Income\Customer;
 use App\Models\Income\QuotationItem;
-use App\Models\Income\QuotationList;
+use App\Models\Income\Quotation;
 use App\Models\Income\Salutation;
 use Illuminate\Http\Request;
 
@@ -17,7 +17,7 @@ class QuoteController
         $customers =  Customer::get();
         $salutations =  Salutation::get();
         $currencies =  Currency::get();
-        $quotation_lists = QuotationList::orderBy('id', 'desc')->get();
+        $quotation_lists = Quotation::orderBy('id', 'desc')->get();
 
         return view('income.quote', [
             'customers' => $customers,
@@ -41,7 +41,7 @@ class QuoteController
 
     public function add_list(Request $request)
     {
-        $quotation = QuotationList::create([
+        $quotation = Quotation::create([
             'customer_name' => $request->input('customer_name'),
             'start_date' => $request->input('start_date'),
             'expiry_date' => $request->input('expiry_date'),
@@ -65,7 +65,7 @@ class QuoteController
             'items' => 'required|array'
         ]);
 
-        $quotation = QuotationList::find($request->input('id'));
+        $quotation = Quotation::find($request->input('id'));
 
         if (!$quotation) {
             return response()->json(['error' => 'Quotation not found'], 404);
@@ -87,7 +87,7 @@ class QuoteController
 
     public function get_list()
     {
-        $quotations = QuotationList::orderBy('id', 'desc')->get();
+        $quotations = Quotation::orderBy('id', 'desc')->get();
 
         $optionsHtml = '';
         foreach ($quotations as $quote) {
@@ -113,7 +113,7 @@ class QuoteController
         ]);
 
         // Find the quotation based on the ID
-        $quote = QuotationList::findOrFail($request->input('id'));
+        $quote = Quotation::findOrFail($request->input('id'));
 
         return response()->json([
             'reference' => $quote->getReferenceAttribute(),
@@ -135,15 +135,15 @@ class QuoteController
         $request->validate([
             'id' => 'required|integer|exists:quotation_lists,id'
         ]);
-    
+
         $items = QuotationItem::where('quotation_id', $request->input('id'))->get();
-    
+
         return response()->json(['items' => $items], 200);
     }
 
     public function get_navigation(Request $request)
     {
-        $quotation_lists = QuotationList::orderBy('id', 'desc')->get();
+        $quotation_lists = Quotation::orderBy('id', 'desc')->get();
         return response()->json(['success' => true, 'quotation_lists' => $quotation_lists], 200);
     }
 

@@ -6,19 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('quotation_items', function (Blueprint $table) {
+        Schema::create('invoice_items', function (Blueprint $table) {
             $table->id();
             $table->string('details');
             $table->float('quantity');
             $table->float('cost');
             $table->float('amount');
+            $table->foreignId('discount_id')->nullable()->index()->constrained('discounts');
             $table->foreignId('measurement_id')->constrained('measurements');
-            $table->foreignId('quotation_id')->constrained('quotations');
+            $table->foreignId('invoice_id')->constrained('invoices');
             $table->timestamps();
         });
     }
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('quotation_items');
+        Schema::dropIfExists('invoice_items');
     }
 };

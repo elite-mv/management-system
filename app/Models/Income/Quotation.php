@@ -6,9 +6,18 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class QuotationList extends Model
+class Quotation extends Model
 {
     use HasFactory;
+
+// #Quotation
+//customer_id
+//subject
+//note
+//expiry_date
+//status:  enum
+//added_by
+//customer_of_id: company_id
 
     protected $fillable = [
         'customer_name',
@@ -31,5 +40,5 @@ class QuotationList extends Model
     public function getPadIdAttribute(){
         return str_pad($this->id,3,"0",STR_PAD_LEFT);
     }
-    
+
 }

@@ -16,7 +16,7 @@ class RequestItemSeeder extends Seeder
     public function run(): void
     {
         Request::factory()
-            ->count(40000)
+            ->count(100)
             ->has(RequestItem::factory()->count(10), 'items')
             ->has(RequestApproval::factory()->count(5)->sequence(
                 ['role_id' => 2],

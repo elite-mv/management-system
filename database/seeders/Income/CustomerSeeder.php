@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\Income;
 
+use App\Models\Income\Customer;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -13,36 +14,8 @@ class CustomerSeeder extends Seeder
      */
     public function run(): void
     {
-
-        DB::table('customers')->insert([
-            [
-                'name' => 'Ms. April Jane Magtangob',
-                'position' => 'Admin Staff',
-                'company' => 'Elite Aces Trading Inc.',
-                'email' => 'april@eliteacesinc.com',
-                'contact_number' => '-',
-                'address' => 'Philippines',
-                'currency' => 'PHP'
-            ],
-            [
-                'name' => 'Ms. Jocelyn Compoto',
-                'position' => 'Secretary',
-                'company' => 'Elite Aces Trading Inc.',
-                'email' => 'jocelyn@eliteacesinc.com',
-                'contact_number' => '-',
-                'address' => 'Philippines',
-                'currency' => 'PHP'
-            ],
-            [
-                'name' => 'Ms. Armorbelle Dijamco',
-                'position' => 'General Manager',
-                'company' => 'Elite Aces Trading Inc.',
-                'email' => 'armorbelle@eliteacesinc.com',
-                'contact_number' => '-',
-                'address' => 'Philippines',
-                'currency' => 'PHP'
-            ],
-        ]);
-
+        Customer::factory()
+            ->count(38000)
+            ->create();
     }
 }

@@ -20,8 +20,8 @@ return new class extends Migration
             $table->string('email');
             $table->string('contact_number')->nullable();
             $table->string('address')->nullable();
-            $table->string('currency')->nullable();
             $table->string('position')->nullable();
+            $table->unique(['name', 'email']);
             $table->timestamps();
         });
     }

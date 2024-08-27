@@ -24,7 +24,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('request_items', function (Blueprint $table) {
+        Schema::table('bank_details', function (Blueprint $table) {
             $table->removeColumn('bank_name_id');
             $table->removeColumn('bank_code_id');
         });
