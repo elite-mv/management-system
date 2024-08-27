@@ -8,6 +8,7 @@ use App\Http\Controllers\Expense\BankDetailController;
 use App\Http\Controllers\Expense\BookKeeperController;
 use App\Http\Controllers\Expense\CompanyController;
 use App\Http\Controllers\Expense\FinanceController;
+use App\Http\Controllers\Expense\JobOrderController;
 use App\Http\Controllers\Expense\PresidentController;
 use App\Http\Controllers\Expense\RequestApprovalController;
 use App\Http\Controllers\Expense\RequestCommentController;
@@ -107,7 +108,15 @@ Route::prefix('expense')->group(function () {
         Route::get('/auditor', [AuditorController::class, 'index']);
         Route::get('/api/auditor', [AuditorController::class, 'getRequests']);
 
+        Route::get('/job-order', [JobOrderController::class, 'index']);
+        Route::post('/job-order', [JobOrderController::class, 'addJobOrder']);
+        Route::patch('/job-order/{jobOrder}', [JobOrderController::class, 'updateJobOrder']);
+        Route::delete('/job-order/{jobOrder}', [JobOrderController::class, 'archiveJobOrder']);
+
+        Route::post('/entity', [CompanyController::class, 'addCompany']);
         Route::get('/entity', [CompanyController::class, 'index']);
+        Route::delete('/entity/{company}', [CompanyController::class, 'deleteCompany']);
+        Route::patch('/entity/{company}', [CompanyController::class, 'updateCompany']);
 
         Route::post('/request', [RequestController::class, 'addRequest']);
         Route::get('/request/{id}', [RequestController::class, 'viewRequest'])->name('request');

@@ -83,6 +83,10 @@ class Request extends Model
         return $this->hasMany(RequestItem::class);
     }
 
+    public function approvedItems(): HasMany{
+        return $this->hasMany(RequestItem::class);
+    }
+
     public function approvals(): HasMany{
         return $this->hasMany(RequestApproval::class);
     }
@@ -111,33 +115,24 @@ class Request extends Model
         return $this->hasOne(AccountingDetail::class);
     }
 
-    public function getBookKeeperAttribute()
+    public function bookKeeper(): HasOne
     {
-        return $this->approvals()
-            ->whereHas('role', function ($query) {
-                $query->where('name', UserRole::BOOK_KEEPER->value);
-            })->first();
+        return $this->hasOne(RequestApproval::class);
     }
 
-    public function getAccountantAttribute(){
-        return $this->approvals()
-            ->whereHas('role', function ($query) {
-                $query->where('name', UserRole::ACCOUNTANT->value);
-            })->first();
+    public function finance(): HasOne
+    {
+        return $this->hasOne(RequestApproval::class);
     }
 
-    public function getFinanceAttribute(){
-        return $this->approvals()
-            ->whereHas('role', function ($query) {
-                $query->where('name', UserRole::FINANCE->value);
-            })->first();
+    public function auditor(): HasOne
+    {
+        return $this->hasOne(RequestApproval::class);
     }
 
-    public function getAuditorAttribute(){
-        return $this->approvals()
-            ->whereHas('role', function ($query) {
-                $query->where('name', UserRole::AUDITOR->value);
-            })->first();
+    public function accountant(): HasOne
+    {
+        return $this->hasOne(RequestApproval::class);
     }
 
     public function vat(): HasOne{

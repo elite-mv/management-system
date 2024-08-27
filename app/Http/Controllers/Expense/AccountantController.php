@@ -8,6 +8,7 @@ use App\Helper\Helper;
 use App\Models\Expense\Request as ModelsRequest;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AccountantController extends Controller
 {
@@ -20,6 +21,17 @@ class AccountantController extends Controller
     {
 
         $query = ModelsRequest::query();
+
+        $query->select(['id','reference', 'request_by', 'company_id', 'status']);
+
+        $query->with('items', function ($query) {
+            $query->select('request_id',DB::raw('SUM(quantity * cost) as total_cost'))
+                ->groupBy('request_id');
+        });
+
+        $query->with('company', function ($query) {
+            $query->select(['id', 'name']);
+        });
 
         $query->when($request->input('search'), function ($qb) use ($request) {
             $qb->where(function ($qb) use ($request) {

@@ -9,7 +9,6 @@
 
 @section('body')
 
-
     @if($errors->any())
         {{ implode('', $errors->all('<div>:message</div>')) }}
     @endif
@@ -21,9 +20,16 @@
                     <div class="card-header">
                         <div class="row">
                             <div class="col-12 d-flex align-items-center justify-content-between">
-                                <div>
-                                    <i class="fas fa-table me-1"></i>
-                                    <b>Entities</b>
+                                <div class="d-flex gap-2 align-items-center">
+                                    <div>
+                                        <i class="fas fa-table me-1"></i>
+                                        <b>Entities</b>
+                                    </div>
+                                    <div>
+                                        <form class="searchForm">
+                                            <input value="{{app('request')->input('search')}}" placeholder="Search..." class="form-control" id="searchInput" type="search" name="search">
+                                        </form>
+                                    </div>
                                 </div>
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                         data-bs-target="#addEntityModal">Add Entity
@@ -35,65 +41,67 @@
                         <table class="table sortable">
                             <thead>
                             <tr>
-                                <th>PRIORITY</th>
+                                <th>Number</th>
                                 <th>NAME</th>
-                                <th>LOGO</th>
+                                <th>Client</th>
                                 <th>ACTION</th>
                             </tr>
                             </thead>
                             <tbody id="requestData">
-                            @forelse ($companies as $company)
+                            @forelse ($jobOrders as $jobOrder)
                                 <tr>
-                                    <td>{{ $company->priority }}</td>
-                                    <td>{{ $company->name }}</td>
-                                    <td>
-                                        <img src="{{Storage::url($company->logo)}}" height="100" width="100">
-                                    </td>
+                                    <td>{{ $jobOrder->reference }}</td>
+                                    <td>{{ $jobOrder->name }}</td>
+                                    <td>{{ $jobOrder->client }}</td>
                                     <td>
                                         <div class="d-flex gap-2 align-items-center">
 
                                             <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
-                                                    data-bs-target="#editEntity{{$company->id}}">Edit
+                                                    data-bs-target="#editEntity{{$jobOrder->id}}">Edit
                                             </button>
 
-                                            <form data-entity-name="{{$company->name }}" class="delete-form" method="POST" action="/expense/entity/{{$company->id}}">
+                                            <form data-entity-name="{{$jobOrder->name }}" class="delete-form"
+                                                  method="POST" action="/expense/job-order/{{$jobOrder->id}}">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button role="button" type="submit" class="btn btn-danger">Delete</button>
+                                                <button role="button" type="submit" class="btn btn-danger">Delete
+                                                </button>
                                             </form>
                                         </div>
                                     </td>
                                 </tr>
 
-                                <div class="modal fade" id="editEntity{{$company->id}}" tabindex="-1"
+                                <div class="modal fade" id="editEntity{{$jobOrder->id}}" tabindex="-1"
                                      aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
-                                        <form method="POST" action="/expense/entity/{{$company->id}}" enctype="multipart/form-data">
+                                        <form method="POST" action="/expense/job-order/{{$jobOrder->id}}"
+                                              enctype="multipart/form-data">
                                             @csrf
                                             @method('PATCH')
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">Edit Entity</h5>
+                                                    <h5 class="modal-title" id="exampleModalLabel">Edit Job Order</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
                                                     <div class="form-group">
-                                                        <label for="priority">Priority</label>
-                                                        <input value="{{$company->priority}}" name="priority"
-                                                               class="form-control" id="priority" type="number" min="1"
+                                                        <label for="priority">Number</label>
+                                                        <input value="{{$jobOrder->reference}}" name="reference"
+                                                               class="form-control" id="priority" type="text"
                                                                required>
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="name">Name</label>
-                                                        <input value="{{$company->name}}" name="name"
+                                                        <input value="{{$jobOrder->name}}" name="name"
                                                                class="text-uppercase form-control text-uppercase"
                                                                id="name" type="text" required>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="logo">Logo</label>
-                                                        <input name="logo" class="form-control" id="logo" type="file"
-                                                               accept="image/*">
+                                                        <label for="logo">Client</label>
+                                                        <input value="{{$jobOrder->client}}" name="client"
+                                                               class="text-uppercase form-control text-uppercase"
+                                                               id="name" type="text" required>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
@@ -106,7 +114,6 @@
                                         </form>
                                     </div>
                                 </div>
-
                             @empty
                                 <tr>
                                     <td class="text-center" colspan='4'>
@@ -119,6 +126,10 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <div class="container-fluid">
+                        {{$jobOrders->links()}}
+                    </div>
                 </div>
             </div>
         </div>
@@ -127,25 +138,25 @@
     <!-- Modal -->
     <div class="modal  fade" id="addEntityModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form method="POST" action="/expense/entity" enctype="multipart/form-data">
+            <form method="POST" action="/expense/job-order">
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Add Entity</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">Add Job Order</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="priority">Priority</label>
-                            <input name="priority" class="form-control" id="priority" type="number" min="1" required>
+                            <label for="priority">Number</label>
+                            <input name="reference" class="form-control" id="priority" type="text"  required>
                         </div>
                         <div class="form-group">
                             <label for="name">Name</label>
                             <input name="name" class="form-control text-uppercase" id="name" type="text" required>
                         </div>
                         <div class="form-group">
-                            <label for="logo">Logo</label>
-                            <input name="logo" class="form-control" id="logo" type="file" accept="image/*" required>
+                            <label for="client">Client</label>
+                            <input name="client" class="form-control" id="logo" type="text" required>
                         </div>
                     </div>
                     <div class="modal-footer">

@@ -21,6 +21,7 @@ class RequestItem extends Model
         'session_id',
         'request_id',
         'status',
+        'remarks',
     ];
 
     protected $appends = ['total', 'fund'];

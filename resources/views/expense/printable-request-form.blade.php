@@ -243,7 +243,7 @@
                         <td colspan="2"
                             class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->cost) !!}</td>
                         <td colspan="2"
-                            class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->total) !!}</td>
+                            class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->total_cost) !!}</td>
                         <td colspan="3" class="small px-2 bg-transparent">{{$item->status}}</td>
                         <td colspan="2" class="small px-2 bg-transparent">{{$item->remarks}}</td>
                     </tr>
@@ -253,7 +253,7 @@
                     <td colspan="4"
                         class="px-2 small text-end">{!! \App\Helper\Helper::formatPeso($request->total) !!}</td>
                     <td colspan="5"
-                        class="px-2 small text-center fw-bold bg-gray text-uppercase">{!! \App\Helper\Helper::formatPeso($request->fund) !!}</td>
+                        class="px-2 small text-center fw-bold bg-gray text-uppercase">{!! \App\Helper\Helper::formatPeso($request->approvedItems->sum('total_cost')) !!}</td>
                 </tr>
                 <tr>
                     <td class="small text-center bg-dark text-white" colspan="18">PURCHASE REQUEST</td>
@@ -300,7 +300,7 @@
                     <td colspan="3" class="small bg-yellow text-center fw-bold" style="width: 179px">TOTAL</td>
                 </tr>
 
-                @foreach ($request->fund_item as $item)
+                @foreach ($request->approvedItems as $item)
                     <tr>
                         <td colspan="4" class="small px-2 bg-transparent">{{$item->quantity}}</td>
                         <td colspan="4" class="small px-2 bg-transparent">{{$item->measurement->name}}</td>
@@ -311,13 +311,13 @@
                         <td colspan="3"
                             class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->cost) !!}</td>
                         <td colspan="3"
-                            class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->total) !!}</td>
+                            class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->total_cost) !!}</td>
                     </tr>
                 @endforeach
                 <tr>
                     <td colspan="15" class="px-2 small bg-yellow text-end fw-bold">TOTAL</td>
                     <td colspan="3"
-                        class="px-2 small bg-yellow text-center fw-bold">{!! \App\Helper\Helper::formatPeso($request->fund) !!}</td>
+                        class="px-2 small bg-yellow text-center fw-bold">{!! \App\Helper\Helper::formatPeso($request->approvedItems->sum('total_cost')) !!}</td>
                 </tr>
                 <tr>
                     <td class="small text-center bg-dark text-white" colspan="18">VOUCHER</td>
@@ -354,7 +354,7 @@
                     <td colspan="3" class="px-2 small fw-bold bg-gray">Paid amount:</td>
                     <td colspan="6" class="px-2 small">
                         @if(isset($request->checkVoucher))
-                            {!! \App\Helper\Helper::formatPeso($request->fund) !!}
+                            {!! \App\Helper\Helper::formatPeso($request->approvedItems->sum('total_cost')) !!}
                         @endif
                     </td>
                 </tr>
@@ -368,7 +368,7 @@
                     <td colspan="3" class="px-2 small fw-bold bg-gray">Amount in words:</td>
                     <td colspan="6" class="px-2 small">
                         @if(isset($request->checkVoucher))
-                            {!! \App\Helper\Helper::amountToWords($request->fund) !!}
+                            {!! \App\Helper\Helper::amountToWords($request->approvedItems->sum('total_cost')) !!}
                         @endif
                     </td>
                 </tr>
