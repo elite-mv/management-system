@@ -15,4 +15,5 @@ input[name="search"]:focus{
 
 table > tbody > *:hover {
     cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.075);
 }

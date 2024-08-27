@@ -1,32 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-		<meta charset="UTF-8">
-	  	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	  	<title>MS [ Income ] - Quotes</title>
-	  	<?php include('include.html') ?>
-	  	<link rel="stylesheet" type="text/css" href="navigation.css">
-	  	<style type="text/css">
-	  		
-	  	</style>
-	</head>
-	<body class="font-monospace">
-		<main class="container-fluid p-0 income-with-nav">
+@extends('layouts.income-index')
 
-			<?php include('navigation.html') ?>
+@section('title', 'MS [ Income ] - Title')
 
-			<!-- page design starts here -->
+@section('style')
+    <style>
+        .income-with-nav > nav {
+            .navigation {
+                background-color: rgb(24, 28, 46);
+            }
+        }
+    </style>
+@endsection
 
-			<div class="w-100 d-flex align-items-start justify-content-center">
-				<div>
-					1
-				</div>
-			</div>
+@section('body')
 
-			<!-- page design ends here -->
+    <div class="w-100 d-flex align-items-start border">
+        <div class="container-fluid p-3">
+            CONTENT HERE
+        </div>
+    </div>
 
-		</main>
-		<script type="text/javascript" src="navigation.js"></script>
-	</body>
-</html>
+@endsection
+
+@section('script')
+
+    <script>
+        
+    </script>
+
+@endsection
