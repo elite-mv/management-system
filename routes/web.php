@@ -17,6 +17,7 @@ use App\Http\Controllers\Expense\RequestDeliveryController;
 use App\Http\Controllers\Expense\RequestExpenseController;
 use App\Http\Controllers\Expense\RequestItemController;
 use App\Http\Controllers\Expense\RequestVoucher;
+use App\Http\Controllers\Expense\UnitOfMeasureController;
 use App\Http\Controllers\Expense\VatController;
 use App\Http\Controllers\Income\CustomerController;
 use App\Http\Controllers\Income\IncomeController;
@@ -107,6 +108,12 @@ Route::prefix('expense')->group(function () {
         Route::get('/entity', [CompanyController::class, 'index']);
         Route::delete('/entity/{company}', [CompanyController::class, 'deleteCompany']);
         Route::patch('/entity/{company}', [CompanyController::class, 'updateCompany']);
+
+        Route::get('/unit-of-measure', [UnitOfMeasureController::class, 'index']);
+        Route::patch('/unit-of-measure/{measurement}', [UnitOfMeasureController::class, 'updateMeasurement']);
+        Route::delete('/unit-of-measure/{measurement}', [UnitOfMeasureController::class, 'deleteMeasurement']);
+        Route::post('/unit-of-measure', [UnitOfMeasureController::class, 'addMeasurement']);
+
 
         Route::post('/request', [RequestController::class, 'addRequest']);
         Route::get('/request/{id}', [RequestController::class, 'viewRequest'])->name('request');
