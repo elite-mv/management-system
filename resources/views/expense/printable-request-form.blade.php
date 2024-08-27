@@ -3,6 +3,8 @@
 
 @section('files')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.6/viewer.js" integrity="sha512-MdZwHb4u4qCy6kVoTLL8JxgPnARtbNCUIjTCihWcgWhCsLfDaQJib4+OV0O8IS+ea+3Xv/6pH3vYY4LWpU/gbQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.6/viewer.css" integrity="sha512-eG8C/4QWvW9MQKJNw2Xzr0KW7IcfBSxljko82RuSs613uOAg/jHEeuez4dfFgto1u6SRI/nXmTr9YPCjs1ozBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 @endsection
 
 @section('title', 'View Request')
@@ -241,7 +243,7 @@
                         <td colspan="2"
                             class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->cost) !!}</td>
                         <td colspan="2"
-                            class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->total) !!}</td>
+                            class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->total_cost) !!}</td>
                         <td colspan="3" class="small px-2 bg-transparent">{{$item->status}}</td>
                         <td colspan="2" class="small px-2 bg-transparent">{{$item->remarks}}</td>
                     </tr>
@@ -251,7 +253,7 @@
                     <td colspan="4"
                         class="px-2 small text-end">{!! \App\Helper\Helper::formatPeso($request->total) !!}</td>
                     <td colspan="5"
-                        class="px-2 small text-center fw-bold bg-gray text-uppercase">{!! \App\Helper\Helper::formatPeso($request->fund) !!}</td>
+                        class="px-2 small text-center fw-bold bg-gray text-uppercase">{!! \App\Helper\Helper::formatPeso($request->approvedItems->sum('total_cost')) !!}</td>
                 </tr>
                 <tr>
                     <td class="small text-center bg-dark text-white" colspan="18">PURCHASE REQUEST</td>
@@ -298,7 +300,7 @@
                     <td colspan="3" class="small bg-yellow text-center fw-bold" style="width: 179px">TOTAL</td>
                 </tr>
 
-                @foreach ($request->fund_item as $item)
+                @foreach ($request->approvedItems as $item)
                     <tr>
                         <td colspan="4" class="small px-2 bg-transparent">{{$item->quantity}}</td>
                         <td colspan="4" class="small px-2 bg-transparent">{{$item->measurement->name}}</td>
@@ -309,13 +311,13 @@
                         <td colspan="3"
                             class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->cost) !!}</td>
                         <td colspan="3"
-                            class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->total) !!}</td>
+                            class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->total_cost) !!}</td>
                     </tr>
                 @endforeach
                 <tr>
                     <td colspan="15" class="px-2 small bg-yellow text-end fw-bold">TOTAL</td>
                     <td colspan="3"
-                        class="px-2 small bg-yellow text-center fw-bold">{!! \App\Helper\Helper::formatPeso($request->fund) !!}</td>
+                        class="px-2 small bg-yellow text-center fw-bold">{!! \App\Helper\Helper::formatPeso($request->approvedItems->sum('total_cost')) !!}</td>
                 </tr>
                 <tr>
                     <td class="small text-center bg-dark text-white" colspan="18">VOUCHER</td>
@@ -352,7 +354,7 @@
                     <td colspan="3" class="px-2 small fw-bold bg-gray">Paid amount:</td>
                     <td colspan="6" class="px-2 small">
                         @if(isset($request->checkVoucher))
-                            {!! \App\Helper\Helper::formatPeso($request->fund) !!}
+                            {!! \App\Helper\Helper::formatPeso($request->approvedItems->sum('total_cost')) !!}
                         @endif
                     </td>
                 </tr>
@@ -366,7 +368,7 @@
                     <td colspan="3" class="px-2 small fw-bold bg-gray">Amount in words:</td>
                     <td colspan="6" class="px-2 small">
                         @if(isset($request->checkVoucher))
-                            {!! \App\Helper\Helper::amountToWords($request->fund) !!}
+                            {!! \App\Helper\Helper::amountToWords($request->approvedItems->sum('total_cost')) !!}
                         @endif
                     </td>
                 </tr>
@@ -1104,6 +1106,10 @@
             keyboard: false
         })
 
+
+
+        const viewer =  new Viewer(document.getElementById('uploads'));
+
         const fileUpload = document.querySelector('#fileUpload');
 
         const editItemForm = document.querySelector('#editItemForm');
@@ -1601,7 +1607,10 @@
             try {
                 const result = await fetch(`/expense/api/request-item/${id}`);
 
-                const data = await result.json();
+                const response = await result.json();
+
+                const data = response.item;
+
 
                 if(!result.ok){
                     throw new Error(data.message);
@@ -1621,9 +1630,25 @@
                 editItemStatus.value = data.status;
                 editItemRemarks.value = data.remarks;
 
+                $('#uploads').html('');
+
+
+                data.attachments.forEach(attachment =>{
+
+                    let imageSrc = (attachment.file.split('/'))[1];
+
+                    const thumbnail = $('<img>').attr('src', '/storage/' + imageSrc).addClass('uploaded-img');
+
+                    $('#uploads').append(thumbnail);
+
+
+                });
+
                 editItemModal.show();
 
-                console.info(data);
+                viewer.update();
+
+                console.info(response);
 
             }catch (error){
                 console.error(error)
@@ -2322,7 +2347,19 @@
 
                 let files = await result.json();
 
-                console.log(files);
+                files.images.forEach(attachment =>{
+
+                    let imageSrc = (attachment.split('/'))[1];
+
+                    const thumbnail = $('<img>').attr('src', '/storage/' + imageSrc).addClass('uploaded-img');
+
+                    $('#uploads').append(thumbnail);
+
+                });
+
+                console.log(files.images);
+
+                viewer.update();
 
             } catch (error) {
                 Swal.fire({

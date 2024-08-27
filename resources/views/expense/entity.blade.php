@@ -1,9 +1,19 @@
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
+
 @extends('layouts.expense-index')
 
 
 @section('title', 'Entities')
 
 @section('body')
+
+
+    @if($errors->any())
+        {{ implode('', $errors->all('<div>:message</div>')) }}
+    @endif
+
     <div class="container p-3">
         <div class="row mb-3">
             <div class="col-12">
@@ -36,7 +46,9 @@
                                 <tr>
                                     <td>{{ $company->priority }}</td>
                                     <td>{{ $company->name }}</td>
-                                    <td>{{ $company->logo }}</td>
+                                    <td>
+                                        <img src="{{Storage::url($company->logo)}}" height="100" width="100">
+                                    </td>
                                     <td>
                                         <div class="d-flex gap-2 align-items-center">
 
@@ -44,11 +56,10 @@
                                                     data-bs-target="#editEntity{{$company->id}}">Edit
                                             </button>
 
-                                            <form data-entity-name="{{$company->name }}" class="delete-form"
-                                                  method="POST" action="/delete-entity/{{$company->id}}">
+                                            <form data-entity-name="{{$company->name }}" class="delete-form" method="POST" action="/expense/entity/{{$company->id}}">
                                                 @csrf
-                                                <button role="button" type="submit" class="btn btn-danger">Delete
-                                                </button>
+                                                @method('DELETE')
+                                                <button role="button" type="submit" class="btn btn-danger">Delete</button>
                                             </form>
                                         </div>
                                     </td>
@@ -57,8 +68,9 @@
                                 <div class="modal fade" id="editEntity{{$company->id}}" tabindex="-1"
                                      aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
-                                        <form method="POST" action="/entity" enctype="multipart/form-data">
+                                        <form method="POST" action="/expense/entity/{{$company->id}}" enctype="multipart/form-data">
                                             @csrf
+                                            @method('PATCH')
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <h5 class="modal-title" id="exampleModalLabel">Edit Entity</h5>
@@ -81,14 +93,14 @@
                                                     <div class="form-group">
                                                         <label for="logo">Logo</label>
                                                         <input name="logo" class="form-control" id="logo" type="file"
-                                                               accept="image/*" required>
+                                                               accept="image/*">
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"
                                                             data-bs-dismiss="modal">Cancel
                                                     </button>
-                                                    <button type="button" class="btn btn-primary">Save changes</button>
+                                                    <button type="submit" class="btn btn-primary">Save changes</button>
                                                 </div>
                                             </div>
                                         </form>
@@ -115,7 +127,7 @@
     <!-- Modal -->
     <div class="modal  fade" id="addEntityModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form method="POST" action="/entity" enctype="multipart/form-data">
+            <form method="POST" action="/expense/entity" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
@@ -138,7 +150,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
                     </div>
                 </div>
             </form>

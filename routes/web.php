@@ -8,6 +8,7 @@ use App\Http\Controllers\Expense\BankDetailController;
 use App\Http\Controllers\Expense\BookKeeperController;
 use App\Http\Controllers\Expense\CompanyController;
 use App\Http\Controllers\Expense\FinanceController;
+use App\Http\Controllers\Expense\JobOrderController;
 use App\Http\Controllers\Expense\PresidentController;
 use App\Http\Controllers\Expense\RequestApprovalController;
 use App\Http\Controllers\Expense\RequestCommentController;
@@ -21,39 +22,48 @@ use App\Http\Controllers\Income\CustomerController;
 use App\Http\Controllers\Income\IncomeController;
 use App\Http\Controllers\Income\QuoteController;
 use App\Http\Controllers\Income\InvoiceController;
+use App\Http\Controllers\NavigationController;
 use App\Http\Controllers\PdfController;
+use App\Http\Middleware\CheckUserPin;
+use App\Http\Middleware\CompanyMiddleware;
 use App\Http\Middleware\SetGlobalVariables;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'index'])->name('login');
+
+Route::middleware([CheckUserPin::class])->get('/navigation', [NavigationController::class, 'index']);
+
+Route::get('/pin', [NavigationController::class, 'pin'])->name('pin');
+Route::post('/pin', [NavigationController::class, 'verifyPin']);
+
+
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 
-Route::prefix('income')->group(function () {
+Route::prefix('income')->middleware([CompanyMiddleware::class])->group(function () {
+
     Route::get('/', [IncomeController::class, 'index']);
 
     Route::get('/customer', [CustomerController::class, 'index']);
-
     Route::post('/customer/add', [CustomerController::class, 'customer_add']);
     Route::get('/customer/get', [CustomerController::class, 'customer_get']);
     Route::get('/customer/select', [CustomerController::class, 'customer_select']);
     Route::put('/customer/update', [CustomerController::class, 'customer_update']);
-
     Route::post('/customer/salutation/add', [CustomerController::class, 'salutation_add']);
     Route::get('/customer/salutation/get', [CustomerController::class, 'salutation_get']);
-
     Route::post('/customer/currency/add', [CustomerController::class, 'currency_add']);
     Route::get('/customer/currency/get', [CustomerController::class, 'currency_get']);
 
     Route::get('/quote', [QuoteController::class, 'index']);
-    Route::post('/quote/addList', [QuoteController::class, 'addQuotationList']);
-    Route::post('/quote/ReaddList', [QuoteController::class, 'ReaddQuotationList']);
-    Route::post('/quote/addItem', [QuoteController::class, 'addQuotationItem']);
-    Route::get('/quote/selectList', [QuoteController::class, 'getQuotationList']);
-    Route::get('/quote/selectItem', [QuoteController::class, 'getQuotationItem']);
-    Route::get('/quote/selectNavigation', [QuoteController::class, 'getQuotationNavigation']);
-    Route::post('/quote/customer/add', [QuoteController::class, 'addCustomerData']);
-    Route::get('/quote/customer/get', [QuoteController::class, 'ReaddCustomerData']);
+    Route::post('/quote/add_list', [QuoteController::class, 'add_list']);
+    Route::post('/quote/add_item', [QuoteController::class, 'add_item']);
+    Route::post('/quote/get_list', [QuoteController::class, 'get_list']);
+    Route::get('/quote/get_navigation_list', [QuoteController::class, 'get_navigation_list']);
+    Route::get('/quote/get_navigation_item', [QuoteController::class, 'get_navigation_item']);
+    Route::get('/quote/get_navigation', [QuoteController::class, 'get_navigation']);
+    Route::get('/quote/customer/get', [QuoteController::class, 'customer_get']);
+
+    Route::get('/search-customer', [CustomerController::class, 'searchCustomer']);
 
     Route::get('/invoice', [InvoiceController::class, 'index']);
 });
@@ -88,7 +98,15 @@ Route::prefix('expense')->group(function () {
         Route::get('/auditor', [AuditorController::class, 'index']);
         Route::get('/api/auditor', [AuditorController::class, 'getRequests']);
 
+        Route::get('/job-order', [JobOrderController::class, 'index']);
+        Route::post('/job-order', [JobOrderController::class, 'addJobOrder']);
+        Route::patch('/job-order/{jobOrder}', [JobOrderController::class, 'updateJobOrder']);
+        Route::delete('/job-order/{jobOrder}', [JobOrderController::class, 'archiveJobOrder']);
+
+        Route::post('/entity', [CompanyController::class, 'addCompany']);
         Route::get('/entity', [CompanyController::class, 'index']);
+        Route::delete('/entity/{company}', [CompanyController::class, 'deleteCompany']);
+        Route::patch('/entity/{company}', [CompanyController::class, 'updateCompany']);
 
         Route::post('/request', [RequestController::class, 'addRequest']);
         Route::get('/request/{id}', [RequestController::class, 'viewRequest'])->name('request');

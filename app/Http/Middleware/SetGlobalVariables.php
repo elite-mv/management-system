@@ -20,11 +20,11 @@ class SetGlobalVariables
     public function handle(Request $request, Closure $next): Response
     {
 
-        $bankNames = BankName::get();
-        $bankCodes = BankCode::get();
-        $companies = Company::get();
+        $bankNames = BankName::select(['id','name'])->get();
+        $bankCodes = BankCode::select(['id','code'])->get();;
+        $companies = Company::select(['id','name'])->get();;
 
-        $expenseCategory = ExpenseCategory::get();
+        $expenseCategory = ExpenseCategory::select(['name', 'id'])->get();
 
         view()->share('bank_names', $bankNames);
         view()->share('bank_codes',  $bankCodes);

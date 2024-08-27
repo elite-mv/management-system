@@ -13,5 +13,11 @@ class Company extends Model
         'name',
         'priority',
         'logo',
+        'archive'
     ];
+
+    protected $casts = [
+        'archive' => 'boolean'
+    ];
+
 }

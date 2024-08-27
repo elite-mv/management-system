@@ -8,6 +8,7 @@ use App\Enums\AccountingType;
 use App\Enums\PaymentMethod;
 use App\Enums\RequestApprovalStatus;
 use App\Enums\RequestFundStatus;
+use App\Enums\RequestItemStatus;
 use App\Enums\RequestPriorityLevel;
 use App\Enums\RequestStatus;
 use App\Enums\UserRole;
@@ -140,19 +141,74 @@ class RequestController extends Controller
 
     public function viewRequest(int $id)
     {
-        $expenseRequest = ModelsRequest::where('id', $id)->firstOrFail();
+
+        $expenseRequest = ModelsRequest::where('id', $id)
+            ->with([
+                'items' => function ($q) {
+                    $q->select([
+                        'id', 'request_id', 'quantity', 'cost', 'description', 'status', 'remarks', 'measurement_id', 'job_order_id',
+                        DB::raw('SUM(quantity * cost) as total_cost')
+                    ])
+                        ->groupBy('id', 'request_id', 'quantity', 'cost', 'description', 'status', 'remarks', 'measurement_id', 'job_order_id')
+                        ->with([
+                            'measurement' => function ($q) {
+                                $q->select(['id', 'name']);
+                            },
+                            'jobOrder' => function ($q) {
+                                $q->select(['id', 'name']);
+                            }
+                        ]);
+                },
+                'approvedItems' => function ($q) {
+                    $q->select([
+                        'id', 'request_id', 'quantity', 'cost', 'description', 'status', 'remarks', 'measurement_id', 'job_order_id',
+                        DB::raw('SUM(quantity * cost) as total_cost')
+                    ])
+                        ->whereIn('status', [RequestItemStatus::PRIORITY->name, RequestItemStatus::APPROVED->name])
+                        ->groupBy('id', 'request_id', 'quantity', 'cost', 'description', 'status', 'remarks', 'measurement_id', 'job_order_id')
+                        ->with([
+                            'measurement' => function ($q) {
+                                $q->select(['id', 'name']);
+                            },
+                            'jobOrder' => function ($q) {
+                                $q->select(['id', 'name']);
+                            }
+                        ]);
+                },
+                'bookKeeper' => function ($q) {
+                    $q->whereHas('role', function ($query) {
+                        $query->where('name', UserRole::BOOK_KEEPER->value);
+                    }, '=', '1');
+                },
+                'accountant' => function ($q) {
+                    $q->whereHas('role', function ($query) {
+                        $query->where('name', UserRole::ACCOUNTANT->value);
+                    }, '=', '1');
+                },
+                'finance' => function ($q) {
+                    $q->whereHas('role', function ($query) {
+                        $query->where('name', UserRole::FINANCE->value);
+                    }, '=', '1');
+                },
+                'auditor' => function ($q) {
+                    $q->whereHas('role', function ($query) {
+                        $query->where('name', UserRole::AUDITOR->value);
+                    }, '=', '1');
+                },
+            ])
+            ->firstOrFail();
 
         if (!Gate::allows('view-request', $expenseRequest)) {
             abort(403);
         }
 
-        $measurements = Measurement::get();
-        $jobOrder = JobOrder::get();
+        $measurements = Measurement::select(['id', 'name'])->get();
+        $jobOrder = JobOrder::select(['id', 'name', 'reference'])->get();
 
         return view('expense.printable-request-form', [
             'request' => $expenseRequest,
-            'measurements' => $measurements,
             'jobOrders' => $jobOrder,
+            'measurements' => $measurements
         ]);
 
     }
@@ -208,7 +264,7 @@ class RequestController extends Controller
                 'status' => '200',
             ]);
 
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
@@ -218,6 +274,7 @@ class RequestController extends Controller
         }
 
     }
+
     public function updateType(Request $request, $id)
     {
 
@@ -237,7 +294,7 @@ class RequestController extends Controller
                 'status' => '200',
             ]);
 
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
@@ -267,7 +324,7 @@ class RequestController extends Controller
                 'status' => '200',
             ]);
 
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
 
             DB::rollBack();
 
@@ -278,6 +335,7 @@ class RequestController extends Controller
         }
 
     }
+
     public function updatePriorityLevel(Request $request, $id)
     {
         try {
@@ -297,7 +355,7 @@ class RequestController extends Controller
                 'status' => '200',
             ]);
 
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
@@ -325,7 +383,7 @@ class RequestController extends Controller
                 'status' => 200,
             ]);
 
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([

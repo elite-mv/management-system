@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\Income\QuotationStatus;
+use Carbon\Carbon;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,19 +13,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('quotation_lists', function (Blueprint $table) {
+
+        Schema::create('quotations', function (Blueprint $table) {
             $table->id();
-            $table->string('customer_name');
-            $table->string('start_date');
-            $table->string('expiry_date');
             $table->string('subject');
-            $table->string('unit');
-            $table->float('discount');
-            $table->float('shipping_charges');
-            $table->string('currency');
-            $table->string('email');
-            $table->float('amount');
-            $table->string('message');
+            $table->string('note');
+            $table->float('shipping_charges')->default(0);
+            $table->enum('status',[
+                QuotationStatus::PENDING->name,
+                QuotationStatus::ACCEPTED->name,
+                QuotationStatus::EXPIRED->name,
+            ]);
+            $table->date('expiry_date')->default(Carbon::now()->addDays(15)->format('Y-m-d'));
+            $table->foreignId('customer_id')->index()->constrained('customers');
+            $table->foreignId('currency_id')->index()->constrained('currencies');
+            $table->foreignId('sales_officer')->index()->constrained('users');
+            $table->foreignId('company_id')->index()->constrained('companies');
             $table->timestamps();
         });
     }
@@ -33,6 +38,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('quotation_lists');
+        Schema::dropIfExists('quotations');
     }
 };

@@ -7,17 +7,20 @@ use App\Models\Income\Customer;
 use App\Models\Income\Salutation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use function PHPUnit\TestFixture\func;
 
 
 class CustomerController
 {
-
-
     public function index(){
 
-        $customers =  Customer::get();
-        $salutations =  Salutation::get();
-        $currencies =  Currency::get();
+        $customers =  Customer::with(['currency' => function ($query) {
+            $query->select(['id', 'name']);
+        }])
+            ->paginate(25);
+
+        $salutations =  Salutation::select(['id', 'salutation'])->get();
+        $currencies =  Currency::select(['id', 'name'])->get();
 
         return view('income.customer', [
             'customers' => $customers,
@@ -99,17 +102,16 @@ class CustomerController
         foreach ($customers as $customer) {
             $optionsHtml .= '
                 <tr>
-                    <th scope="row"><small>' . e($customer->name) . '</small></th>
-                    <td><small>' . e($customer->position) . '</small></td>
-                    <td><small>' . e($customer->company) . '</small></td>
-                    <td><small>' . e($customer->contact_number) . '</small></td>
-                    <td><small>' . e($customer->address) . '</small></td>
-                    <td><small>' . e($customer->currency) . '</small></td>
-                    <input type="hidden" name="id" value="' . e($customer->id) . '">
+                    <th scope="row"><small onclick="open_customer('. e($customer->id) . ');">' . e($customer->name) . '</small></th>
+                    <td><small onclick="open_customer('. e($customer->id) . ');">' . e($customer->position) . '</small></td>
+                    <td><small onclick="open_customer('. e($customer->id) . ');">' . e($customer->company) . '</small></td>
+                    <td><small onclick="open_customer('. e($customer->id) . ');">' . e($customer->contact_number) . '</small></td>
+                    <td><small onclick="open_customer('. e($customer->id) . ');">' . e($customer->address) . '</small></td>
+                    <td><small onclick="open_customer('. e($customer->id) . ');">' . e($customer->currency) . '</small></td>
+                    <td><small onclick="open_customer('. e($customer->id) . ');">Sales Officer</small></td>
                 </tr>
             ';
         }
-
         return response()->json(['options' => $optionsHtml]);
     }
 
@@ -124,9 +126,10 @@ class CustomerController
         }
     }
 
-    public function updateCustomerData(Request $request)
+    public function customer_update(Request $request)
     {
         $validatedData = $request->validate([
+            'id' => 'required|integer|exists:customers,id',
             'name' => 'required|string|max:255',
             'position' => 'nullable|string|max:255',
             'company' => 'nullable|string|max:255',
@@ -148,6 +151,32 @@ class CustomerController
         }
     }
 
-    
+    public  function searchCustomer(Request $request)
+    {
+
+        try {
+
+            $query = Customer::query();
+
+            $query->when($request->input('search'), function ($query) use ($request) {
+                $query->where(function ($query) use ($request) {
+                    $query->where('name', 'like', '%' . $request->input('search'));
+                });
+            });
+
+            $query->take(20);
+
+            $query->whereHas('clientOf', function ($query) use ($request) {
+                $query->where('user_id', Auth::id());
+            }, '>=',1);
+
+            return response()->json($query->get());
+
+
+        }catch (\Exception $exception){
+            return response()->json(['message' => $exception->getMessage()], 500);
+        }
+
+    }
 
 }

@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('quotation_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('quotation_id')->constrained('quotation_lists');
-            $table->string('unit_detail');
+            $table->string('details');
             $table->float('quantity');
-            $table->float('unit_cost');
-            $table->float('discount');
+            $table->float('cost');
             $table->float('amount');
+            $table->foreignId('measurement_id')->constrained('measurements');
+            $table->foreignId('quotation_id')->constrained('quotations');
             $table->timestamps();
         });
     }

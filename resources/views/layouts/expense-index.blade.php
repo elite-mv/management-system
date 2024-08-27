@@ -141,7 +141,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <a href="job_order.php" class="job_order_nav">
+                    <a href="/expense/job-order" class="job_order_nav">
                         <i class="fas fa-sort-amount-up-alt" style="height: 20px; width: 20px;"></i>
                         <small><b>Job Order</b></small>
                     </a>

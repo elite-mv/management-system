@@ -16,7 +16,7 @@
 
     <div class="w-100 d-flex align-items-start border">
         <div class="container-fluid p-3">
-            <div class="row">
+            {{-- <div class="row">
                 <div class="col-12 text-start">
                     <p class="d-inline-flex gap-1">
                         <a class="btn btn-outline-primary rounded-0" data-bs-toggle="collapse" href="#Collapse1" role="button" aria-expanded="false" aria-controls="Collapse1">FILTER</a>
@@ -65,9 +65,9 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
-            <div class="row">
+            {{-- <div class="row">
                 <div class="col-12" style="display: flex; justify-content: center; align-items: center;">
                     <div class="w-50 rounded-pill border d-flex align-items-start flex-direction-row gap-2 py-2 px-3">
                         <div>
@@ -82,9 +82,9 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
-            <div class="row p-3">
+            {{-- <div class="row p-3">
                 <div class="border border-dark bg-dark text-white row m-0 p-1 d-flex align-items-center">
                     <div class="col-auto">
                         <b>List of Customers</b>
@@ -125,6 +125,53 @@
                             @endforeach
                         </tbody>
                     </table>
+                </div>
+            </div> --}}
+
+            <div class="row my-3">
+                <div class="col-12">
+                    <div class="card overflow-x-auto">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-table me-1"></i>
+                                <b>List of Customers</b>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-sm btn-danger rounded-0 px-3 d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#customerModal">
+                                    <i class="fas fa-plus-circle me-2"></i>CUSTOMER
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table id="customer" class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Position</th>
+                                        <th scope="col">Company</th>
+                                        <th scope="col">Contact Number</th>
+                                        <th scope="col">Address</th>
+                                        <th scope="col">Currency</th>
+                                        <th scope="col">Added By</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($customers as $customer)
+                                        <tr>
+                                            <th scope="row"><small onclick="open_customer({{ $customer->id }});">{{$customer->name}}</small></th>
+                                            <td><small onclick="open_customer({{ $customer->id }});">{{$customer->position}}</small></td>
+                                            <td><small onclick="open_customer({{ $customer->id }});">{{$customer->company}}</small></td>
+                                            <td><small onclick="open_customer({{ $customer->id }});">{{$customer->contact_number}}</small></td>
+                                            <td><small onclick="open_customer({{ $customer->id }});">{{$customer->address}}</small></td>
+                                            <td><small onclick="open_customer({{ $customer->id }});">{{$customer->currency->name}}</small></td>
+                                            <td><small onclick="open_customer({{ $customer->id }});">Sales Officer</small></td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            {{$customers->links()}}
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -214,7 +261,7 @@
                             </div>
                             <div class="modal-body">
                                 <div class="d-flex gap-3" style="flex-direction: column;">
-                                    <input type="hidden" name="id">
+                                    <input type="hidden" name="update_id">
                                     <div>
                                         <b>Customer Name</b>
                                         <div class="d-flex flex-direction-row gap-3">
@@ -380,7 +427,11 @@
 @section('script')
 
     <script>
-        $('input[name="customer_salutation"]').on('input', function() {
+        $(window).on('load', function() {
+            // Get_Customer();
+        })
+
+        $('input[name="customer_salutation"], input[name="update_salutation"]').on('input', function() {
             if ($(this).val() === 'Add New') {
                 new bootstrap.Modal(document.getElementById('salutationModal')).show();
                 $(this).val('');
@@ -411,7 +462,8 @@
                             $('#customerModal').find('#customer_salutation').append('<option value="Add New">Add New</option>');
 
                             $('#customerModal').find('input[name="customer_salutation"]').val($('#salutationForm').find('input[name="salutation_salutation"]').val());
-                            
+                            $('#updateModal').find('input[name="update_salutation"]').val($('#salutationForm').find('input[name="salutation_salutation"]').val());
+
                             $('#salutationModal').find('#salutation_salutation').append(
                                 '<div>' +
                                     '<b>' + $('#salutationForm').find('input[name="salutation_salutation"]').val() + '</b>' +
@@ -420,7 +472,7 @@
                                     '</em>' +
                                 '</div>'
                             );
-                             
+
                             $('#updateModal').find('#update_salutation').html('');
                             $('#updateModal').find('#update_salutation').html(data.options);
                             $('#updateModal').find('#update_salutation').append('<option value="Add New">Add New</option>');
@@ -439,7 +491,7 @@
             });
         });
 
-        $('input[name="customer_currency"]').on('input', function() {
+        $('input[name="customer_currency"], input[name="update_currency"]').on('input', function() {
             if ($(this).val() === 'Add New') {
                 new bootstrap.Modal(document.getElementById('currencyModal')).show();
                 $(this).val('');
@@ -479,7 +531,8 @@
                             $('#customerModal').find('#customer_currency').append('<option value="Add New">Add New</option>');
 
                             $('#customerModal').find('input[name="customer_currency"]').val($('#currencyForm').find('input[name="currency_currency"]').val());
-                            
+                            $('#updateModal').find('input[name="update_currency"]').val($('#currencyForm').find('input[name="currency_currency"]').val());
+
                             $('#currencyModal').find('#currency_currency').append(
                                 '<div>' +
                                     '<b>' + $('#currencyForm').find('input[name="currency_currency"]').val() + '</b>' +
@@ -534,41 +587,7 @@
                         success: function (data) {
                             $('#customer tbody').html('');
                             $('#customer tbody').html(data.options);
-
-                            document.querySelectorAll('#customer > tbody > tr > th, #customer > tbody > tr > td').forEach(function(element) {
-                                element.addEventListener('click', function() {
-                                    const parentRow = element.closest('tr');
-
-                                    $.ajax({
-                                        url: "/income/customer/select",
-                                        headers: {
-                                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                                        },
-                                        data: {
-                                            id: parentRow.querySelector('input[name="id"]').value
-                                        },
-                                        method: "GET",
-                                        success: function (data) {
-                                            $('#UpdatecustomerForm').find('input[name="id"]').val(data.id);
-                                            let name = data.name;
-                                            $('#UpdatecustomerForm').find('select[name="update_name"]').val(name.substring(0, name.indexOf(' ')));
-                                            $('#UpdatecustomerForm').find('input[name="update_name"]').val(name.substring(name.indexOf(' ') + 1));
-                                            $('#UpdatecustomerForm').find('input[name="update_position"]').val(data.position);
-                                            $('#UpdatecustomerForm').find('input[name="update_company"]').val(data.company);
-                                            $('#UpdatecustomerForm').find('input[name="update_email"]').val(data.email);
-                                            $('#UpdatecustomerForm').find('input[name="update_contact_number"]').val(data.contact_number);
-                                            $('#UpdatecustomerForm').find('textarea[name="update_address"]').val(data.address);
-                                            $('#UpdatecustomerForm').find('select[name="update_currency"]').val(data.currency);
-                                            new bootstrap.Modal(document.getElementById('updateModal')).show();
-                                        },
-                                        error: function (jqXHR, textStatus, errorThrown) {
-                                            console.error('Error:', textStatus, errorThrown);
-                                        }
-                                    });
-
-                                });
-                            });
-
+                            Get_Customer();
                             bootstrap.Modal.getInstance(document.querySelector('#customerModal')).hide();
                             $('#customerForm')[0].reset();
                         },
@@ -583,43 +602,8 @@
             });
         })
 
-        document.querySelectorAll('#customer > tbody > tr > th, #customer > tbody > tr > td').forEach(function(element) {
-            element.addEventListener('click', function() {
-                const parentRow = element.closest('tr');
-
-                $.ajax({
-                    url: "/income/customer/select",
-                    headers: {
-                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                    },
-                    data: {
-                        id: parentRow.querySelector('input[name="id"]').value
-                    },
-                    method: "GET",
-                    success: function (data) {
-                        $('#updateForm').find('input[name="id"]').val(data.id);
-                        let name = data.name;
-                        $('#updateForm').find('input[name="update_salutation"]').val(name.substring(0, name.indexOf(' ')));
-                        $('#updateForm').find('input[name="update_name"]').val(name.substring(name.indexOf(' ') + 1));
-                        $('#updateForm').find('input[name="update_position"]').val(data.position);
-                        $('#updateForm').find('input[name="update_company"]').val(data.company);
-                        $('#updateForm').find('input[name="update_email"]').val(data.email);
-                        $('#updateForm').find('input[name="update_contact_number"]').val(data.contact_number);
-                        $('#updateForm').find('textarea[name="update_address"]').val(data.address);
-                        $('#updateForm').find('input[name="update_currency"]').val(data.currency);
-                        new bootstrap.Modal(document.getElementById('updateModal')).show();
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.error('Error:', textStatus, errorThrown);
-                    }
-                });
-
-            });
-        });
-
         document.querySelector('#updateForm').addEventListener('submit', function(event) {
             event.preventDefault();
-
             $.ajax({
                 url: "/income/customer/update",
                 headers: {
@@ -627,14 +611,14 @@
                 },
                 method: "PUT",
                 data: {
-                    id: $(this).find('input[name="id"]').val(),
+                    id: $(this).find('input[name="update_id"]').val(),
                     name: $(this).find('input[name="update_salutation"]').val() + ' ' + $(this).find('input[name="update_name"]').val(),
-                    position: $(this).find('input[name="position"]').val(),
-                    company: $(this).find('input[name="company"]').val(),
-                    email: $(this).find('input[name="email"]').val(),
-                    contact_number: $(this).find('input[name="contact_number"]').val(),
-                    address: $(this).find('textarea[name="address"]').val(),
-                    currency: $(this).find('input[name="currency"]').val()
+                    position: $(this).find('input[name="update_position"]').val(),
+                    company: $(this).find('input[name="update_company"]').val(),
+                    email: $(this).find('input[name="update_email"]').val(),
+                    contact_number: $(this).find('input[name="update_contact_number"]').val(),
+                    address: $(this).find('textarea[name="update_address"]').val(),
+                    currency: $(this).find('input[name="update_currency"]').val()
                 },
                 success: function (data) {
                     $.ajax({
@@ -647,43 +631,9 @@
                             $(this).trigger('reset');
                             $('#customer tbody').html('');
                             $('#customer tbody').html(data.options);
-
-                            document.querySelectorAll('#customer > tbody > tr > th, #customer > tbody > tr > td').forEach(function(element) {
-                                element.addEventListener('click', function() {
-                                    const parentRow = element.closest('tr');
-
-                                    $.ajax({
-                                        url: "/income/customer/select",
-                                        headers: {
-                                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                                        },
-                                        data: {
-                                            id: parentRow.querySelector('input[name="id"]').value
-                                        },
-                                        method: "GET",
-                                        success: function (data) {
-                                            $('#UpdatecustomerForm').find('input[name="id"]').val(data.id);
-                                            let name = data.name;
-                                            $('#UpdatecustomerForm').find('select[name="pre_name"]').val(name.substring(0, name.indexOf(' ')));
-                                            $('#UpdatecustomerForm').find('input[name="full_name"]').val(name.substring(name.indexOf(' ') + 1));
-                                            $('#UpdatecustomerForm').find('input[name="position"]').val(data.position);
-                                            $('#UpdatecustomerForm').find('input[name="company"]').val(data.company);
-                                            $('#UpdatecustomerForm').find('input[name="email"]').val(data.email);
-                                            $('#UpdatecustomerForm').find('input[name="contact_number"]').val(data.contact_number);
-                                            $('#UpdatecustomerForm').find('textarea[name="address"]').val(data.address);
-                                            $('#UpdatecustomerForm').find('select[name="currency"]').val(data.currency);
-                                            new bootstrap.Modal(document.getElementById('UpdatecustomerModal')).show();
-                                        },
-                                        error: function (jqXHR, textStatus, errorThrown) {
-                                            console.error('Error:', textStatus, errorThrown);
-                                        }
-                                    });
-
-                                });
-                            });
-
-                            var UpdatecustomerModal = bootstrap.Modal.getInstance(document.querySelector('#UpdatecustomerModal'));
-                            UpdatecustomerModal.hide();
+                            Get_Customer();
+                            bootstrap.Modal.getInstance(document.querySelector('#updateModal')).hide();
+                            $('#updateForm')[0].reset();
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
                             console.error('Error:', textStatus, errorThrown);
@@ -695,6 +645,54 @@
                 }
             });
         });
+
+        function open_customer(response) {
+            $.ajax({
+                url: "/income/customer/select",
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    id: response
+                },
+                method: "GET",
+                success: function (data) {
+                    $('#updateForm').find('input[name="update_id"]').val(data.id);
+                    let name = data.name;
+                    $('#updateForm').find('input[name="update_salutation"]').val(name.substring(0, name.indexOf(' ')));
+                    $('#updateForm').find('input[name="update_name"]').val(name.substring(name.indexOf(' ') + 1));
+                    $('#updateForm').find('input[name="update_position"]').val(data.position);
+                    $('#updateForm').find('input[name="update_company"]').val(data.company);
+                    $('#updateForm').find('input[name="update_email"]').val(data.email);
+                    $('#updateForm').find('input[name="update_contact_number"]').val(data.contact_number);
+                    $('#updateForm').find('textarea[name="update_address"]').val(data.address);
+                    $('#updateForm').find('input[name="update_currency"]').val(data.currency);
+                    new bootstrap.Modal(document.getElementById('updateModal')).show();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error('Error:', textStatus, errorThrown);
+                }
+            });
+        }
+
+        function Get_Customer() {
+            const datatablesSimple = document.getElementById('customer');
+            if (datatablesSimple) {
+                datatablesSimple.SimpleDataTable = new simpleDatatables.DataTable(datatablesSimple);
+
+                const columnWidths = ['20%', '10%', '15%', '15%', '15%', '10%', '15%'];
+                const headers = datatablesSimple.querySelectorAll('th');
+
+                headers.forEach((header, index) => {
+                    header.style.width = columnWidths[index];
+                    header.style.fontWeight =
+                        ['Name', 'Position', 'Company', 'Contact Number', 'Address', 'Currency', 'Added By'].includes(header.textContent.trim())
+                        ? 'bold'
+                        : 'normal';
+                });
+            }
+        }
+
     </script>
 
 @endsection
