@@ -16,11 +16,11 @@ class CustomerSeeder extends Seeder
 
         DB::table('customers')->insert([
             [
-                'name' => 'Ms. April Jane',
-                'position' => 'Admin',
+                'name' => 'Ms. April Jane Magtangob',
+                'position' => 'Admin Staff',
                 'company' => 'Elite Aces Trading Inc.',
                 'email' => 'april@eliteacesinc.com',
-                'contact_number' => '+63 9',
+                'contact_number' => '-',
                 'address' => 'Philippines',
                 'currency' => 'PHP'
             ],
@@ -29,7 +29,7 @@ class CustomerSeeder extends Seeder
                 'position' => 'Secretary',
                 'company' => 'Elite Aces Trading Inc.',
                 'email' => 'jocelyn@eliteacesinc.com',
-                'contact_number' => '+63 9',
+                'contact_number' => '-',
                 'address' => 'Philippines',
                 'currency' => 'PHP'
             ],
@@ -38,7 +38,7 @@ class CustomerSeeder extends Seeder
                 'position' => 'General Manager',
                 'company' => 'Elite Aces Trading Inc.',
                 'email' => 'armorbelle@eliteacesinc.com',
-                'contact_number' => '+63 9',
+                'contact_number' => '-',
                 'address' => 'Philippines',
                 'currency' => 'PHP'
             ],

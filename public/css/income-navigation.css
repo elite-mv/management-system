@@ -25,6 +25,7 @@
 
 	a {
 		margin-inline: 10px;
+		margin-block: 4px;
 		border-radius: 5px;
 		display: block;
 		padding-left: 10%;
@@ -36,6 +37,7 @@
 
 	a:hover {
 		background-color: rgb(24, 28, 46, 1.0);
+		border-radius: 0;
 	}
 
 	.fa-chevron-right {

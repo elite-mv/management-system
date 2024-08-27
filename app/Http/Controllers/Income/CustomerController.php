@@ -11,8 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class CustomerController
 {
-
-
     public function index(){
 
         $customers =  Customer::get();
@@ -99,13 +97,13 @@ class CustomerController
         foreach ($customers as $customer) {
             $optionsHtml .= '
                 <tr>
-                    <th scope="row"><small>' . e($customer->name) . '</small></th>
-                    <td><small>' . e($customer->position) . '</small></td>
-                    <td><small>' . e($customer->company) . '</small></td>
-                    <td><small>' . e($customer->contact_number) . '</small></td>
-                    <td><small>' . e($customer->address) . '</small></td>
-                    <td><small>' . e($customer->currency) . '</small></td>
-                    <input type="hidden" name="id" value="' . e($customer->id) . '">
+                    <th scope="row"><small onclick="open_customer('. e($customer->id) . ');">' . e($customer->name) . '</small></th>
+                    <td><small onclick="open_customer('. e($customer->id) . ');">' . e($customer->position) . '</small></td>
+                    <td><small onclick="open_customer('. e($customer->id) . ');">' . e($customer->company) . '</small></td>
+                    <td><small onclick="open_customer('. e($customer->id) . ');">' . e($customer->contact_number) . '</small></td>
+                    <td><small onclick="open_customer('. e($customer->id) . ');">' . e($customer->address) . '</small></td>
+                    <td><small onclick="open_customer('. e($customer->id) . ');">' . e($customer->currency) . '</small></td>
+                    <td><small onclick="open_customer('. e($customer->id) . ');">Sales Officer</small></td>
                 </tr>
             ';
         }
@@ -124,9 +122,10 @@ class CustomerController
         }
     }
 
-    public function updateCustomerData(Request $request)
+    public function customer_update(Request $request)
     {
         $validatedData = $request->validate([
+            'id' => 'required|integer|exists:customers,id',
             'name' => 'required|string|max:255',
             'position' => 'nullable|string|max:255',
             'company' => 'nullable|string|max:255',
@@ -139,9 +138,9 @@ class CustomerController
         $customer = Customer::find($request->input('id'));
 
         if ($customer) {
-
+            
             $customer->update($validatedData);
-
+    
             return response()->json(['success' => true], 200);
         } else {
             return response()->json(['error' => 'Customer not found'], 404);
