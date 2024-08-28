@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DataController;
 use App\Http\Controllers\Expense\AccountantController;
+use App\Http\Controllers\Expense\AccountController;
 use App\Http\Controllers\Expense\AuditorController;
 use App\Http\Controllers\Expense\AuthController;
 use App\Http\Controllers\Expense\BankDetailController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\Expense\RequestDeliveryController;
 use App\Http\Controllers\Expense\RequestExpenseController;
 use App\Http\Controllers\Expense\RequestItemController;
 use App\Http\Controllers\Expense\RequestVoucher;
+use App\Http\Controllers\Expense\UnitOfMeasureController;
 use App\Http\Controllers\Expense\VatController;
 use App\Http\Controllers\Income\CustomerController;
 use App\Http\Controllers\Income\IncomeController;
@@ -108,6 +110,12 @@ Route::prefix('expense')->group(function () {
         Route::delete('/entity/{company}', [CompanyController::class, 'deleteCompany']);
         Route::patch('/entity/{company}', [CompanyController::class, 'updateCompany']);
 
+        Route::get('/unit-of-measure', [UnitOfMeasureController::class, 'index']);
+        Route::patch('/unit-of-measure/{measurement}', [UnitOfMeasureController::class, 'updateMeasurement']);
+        Route::delete('/unit-of-measure/{measurement}', [UnitOfMeasureController::class, 'deleteMeasurement']);
+        Route::post('/unit-of-measure', [UnitOfMeasureController::class, 'addMeasurement']);
+
+
         Route::post('/request', [RequestController::class, 'addRequest']);
         Route::get('/request/{id}', [RequestController::class, 'viewRequest'])->name('request');
 
@@ -160,9 +168,12 @@ Route::prefix('expense')->group(function () {
         Route::get('/expense-request/comments/{requestID}', [RequestCommentController::class, 'viewComments'])->name('comments');
         Route::post('/expense-request/comment/{requestID}', [RequestCommentController::class, 'addComment']);
 
+        Route::get('/account', [AccountController::class, 'index']);
+        Route::get('/accounts', [AccountController::class, 'accounts']);
 
     });
 });
 
+Route::get('/test', [PdfController::class, 'index']);
 Route::get('/test/{expenseRequest}', [PdfController::class, 'test']);
 Route::get('/test2/{expenseRequest}', [PdfController::class, 'test2']);

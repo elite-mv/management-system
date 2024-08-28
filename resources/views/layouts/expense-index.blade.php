@@ -157,13 +157,13 @@
                 <small class="my-2" style="color: rgb(255, 255, 255, 0.5);"><b>MANAGE ACCOUNTS</b></small>
 
                 <div class="mb-3">
-                    <a href="my_profile.php" class="my_profile_nav">
+                    <a href="/expense/account" class="my_profile_nav">
                         <i class="fas fa-user" style="height: 20px; width: 20px;"></i>
                         <small><b>My Profile</b></small>
                     </a>
                 </div>
                 <div class="mb-3">
-                    <a href="accounts.php" class="accounts_nav">
+                    <a href="/expense/accounts" class="accounts_nav">
                         <i class="fas fa-users" style="height: 20px; width: 20px;"></i>
                         <small><b>Accounts</b></small>
                     </a>
