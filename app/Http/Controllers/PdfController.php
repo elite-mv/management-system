@@ -17,12 +17,22 @@ class PdfController
     public function index()
     {
 
-        $pdf = new FPDF('L', 'in', array(8, 3));
+//        $pdf = new FPDF('L', 'in', array(8, 3));
+        $pdf = new FPDF('L', 'in', 'A4');
 
         $pdf->AddPage();
         $pdf->SetFont('Arial', 'B', 10);
-        $pdf->SetXY(1,1);
-        $pdf->Cell(4.5, 0.3, '***JOHN CASTILLO***');
+
+        $mid_y = $pdf->GetPageWidth() / 2;
+        $mid_x = $pdf->GetPageHeight() / 2;
+
+        $text = '***JOHN CASTILLO***';
+
+        $width = $pdf->GetStringWidth($text);
+
+        $pdf->SetXY(1,$mid_x - 1);
+        $pdf->Cell(4.5, 0.3, $text);
+
         $pdf->Output(); // This will output the PDF to the browser
         exit; // Prevent Laravel from trying to render the page
     }

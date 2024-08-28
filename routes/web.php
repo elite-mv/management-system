@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DataController;
 use App\Http\Controllers\Expense\AccountantController;
+use App\Http\Controllers\Expense\AccountController;
 use App\Http\Controllers\Expense\AuditorController;
 use App\Http\Controllers\Expense\AuthController;
 use App\Http\Controllers\Expense\BankDetailController;
@@ -167,9 +168,12 @@ Route::prefix('expense')->group(function () {
         Route::get('/expense-request/comments/{requestID}', [RequestCommentController::class, 'viewComments'])->name('comments');
         Route::post('/expense-request/comment/{requestID}', [RequestCommentController::class, 'addComment']);
 
+        Route::get('/account', [AccountController::class, 'index']);
+        Route::get('/accounts', [AccountController::class, 'accounts']);
 
     });
 });
 
+Route::get('/test', [PdfController::class, 'index']);
 Route::get('/test/{expenseRequest}', [PdfController::class, 'test']);
 Route::get('/test2/{expenseRequest}', [PdfController::class, 'test2']);
