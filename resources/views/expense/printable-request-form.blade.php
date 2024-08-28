@@ -92,7 +92,44 @@
             <i class="fas fa-scroll"></i>
             View Logs
         </button>
+        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#checkwriterModal">
+            <i class="fas fa-plus-circle me-2"></i>Check Writer
+        </button>
     </div>
+
+    <div class="modal fade text-dark" id="checkwriterModal" tabindex="-1" aria-labelledby="Check Writer" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <form id="checkwriterForm">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">Check Writer</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex align-items-center justify-content-around">
+                        <div style="width: 7.95in; height: 2.9in; position: relative;" class="my-auto" id="printable_check">
+                            <img src="https://html.scribdassets.com/5xqh18575sa7ssqi/images/1-f2cc24c5d0.jpg" class="img-fluid h-100" alt="check-writer">
+
+                            <div style="position: absolute; top: 0.23in; right: 0.35in; width: 2in;">
+                                <input type="text" class="form-control rounded-0 bg-transparent border-0 text-end fw-bold" style="line-height: 8px;" name="date" placeholder="0  0    0  0    0  0  0  0">
+                            </div>
+                            <div style="position: absolute; top: 0.6in; left: 0.95in; width: 4.43in;">
+                                <input type="text" class="form-control rounded-0 bg-transparent border-0 fw-bold" style="line-height: 8px;" name="paid_to" placeholder="*** JOHN CASTILLO ***">
+                            </div>
+                            <div style="position: absolute; top: 0.6in; left: 5.5in; width: 2in;">
+                                <input type="text" class="form-control rounded-0 bg-transparent border-0 fw-bold" style="line-height: 8px;" name="amount_words" placeholder="*** 1,000,000 ***">
+                            </div>
+                            <div style="position: absolute; top: 0.92in; left: 0.695in; width: 6.8in;">
+                                <input type="text" class="form-control rounded-0 bg-transparent border-0 fw-bold" style="line-height: 8px;" name="amount_value" placeholder="*** ONE MILLION ONLY ***">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success rounded-pill w-50 mx-auto">Print</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>    
 
     <div class="container-fluid mx-auto bg-white">
         <div class="mx-auto px-4 py-2" id="printable">
@@ -2372,6 +2409,24 @@
                 fileUpload.value = null;
             }
         })
-
     </script>
+
+    <script>
+        document.getElementById('checkwriterForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var element = document.getElementById('printable_check');
+            html2pdf(element, {
+                margin: 0,
+                filename: 'CHECK_BDO.pdf',
+                image: { type: 'jpg', quality: 1.0 },
+                html2canvas: { scale: 1 },
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: 'dl', 
+                    orientation: 'landscape',
+                }
+            });
+        });
+    </script>
+    
 @endsection
