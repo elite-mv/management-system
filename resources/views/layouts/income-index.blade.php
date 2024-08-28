@@ -35,6 +35,8 @@
 
         <link rel="stylesheet" href="/css/income-global.css">
 
+        @yield('files')
+
         @yield('style')
 
     </head>

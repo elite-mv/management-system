@@ -47,9 +47,14 @@ Route::prefix('income')->middleware([CompanyMiddleware::class])->group(function 
     Route::get('/', [IncomeController::class, 'index']);
 
     Route::get('/customer', [CustomerController::class, 'index']);
+    Route::get('/customer/{id}', [CustomerController::class, 'getCustomer']);
+    Route::post('/customer', [CustomerController::class, 'addCustomer']);
+
+    Route::get('/api/customers', [CustomerController::class, 'getCustomers']);
+
+
     Route::post('/customer/add', [CustomerController::class, 'customer_add']);
     Route::get('/customer/get', [CustomerController::class, 'customer_get']);
-    Route::get('/customer/select', [CustomerController::class, 'customer_select']);
     Route::put('/customer/update', [CustomerController::class, 'customer_update']);
     Route::post('/customer/salutation/add', [CustomerController::class, 'salutation_add']);
     Route::get('/customer/salutation/get', [CustomerController::class, 'salutation_get']);

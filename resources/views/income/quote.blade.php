@@ -22,146 +22,8 @@
 @endsection
 
 @section('body')
-
-
-    <form id="customerSearchForm">
-        <input type="text" name="search" id="customerSearchInput" class="form-control">
-    </form>
-
     <div class="w-100 d-flex align-items-start border">
         <div class="container-fluid p-3">
-            {{-- <div class="row">
-                <div class="col-12 text-start">
-                    <p class="d-inline-flex gap-1">
-                        <a class="btn btn-outline-primary rounded-0" data-bs-toggle="collapse" href="#Collapse1" role="button" aria-expanded="false" aria-controls="Collapse1">FILTER</a>
-                    </p>
-                    <div class="row pb-3">
-                        <div class="col">
-                          <div class="collapse overflow-hidden" id="Collapse1">
-                                <div class="card card-body rounded-0 container-fluid">
-                                    <div class="gap-3 px-3 row">
-                                        <div class="col-auto d-flex align-items-center justify-content-center gap-3 border px-3 py-1 bg-light">
-                                            <div>
-                                                  <input type="radio" name="filters" class="me-2"><small>A-Z</small>
-                                            </div>
-                                            <div>
-                                                  <input type="radio" name="filters" class="me-2"><small>Z-A</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto d-flex align-items-center justify-content-center gap-3 border px-3 py-1 bg-light">
-                                            <div>
-                                                  <input type="radio" name="filters" class="me-2"><small>0-9</small>
-                                            </div>
-                                            <div>
-                                                  <input type="radio" name="filters" class="me-2"><small>9-0</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto d-flex align-items-center justify-content-center gap-3 border px-3 py-1 bg-light">
-                                            <div>
-                                                <input type="radio" name="filters" class="me-2"><small>By Customer</small>
-                                            </div>
-                                            <div>
-                                                <input type="radio" name="filters" class="me-2"><small>By Sales Officer</small>
-                                            </div>
-                                            <div>
-                                                <input type="radio" name="filters" class="me-2"><small>By Company</small>
-                                            </div>
-                                            <div>
-                                                <input type="radio" name="filters" class="me-2"><small>By Unit</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto d-flex align-items-center justify-content-center gap-3 border px-3 py-1 bg-light">
-                                            <div class="d-flex align-items-center flex-direction-row gap-3 w-100" style="justify-content: space-around;">
-                                                <div class="p-3" style="border: 1px solid #000; border-style: none solid none none;">
-                                                    <div class="d-flex flex-direction-row gap-3 w-100" style="justify-content: space-around;">
-                                                        <div class="d-flex align-items-center">
-                                                            <input type="radio" name="filters" class="me-2"><small><</small>
-                                                        </div>
-                                                        <div class="d-flex align-items-center">
-                                                            <input type="radio" name="filters" class="me-2"><small>=</small>
-                                                        </div>
-                                                        <div class="d-flex align-items-center">
-                                                            <input type="radio" name="filters" class="me-2"><small>></small>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="p-3 overflow-auto">
-                                                    <div class="d-flex align-items-center gap-3">
-                                                        <div>
-                                                            <small><input type="number" placeholder="Enter desired amount." class="form-control"></small>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                          </div>
-                        </div>
-                    </div>
-                </div>
-            </div> --}}
-
-            {{-- <div class="row">
-                <div class="col-12" style="display: flex; justify-content: center; align-items: center;">
-                    <div class="w-50 rounded-pill border d-flex align-items-start flex-direction-row gap-2 py-2 px-3">
-                        <div>
-                            <button class="border-0 bg-transparent" style="border-radius: 50%;">
-                                <i class="fas fa-search text-secondary"></i>
-                            </button>
-                        </div>
-                        <div class="w-100 mx-1">
-                            <small>
-                                <input type="search" name="search" class="rounded-0 border-0 w-100">
-                            </small>
-                        </div>
-                    </div>
-                </div>
-            </div> --}}
-
-            {{-- <div class="row p-3">
-                <div class="border border-dark bg-dark text-white row m-0 p-1 d-flex align-items-center">
-                    <div class="col-auto">
-                        <b>List of Quotations</b>
-                    </div>
-
-                    <div class="col-auto p-0 ms-auto" style="display: flex; justify-content: center; align-items: center;">
-
-                        <button type="button" class="btn btn-sm btn-danger rounded-0 d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#quotationModal">
-                            <i class="fas fa-plus-circle me-2"></i>QUOTATION
-                        </button>
-
-                    </div>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="table table-border table-hover" id="quote">
-                        <thead>
-                            <tr>
-                                <th scope="col">QT#</th>
-                                <th scope="col">Sales Officer</th>
-                                <th scope="col">Customer</th>
-                                <th scope="col">Unit</th>
-                                <th scope="col" class="text-end">Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($quotation_lists as $quotation)
-                                <tr>
-                                    <th scope="row"><small>QT-{{$quotation->reference}}</small></th>
-                                    <td><small>Sample Officer</small></td>
-                                    <td><small>{{$quotation->customer_name}}</small></td>
-                                    <td><small>{{$quotation->unit}}</small></td>
-                                    <td class="text-end"><small>{{$quotation->message}}</small></td>
-                                    <input type="hidden" name="id" value="{{$quotation->id}}">
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div> --}}
-
             <div class="row my-3">
                 <div class="col-12">
                     <div class="card overflow-x-auto">
@@ -217,13 +79,12 @@
                                 <div class="d-flex gap-3" style="flex-direction: column;">
                                     <div>
                                         <b>Customer Name</b>
-                                        <small><select class="px-3 form-control" name="customer_name" required>
-                                            <option value=""></option>
-                                            @foreach($customers as $customer)
-                                                <option value="{{$customer->name}}" data-currency="{{$customer->currency}}" data-email="{{$customer->email}}">{{$customer->name}}</option>
+                                        <input class="form-control" list="customerSearchSuggestion" id="customerSearch" placeholder="Type to search...">
+                                        <datalist id="customerSearchSuggestion">
+                                            @foreach($searchCustomers as $customer)
+                                                <option value="{{$customer->name}}">
                                             @endforeach
-                                            <option value="Add New">Add New</option>
-                                        </select></small>
+                                        </datalist>
                                     </div>
 
                                     <div class="d-flex flex-direction-row gap-3">
@@ -632,34 +493,76 @@
             </div>
         </div>
     </div>
-
 @endsection
 
 @section('script')
 
     <script>
 
+        const customerSearch = document.querySelector('#customerSearch');
+        const customerSearchSuggestion = document.querySelector('#customerSearchSuggestion');
 
-        const customerSearchForm = document.querySelector('#customerSearchForm');
-        const customerSearchInput = document.querySelector('#customerSearchInput');
+        let timer;
+        let prevValue = '';
+        const timeoutVal = 300;
 
-        customerSearchInput.addEventListener('input',async  (e)=>{
+        customerSearch.addEventListener('keyup', handleKeyUp);
+        customerSearch.addEventListener('keydown', handleKeyPress);
 
-            console.log('change detected');
+        customerSearch.addEventListener('change', ()=>{
 
-            const formData = new FormData(customerSearchForm);
+            const options = customerSearchSuggestion.options;
 
-            const params = new URLSearchParams(formData);
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].value === customerSearch.value) {
+                    prevValue = customerSearch.value;
+                }
+            }
+        });
 
-            const data = await fetch(`/income/search-customer?${params.toString()}`);
+         function handleKeyUp(e) {
 
-            const result = await  data.json();
+            window.clearTimeout(timer); // prevent errant multiple timeouts from being generated
 
-            console.log(result);
-            console.log(data);
+            customerSearchSuggestion.innerHTML = null;
 
-        })
+            timer = window.setTimeout(async () => {
 
+                if(!customerSearch.value.length){
+                     return;
+                }
+
+                if(prevValue === customerSearch.value){
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('search', customerSearch.value)
+
+                const queryString = new URLSearchParams(formData).toString();
+
+                const response = await fetch(`/income/api/customers?${queryString}`);
+
+                const result = await response.json();
+
+                prevValue = customerSearch.value;
+
+                if(response.ok){
+                    result.forEach(customer =>{
+                        const option = document.createElement('option');
+                        option.value = customer.name; // Set the value of the option
+                        customerSearchSuggestion.appendChild(option);
+                    })
+                }
+
+                console.log('suggesting ...');
+
+            }, timeoutVal);
+        }
+
+        function handleKeyPress(e) {
+            window.clearTimeout(timer);
+        }
 
         window.addEventListener('load', function() {
             Get_Quote();

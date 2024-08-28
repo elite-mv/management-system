@@ -25,6 +25,7 @@ class CustomerFactory extends Factory
             'address' => fake()->address(),
             'position' => fake()->jobTitle(),
             'currency_id' => 1,
+            'salutation_id' => 1,
         ];
     }
 }

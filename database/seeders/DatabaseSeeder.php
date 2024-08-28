@@ -27,8 +27,8 @@ class DatabaseSeeder extends Seeder
             BankSeeder::class,
             ExpenseCategorySeeder::class,
             CurrencySeeder::class,
-            CustomerSeeder::class,
             SalutationSeeder::class,
+            CustomerSeeder::class,
             RequestItemSeeder::class,
         ]);
 

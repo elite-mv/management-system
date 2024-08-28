@@ -14,13 +14,17 @@ class QuoteController
 
     public function index(){
 
+
         $customers =  Customer::select(['id','name'])->take(100)->get();
+        $searchCustomers =  Customer::select(['id','name'])->take(10)->get();
+
         $salutations =  Salutation::select(['id', 'salutation'])->get();
         $currencies =  Currency::select(['id', 'name'])->get();
 
         $quotation_lists = Quotation::orderBy('id', 'desc')->get();
 
         return view('income.quote', [
+            'searchCustomers' => $searchCustomers,
             'customers' => $customers,
             'salutations' => $salutations,
             'currencies' => $currencies,

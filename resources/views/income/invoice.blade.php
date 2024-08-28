@@ -134,7 +134,7 @@
                                                     <div class="d-flex flex-direction-row gap-3">
                                                         <small>
                                                             <select class="form-control" name="pre_name" required>
-                                                                
+
                                                                 <option value="Add New">Add New</option>
                                                             </select>
                                                         </small>
@@ -174,7 +174,7 @@
                                                     <b>Currency</b>
                                                     <small>
                                                         <select class="form-control" name="currency">
-                                                            
+
                                                             <option value="Add New">Add New</option>
                                                         </select>
                                                     </small>
@@ -210,7 +210,7 @@
                                             <div class="d-flex flex-direction-row gap-3">
                                                 <small>
                                                     <select class="form-control" name="pre_name">
-                                                        
+
                                                         <option value="Add New">Add New</option>
                                                     </select>
                                                 </small>
@@ -250,7 +250,7 @@
                                             <b>Currency</b>
                                             <small>
                                                 <select class="form-control" name="currency">
-                                                    
+
                                                     <option value="Add New">Add New</option>
                                                 </select>
                                             </small>
@@ -284,7 +284,7 @@
                                                         <input type="text" name="salutation" class="form-control" required>
                                                     </div>
                                                     <div class="p-3 d-flex flex-column align-items-center justify-content-start overflow-y-auto w-100" style="height: 100px;">
-                                                        
+
                                                     </div>
                                                 </small>
                                             </div>
@@ -318,7 +318,7 @@
                                                         <input type="text" name="name" class="form-control" required>
                                                     </div>
                                                     <div class="p-3 d-flex flex-column align-items-center justify-content-start overflow-y-auto w-100" style="height: 100px;">
-                                                        
+
                                                     </div>
                                                 </small>
                                             </div>
@@ -332,7 +332,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="overflow-x-auto">
                     <table class="table table-border table-hover" id="customer">
                         <thead>
@@ -346,7 +346,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            
+
                         </tbody>
                     </table>
                 </div>
@@ -359,7 +359,7 @@
 @section('script')
 
     <script>
-        
+
     </script>
 
 @endsection
