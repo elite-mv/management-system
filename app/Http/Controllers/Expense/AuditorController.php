@@ -64,21 +64,17 @@ class AuditorController extends Controller
                 UserRole::FINANCE->value,
             ];
 
-            $qb->where(function ($qb) use ($request, $approvedRoles) {
-                $qb->whereHas('role', function ($qb) use ($request,$approvedRoles) {
-                    $qb->whereIn('name', $approvedRoles)
-                        ->where('status', RequestApprovalStatus::APPROVED);
-                });
+            $qb->whereHas('role', function ($qb) use ($request, $approvedRoles) {
+                $qb->whereIn('name', $approvedRoles)
+                    ->where('status', RequestApprovalStatus::APPROVED)
+                    ->orWhere(function ($qb) use ($request) {
+                        $qb->where('name', UserRole::AUDITOR->value)
+                            ->when($request->input('status') && $request->input('status') != 'ALL', function ($qb) use ($request) {
+                                $qb->where('status', RequestApprovalStatus::valueOf($request->input('status')));
+                            });
+                    });
             });
 
-            $qb->orWhere(function ($qb) use ($request) {
-                $qb->whereHas('role', function ($qb) use ($request) {
-                    $qb->where('name', UserRole::AUDITOR->value);
-                    $qb->when($request->input('status') && $request->input('status') != 'ALL', function ($qb) use ($request) {
-                        $qb->where('status', RequestApprovalStatus::valueOf($request->input('status')));
-                    });
-                });
-            });
 
         }, '=', 4);
 
