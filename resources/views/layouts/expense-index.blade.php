@@ -193,13 +193,6 @@
                 </div>
 
                 <div class="mb-3">
-                    <a href="analytics.php" class="analytics_nav">
-                        <i class="fas fa-file-signature" style="height: 20px; width: 20px;"></i>
-                        <small><b>Analytics</b></small>
-                    </a>
-                </div>
-
-                <div class="mb-3">
                     <a href="downloadable_forms.php" class="dl_forms_nav">
                         <i class="fas fa-download" style="height: 20px; width: 20px;"></i>
                         <small><b>Downloadable Forms</b></small>

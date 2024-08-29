@@ -115,7 +115,7 @@ class RequestController extends Controller
 
             DB::commit();
 
-            return ['message' => 'expense request added'];
+            return  redirect('/expense/requests');
 
         } catch (\Exception $e) {
             DB::rollback();
