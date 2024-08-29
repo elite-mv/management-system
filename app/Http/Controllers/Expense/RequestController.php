@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Expense;
 
+use App\Actions\AddRequestLog;
 use App\Enums\AccountingAttachment;
 use App\Enums\AccountingReceipt;
 use App\Enums\AccountingType;
@@ -43,7 +44,30 @@ class RequestController extends Controller
         ]);
     }
 
-    public function addRequest(Request $request)
+    public function getDailyRequest(Request $request)
+    {
+
+        $query = \App\Models\Expense\Request::query();
+
+
+        $query->when($request->input('status') && $request->input('status') != 'ALL', function ($query)use ($request) {
+            $query->where('status',  RequestStatus::valueOf($request->input('status')));
+        });
+
+        $query->with('company');
+        $query->with('preparedBy');
+
+        $query->where(function ($query){
+            $query->where('created_at', '>=', Carbon::now()->startOfDay()->format('Y-m-d H:i:s'));
+            $query->where('created_at', '<=', Carbon::now()->endOfDay()->format('Y-m-d H:i:s'));
+        });
+
+        return view('expense.daily-requests', [
+            'requests' => $query->paginate(25),
+        ]);
+    }
+
+    public function addRequest(Request $request, AddRequestLog $addRequestLog)
     {
 
         DB::beginTransaction();
@@ -87,6 +111,7 @@ class RequestController extends Controller
                 ]);
             }
 
+            $addRequestLog->handle($expenseRequest->id, 'Request was created');
 
             DB::commit();
 
@@ -213,7 +238,7 @@ class RequestController extends Controller
 
     }
 
-    public function updatePaymentMethod(Request $request, $requestID)
+    public function updatePaymentMethod(Request $request, AddRequestLog $addRequestLog, $requestID)
     {
         try {
 
@@ -221,9 +246,13 @@ class RequestController extends Controller
 
             $requestModel = ModelsRequest::where('id', $requestID)->firstOrFail();
 
-            $requestModel->payment_method = PaymentMethod::valueOf($request->input('mode'));
+            $paymentMethod =  PaymentMethod::valueOf($request->input('mode'));
+
+            $requestModel->payment_method = $paymentMethod;
 
             $requestModel->save();
+
+            $addRequestLog->handle($requestID->id, 'payment method was set to '. $paymentMethod->name);
 
             DB::commit();
 
@@ -245,7 +274,7 @@ class RequestController extends Controller
         }
     }
 
-    public function updateAttachment(Request $request, $id)
+    public function updateAttachment(Request $request, AddRequestLog $addRequestLog,$id)
     {
 
         try {
@@ -253,9 +282,13 @@ class RequestController extends Controller
 
             $modelsRequest = ModelsRequest::where('id', $id)->firstOrFail();
 
-            $modelsRequest->attachment = AccountingAttachment::valueOf($request->input('attachment'));
+            $attachment = AccountingAttachment::valueOf($request->input('attachment'));
+
+            $modelsRequest->attachment = $attachment;
 
             $modelsRequest->save();
+
+            $addRequestLog->handle($id, 'request attachment was set to '. $attachment->name);
 
             DB::commit();
 
@@ -275,7 +308,7 @@ class RequestController extends Controller
 
     }
 
-    public function updateType(Request $request, $id)
+    public function updateType(Request $request, AddRequestLog $addRequestLog, $id)
     {
 
         try {
@@ -283,9 +316,13 @@ class RequestController extends Controller
 
             $modelsRequest = ModelsRequest::where('id', $id)->firstOrFail();
 
-            $modelsRequest->type = AccountingType::valueOf($request->input('type'));
+            $type = AccountingType::valueOf($request->input('type'));
+
+            $modelsRequest->type = $type;
 
             $modelsRequest->save();
+
+            $addRequestLog->handle($id, 'request type was set to '. $type->name);
 
             DB::commit();
 
@@ -305,7 +342,7 @@ class RequestController extends Controller
 
     }
 
-    public function updateReceipt(Request $request, $id)
+    public function updateReceipt(Request $request, AddRequestLog $addRequestLog, $id)
     {
 
         try {
@@ -313,9 +350,12 @@ class RequestController extends Controller
 
             $modelsRequest = ModelsRequest::where('id', $id)->firstOrFail();
 
-            $modelsRequest->receipt = AccountingReceipt::valueOf($request->input('receipt'));
+            $receipt =  AccountingReceipt::valueOf($request->input('receipt'));
+            $modelsRequest->receipt = $receipt;
 
             $modelsRequest->save();
+
+            $addRequestLog->handle($id, 'request receipt was set to '. $receipt->name);
 
             DB::commit();
 
@@ -336,7 +376,7 @@ class RequestController extends Controller
 
     }
 
-    public function updatePriorityLevel(Request $request, $id)
+    public function updatePriorityLevel(Request $request, AddRequestLog $addRequestLog, $id)
     {
         try {
 
@@ -344,9 +384,12 @@ class RequestController extends Controller
 
             $modelsRequest = ModelsRequest::where('id', $id)->firstOrFail();
 
-            $modelsRequest->priority_level = RequestPriorityLevel::valueOf($request->input('priority_level'));
+            $priority =  RequestPriorityLevel::valueOf($request->input('priority_level'));
+            $modelsRequest->priority_level = $priority;
 
             $modelsRequest->save();
+
+            $addRequestLog->handle($id, 'request priority was set to '. $priority->name);
 
             DB::commit();
 
@@ -366,16 +409,20 @@ class RequestController extends Controller
 
     }
 
-    public function updateRequestStatus(Request $request, ModelsRequest $expenseRequest)
+    public function updateRequestStatus(Request $request, AddRequestLog $addRequestLog,ModelsRequest $expenseRequest)
     {
         try {
 
             DB::beginTransaction();
 
-            $expenseRequest->status = RequestStatus::valueOf($request->input('status'));
+            $status = RequestStatus::valueOf($request->input('status'));
+
+            $expenseRequest->status = $status;
 
             $expenseRequest->save();
 
+            $addRequestLog->handle($expenseRequest->id, 'request payment status was set to '. $status->name);
+
             DB::commit();
 
             return response()->json([
@@ -394,7 +441,7 @@ class RequestController extends Controller
 
     }
 
-    public function updateFundStatus(Request $request, $requestID)
+    public function updateFundStatus(Request $request, AddRequestLog $addRequestLog,$requestID)
     {
         try {
 
@@ -405,6 +452,8 @@ class RequestController extends Controller
             $requestModel->fund_status = RequestFundStatus::valueOf($request->input('status'));
 
             $requestModel->save();
+
+            $addRequestLog->handle($requestID->id, 'request fund status was set to '. $requestModel->fund_status->name);
 
             DB::commit();
 

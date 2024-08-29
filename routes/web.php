@@ -9,6 +9,7 @@ use App\Http\Controllers\Expense\BankDetailController;
 use App\Http\Controllers\Expense\BookKeeperController;
 use App\Http\Controllers\Expense\CompanyController;
 use App\Http\Controllers\Expense\FinanceController;
+use App\Http\Controllers\Expense\HomeController;
 use App\Http\Controllers\Expense\JobOrderController;
 use App\Http\Controllers\Expense\PresidentController;
 use App\Http\Controllers\Expense\RequestApprovalController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\Expense\RequestController;
 use App\Http\Controllers\Expense\RequestDeliveryController;
 use App\Http\Controllers\Expense\RequestExpenseController;
 use App\Http\Controllers\Expense\RequestItemController;
+use App\Http\Controllers\Expense\RequestLogsController;
 use App\Http\Controllers\Expense\RequestVoucher;
 use App\Http\Controllers\Expense\UnitOfMeasureController;
 use App\Http\Controllers\Expense\VatController;
@@ -29,6 +31,7 @@ use App\Http\Controllers\PdfController;
 use App\Http\Middleware\CheckUserPin;
 use App\Http\Middleware\CompanyMiddleware;
 use App\Http\Middleware\SetGlobalVariables;
+use App\Models\Expense\RequestLogs;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'index'])->name('login');
@@ -51,7 +54,6 @@ Route::prefix('income')->middleware([CompanyMiddleware::class])->group(function 
     Route::post('/customer', [CustomerController::class, 'addCustomer']);
 
     Route::get('/api/customers', [CustomerController::class, 'getCustomers']);
-
 
     Route::post('/customer/add', [CustomerController::class, 'customer_add']);
     Route::get('/customer/get', [CustomerController::class, 'customer_get']);
@@ -82,7 +84,10 @@ Route::prefix('expense')->group(function () {
 
     Route::middleware(['auth', SetGlobalVariables::class])->group(function () {
 
+        Route::get('/home', [HomeController::class, 'index']);
+
         Route::get('/request', [RequestController::class, 'index']);
+        Route::get('/daily-request', [RequestController::class, 'getDailyRequest']);
         Route::get('/requests', [RequestController::class, 'getRequests']);
         Route::post('/api/request/status/{expenseRequest}', [RequestController::class, 'updateRequestStatus']);
 
@@ -119,7 +124,6 @@ Route::prefix('expense')->group(function () {
         Route::patch('/unit-of-measure/{measurement}', [UnitOfMeasureController::class, 'updateMeasurement']);
         Route::delete('/unit-of-measure/{measurement}', [UnitOfMeasureController::class, 'deleteMeasurement']);
         Route::post('/unit-of-measure', [UnitOfMeasureController::class, 'addMeasurement']);
-
 
         Route::post('/request', [RequestController::class, 'addRequest']);
         Route::get('/request/{id}', [RequestController::class, 'viewRequest'])->name('request');
@@ -176,6 +180,7 @@ Route::prefix('expense')->group(function () {
         Route::get('/account', [AccountController::class, 'index']);
         Route::get('/accounts', [AccountController::class, 'accounts']);
 
+        Route::get('/logs', [RequestLogsController::class, 'index']);
     });
 });
 
