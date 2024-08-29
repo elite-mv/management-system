@@ -58,23 +58,15 @@ class AuditorController extends Controller
 
         $query->whereHas('approvals', function ($qb) use ($request) {
 
-            $qb->where(function ($qb) use ($request) {
-                $qb->whereHas('role', function ($qb) use ($request) {
-                    $qb->where('name', UserRole::BOOK_KEEPER->value)
-                        ->where('status', RequestApprovalStatus::APPROVED);
-                });
-            });
+            $approvedRoles = [
+                UserRole::BOOK_KEEPER->value,
+                UserRole::ACCOUNTANT->value,
+                UserRole::FINANCE->value,
+            ];
 
-            $qb->orwhere(function ($qb) use ($request) {
-                $qb->whereHas('role', function ($qb) use ($request) {
-                    $qb->where('name', UserRole::ACCOUNTANT->value)
-                        ->where('status', RequestApprovalStatus::APPROVED);
-                });
-            });
-
-            $qb->orwhere(function ($qb) use ($request) {
-                $qb->whereHas('role', function ($qb) use ($request) {
-                    $qb->where('name', UserRole::FINANCE->value)
+            $qb->where(function ($qb) use ($request, $approvedRoles) {
+                $qb->whereHas('role', function ($qb) use ($request,$approvedRoles) {
+                    $qb->whereIn('name', $approvedRoles)
                         ->where('status', RequestApprovalStatus::APPROVED);
                 });
             });
