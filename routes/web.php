@@ -28,8 +28,12 @@ use App\Http\Controllers\Income\QuoteController;
 use App\Http\Controllers\Income\InvoiceController;
 use App\Http\Controllers\NavigationController;
 use App\Http\Controllers\PdfController;
+use App\Http\Middleware\BankCodesData;
+use App\Http\Middleware\BankData;
 use App\Http\Middleware\CheckUserPin;
+use App\Http\Middleware\CompanyData;
 use App\Http\Middleware\CompanyMiddleware;
+use App\Http\Middleware\ExpenseCategoryData;
 use App\Http\Middleware\SetGlobalVariables;
 use Illuminate\Support\Facades\Route;
 
@@ -80,32 +84,33 @@ Route::prefix('income')->middleware([CompanyMiddleware::class])->group(function 
 Route::get('/pdf', [PdfController::class, 'index']);
 
 Route::prefix('expense')->group(function () {
-    Route::middleware(['auth', CheckUserPin::class, SetGlobalVariables::class])->group(function () {
+    Route::middleware(['auth', CheckUserPin::class])->group(function () {
 
         Route::get('/home', [HomeController::class, 'index']);
-
         Route::get('/request', [RequestController::class, 'index']);
+
+        Route::middleware([CompanyData::class])->get('/requests', [RequestController::class, 'getRequests']);
+
+
         Route::get('/daily-request', [RequestController::class, 'getDailyRequest']);
-        Route::get('/requests', [RequestController::class, 'getRequests']);
         Route::post('/api/request/status/{expenseRequest}', [RequestController::class, 'updateRequestStatus']);
 
         Route::post('/api/request/voucher/{expenseRequest}', [RequestVoucher::class, 'generate']);
-
         Route::get('/api/my-requests', [RequestController::class, 'getRequestsData']);
 
-        Route::get('/book-keeper', [BookKeeperController::class, 'index']);
+        Route::middleware([CompanyData::class])->get('/book-keeper', [BookKeeperController::class, 'index']);
         Route::get('/api/book-keeper', [BookKeeperController::class, 'getRequests']);
 
-        Route::get('/accountant', [AccountantController::class, 'index']);
+        Route::middleware([CompanyData::class])->get('/accountant', [AccountantController::class, 'index']);
         Route::get('/api/accountant', [AccountantController::class, 'getRequests']);
 
-        Route::get('/finance', [FinanceController::class, 'index']);
+        Route::middleware([CompanyData::class])->get('/finance', [FinanceController::class, 'index']);
         Route::get('/api/finance', [FinanceController::class, 'getRequests']);
 
-        Route::get('/president', [PresidentController::class, 'index']);
+        Route::middleware([CompanyData::class])->get('/president', [PresidentController::class, 'index']);
         Route::get('/api/president', [PresidentController::class, 'getRequests']);
 
-        Route::get('/auditor', [AuditorController::class, 'index']);
+        Route::middleware([CompanyData::class])->get('/auditor', [AuditorController::class, 'index']);
         Route::get('/api/auditor', [AuditorController::class, 'getRequests']);
 
         Route::get('/job-order', [JobOrderController::class, 'index']);
@@ -124,7 +129,7 @@ Route::prefix('expense')->group(function () {
         Route::post('/unit-of-measure', [UnitOfMeasureController::class, 'addMeasurement']);
 
         Route::post('/request', [RequestController::class, 'addRequest']);
-        Route::get('/request/{id}', [RequestController::class, 'viewRequest'])->name('request');
+        Route::middleware([ExpenseCategoryData::class, BankData::class, BankCodesData::class])->get('/request/{id}', [RequestController::class, 'viewRequest'])->name('request');
 
         Route::post('/api/request-item/update/{requestItem}', [RequestItemController::class, 'updateRequestItem']);
         Route::post('/api/request-item', [RequestItemController::class, 'addRequestItem']);

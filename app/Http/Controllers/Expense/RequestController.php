@@ -125,7 +125,8 @@ class RequestController extends Controller
 
     public function getRequests(Request $request)
     {
-        return view('expense.requests');
+        return view('expense.requests',
+            []);
     }
 
     public function getRequestsData(Request $request)
