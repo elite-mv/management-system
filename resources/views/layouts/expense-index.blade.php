@@ -33,22 +33,6 @@
 
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
 
-    <script>
-
-        // Enable pusher logging - don't include this in production
-        Pusher.logToConsole = true;
-
-        var pusher = new Pusher('e97a0e3c36e5f02024a5', {
-            cluster: 'ap1'
-        });
-
-        var channel = pusher.subscribe('chat');
-
-        channel.bind('update-chat', function(data) {
-            alert(JSON.stringify(data));
-        });
-
-    </script>
 
     @yield('files')
     @yield('style')
@@ -77,7 +61,7 @@
             height: 100px;
         }
 
-        .cursor-pointer{
+        .cursor-pointer {
             cursor: pointer !important;
         }
     </style>
@@ -233,7 +217,7 @@
                 <small class="my-2" style="color: rgb(255, 255, 255, 0.5);"><b>MESSAGES</b></small>
 
                 <div class="mb-3">
-                    <a href="group_message.php" class="group_message_nav">
+                    <a href="/expense/chat" class="group_message_nav">
                         <i class="far fa-comments" style="height: 20px; width: 20px;"></i>
                         <small><b>Group Message</b></small>
                     </a>
@@ -285,9 +269,11 @@
 <script>
 
 
+
+
     const logoutForm = document.querySelector('.logoutForm');
 
-    logoutForm.addEventListener('submit',(e)=>{
+    logoutForm.addEventListener('submit', (e) => {
 
         e.preventDefault();
 

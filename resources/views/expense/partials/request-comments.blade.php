@@ -1,5 +1,4 @@
 @foreach($comments as $comment)
-
     @if(auth()->user()->id == $comment->user->id)
         <div class="ms-auto text-end card p-3 mb-2 w-75">
             <div class="small">
@@ -17,5 +16,4 @@
             </div>
         </div>
     @endif
-
 @endforeach

@@ -1,12 +1,12 @@
 <?php
 
-use App\Http\Controllers\DataController;
 use App\Http\Controllers\Expense\AccountantController;
 use App\Http\Controllers\Expense\AccountController;
 use App\Http\Controllers\Expense\AuditorController;
 use App\Http\Controllers\Expense\AuthController;
 use App\Http\Controllers\Expense\BankDetailController;
 use App\Http\Controllers\Expense\BookKeeperController;
+use App\Http\Controllers\Expense\ChatController;
 use App\Http\Controllers\Expense\CompanyController;
 use App\Http\Controllers\Expense\FinanceController;
 use App\Http\Controllers\Expense\HomeController;
@@ -31,7 +31,6 @@ use App\Http\Controllers\PdfController;
 use App\Http\Middleware\CheckUserPin;
 use App\Http\Middleware\CompanyMiddleware;
 use App\Http\Middleware\SetGlobalVariables;
-use App\Models\Expense\RequestLogs;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'index'])->name('login');
@@ -40,10 +39,10 @@ Route::middleware([CheckUserPin::class])->get('/navigation', [NavigationControll
 
 Route::get('/pin', [NavigationController::class, 'pin'])->name('pin');
 Route::post('/pin', [NavigationController::class, 'verifyPin']);
-
+Route::post('/logout', [AuthController::class, 'logout']);
 
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout']);
+
 
 Route::prefix('income')->middleware([CompanyMiddleware::class])->group(function () {
 
@@ -81,8 +80,7 @@ Route::prefix('income')->middleware([CompanyMiddleware::class])->group(function 
 Route::get('/pdf', [PdfController::class, 'index']);
 
 Route::prefix('expense')->group(function () {
-
-    Route::middleware(['auth', SetGlobalVariables::class])->group(function () {
+    Route::middleware(['auth', CheckUserPin::class, SetGlobalVariables::class])->group(function () {
 
         Route::get('/home', [HomeController::class, 'index']);
 
@@ -149,7 +147,6 @@ Route::prefix('expense')->group(function () {
         Route::post('/api/expense-request/delivery/supplier/{requestID}', [RequestDeliveryController::class, 'verifySupplier']);
         Route::delete('/api/expense-request/delivery/supplier/{requestID}', [RequestDeliveryController::class, 'deleteSupplier']);
 
-
         Route::post('/api/expense-request/payment-method/{requestID}', [RequestController::class, 'updatePaymentMethod']);
 
         Route::post('/api/expense-request/attachment/{id}', [RequestController::class, 'updateAttachment']);
@@ -181,6 +178,9 @@ Route::prefix('expense')->group(function () {
         Route::get('/accounts', [AccountController::class, 'accounts']);
 
         Route::get('/logs', [RequestLogsController::class, 'index']);
+
+        Route::get('/chat', [ChatController::class, 'index']);
+        Route::post('/chat', [ChatController::class, 'addMessage']);
     });
 });
 
