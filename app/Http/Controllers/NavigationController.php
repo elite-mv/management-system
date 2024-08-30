@@ -2,15 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Expense\BankCode;
-use App\Models\Expense\BankName;
-use App\Models\Expense\ExpenseCategory;
-use App\Models\Expense\JobOrder;
-use App\Models\Expense\Measurement;
+use App\Models\Expense\User;
 use Illuminate\Http\Request;
-use Codedge\Fpdf\Fpdf\Fpdf;
-use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\Expense\Request as ExpenseRequest;
+use Illuminate\Support\Facades\Auth;
 
 class NavigationController
 {
@@ -26,7 +20,29 @@ class NavigationController
 
     public function verifyPin(Request $request)
     {
-        session(['pin_verified' => true]);
-        return redirect('/navigation');
+
+        try {
+
+            $pin = implode('', $request->input('pin'));
+
+            $valid = User::select(['id','pin'])
+                ->where('id', '=', Auth::id())
+                ->where('pin','=', $pin . '1')
+                ->pluck('pin')
+                ->first();
+
+            return $valid;
+//
+//            if(empty($valid)){
+//                throw new \Exception('Incorrect pin');
+//            }
+//
+//            session(['pin_verified' => true]);
+//
+//            return redirect('/navigation');
+
+        }catch (\Exception $exception){
+            return redirect()->back()->withErrors(['error' => $exception->getMessage()]);
+        }
     }
 }

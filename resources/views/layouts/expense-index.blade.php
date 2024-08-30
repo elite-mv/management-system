@@ -18,6 +18,9 @@
     <script src="/js/header.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+
+
     @yield('files')
     @yield('style')
 
@@ -45,7 +48,7 @@
             height: 100px;
         }
 
-        .cursor-pointer{
+        .cursor-pointer {
             cursor: pointer !important;
         }
     </style>
@@ -66,7 +69,17 @@
                     <h6 class="mt-3 text-center">MANAGEMENT SYSTEM</h6>
                 </div>
 
-                <div class="mt-1" style="height: 1px; background-color: rgb(255, 255, 255, 0.5); width: 100%;"></div>
+                <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
+
+                <div class="my-3">
+                    <a href="/expense/home" class="home_nav">
+                        <i class="fas fa-home" style="height: 20px; width: 20px;"></i>
+                        <small><b>Home</b></small>
+                    </a>
+                </div>
+
+                <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
+
                 <small class="my-2" style="color: rgb(255, 255, 255, 0.5);"><b>MAKE REQUEST</b></small>
 
                 <div class="mb-3">
@@ -83,7 +96,7 @@
                     </a>
                 </div>
 
-                <div class="mt-1" style="height: 1px; background-color: rgb(255, 255, 255, 0.5); width: 100%;"></div>
+                <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
                 <small class="my-2" style="color: rgb(255, 255, 255, 0.5);"><b>MANAGE REQUESTS</b></small>
 
                 <div class="mb-3">
@@ -117,7 +130,7 @@
                         <small><b>Auditor</b></small>
                     </a>
                 </div>
-                <div class="mt-1" style="height: 1px; background-color: rgb(255, 255, 255, 0.5); width: 100%;"></div>
+                <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
                 <small class="my-2" style="color: rgb(255, 255, 255, 0.5);"><b>EDIT OPTIONS</b></small>
 
                 <div class="mb-3">
@@ -140,7 +153,7 @@
                         <small class="text-start"><b>Units Of Measurement</b></small>
                     </a>
                 </div>
-                <div class="mt-1" style="height: 1px; background-color: rgb(255, 255, 255, 0.5); width: 100%;"></div>
+                <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
                 <small class="my-2" style="color: rgb(255, 255, 255, 0.5);"><b>MANAGE ACCOUNTS</b></small>
 
                 <div class="mb-3">
@@ -156,35 +169,35 @@
                     </a>
                 </div>
 
-                <div class="mt-1" style="height: 1px; background-color: rgb(255, 255, 255, 0.5); width: 100%;"></div>
+                <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
                 <small class="my-2" style="color: rgb(255, 255, 255, 0.5);"><b>REPORTS</b></small>
 
                 <div class="mb-3">
-                    <a href="exp.php" class="exp_nav">
+                    <a href="/expense/logs" class="exp_nav">
                         <i class="fas fa-folder-open" style="height: 20px; width: 20px;"></i>
                         <small><b>Logs</b></small>
                     </a>
                 </div>
 
                 <div class="mb-3">
-                    <a href="analytics.php" class="analytics_nav">
-                        <i class="fas fa-file-signature" style="height: 20px; width: 20px;"></i>
-                        <small><b>Analytics</b></small>
-                    </a>
-                </div>
-
-                <div class="mb-3">
-                    <a href="downloadable_forms.php" class="dl_forms_nav">
+                    <a href="/expense/forms" class="dl_forms_nav">
                         <i class="fas fa-download" style="height: 20px; width: 20px;"></i>
                         <small><b>Downloadable Forms</b></small>
                     </a>
                 </div>
 
-                <div class="mt-1" style="height: 1px; background-color: rgb(255, 255, 255, 0.5); width: 100%;"></div>
+                <div class="mb-3">
+                    <a href="/expense/daily-request" class="daily_request_nav">
+                        <i class="fas fa-calendar" style="height: 20px; width: 20px;"></i>
+                        <small><b>Daily Request</b></small>
+                    </a>
+                </div>
+
+                <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
                 <small class="my-2" style="color: rgb(255, 255, 255, 0.5);"><b>MESSAGES</b></small>
 
                 <div class="mb-3">
-                    <a href="group_message.php" class="group_message_nav">
+                    <a href="/expense/chat" class="group_message_nav">
                         <i class="far fa-comments" style="height: 20px; width: 20px;"></i>
                         <small><b>Group Message</b></small>
                     </a>
@@ -236,9 +249,11 @@
 <script>
 
 
+
+
     const logoutForm = document.querySelector('.logoutForm');
 
-    logoutForm.addEventListener('submit',(e)=>{
+    logoutForm.addEventListener('submit', (e) => {
 
         e.preventDefault();
 

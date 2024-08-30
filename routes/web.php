@@ -1,14 +1,16 @@
 <?php
 
-use App\Http\Controllers\DataController;
+use App\Http\Controllers\DownloadableFormController;
 use App\Http\Controllers\Expense\AccountantController;
 use App\Http\Controllers\Expense\AccountController;
 use App\Http\Controllers\Expense\AuditorController;
 use App\Http\Controllers\Expense\AuthController;
 use App\Http\Controllers\Expense\BankDetailController;
 use App\Http\Controllers\Expense\BookKeeperController;
+use App\Http\Controllers\Expense\ChatController;
 use App\Http\Controllers\Expense\CompanyController;
 use App\Http\Controllers\Expense\FinanceController;
+use App\Http\Controllers\Expense\HomeController;
 use App\Http\Controllers\Expense\JobOrderController;
 use App\Http\Controllers\Expense\PresidentController;
 use App\Http\Controllers\Expense\RequestApprovalController;
@@ -17,6 +19,7 @@ use App\Http\Controllers\Expense\RequestController;
 use App\Http\Controllers\Expense\RequestDeliveryController;
 use App\Http\Controllers\Expense\RequestExpenseController;
 use App\Http\Controllers\Expense\RequestItemController;
+use App\Http\Controllers\Expense\RequestLogsController;
 use App\Http\Controllers\Expense\RequestVoucher;
 use App\Http\Controllers\Expense\UnitOfMeasureController;
 use App\Http\Controllers\Expense\VatController;
@@ -26,8 +29,12 @@ use App\Http\Controllers\Income\QuoteController;
 use App\Http\Controllers\Income\InvoiceController;
 use App\Http\Controllers\NavigationController;
 use App\Http\Controllers\PdfController;
+use App\Http\Middleware\BankCodesData;
+use App\Http\Middleware\BankData;
 use App\Http\Middleware\CheckUserPin;
+use App\Http\Middleware\CompanyData;
 use App\Http\Middleware\CompanyMiddleware;
+use App\Http\Middleware\ExpenseCategoryData;
 use App\Http\Middleware\SetGlobalVariables;
 use Illuminate\Support\Facades\Route;
 
@@ -37,19 +44,23 @@ Route::middleware([CheckUserPin::class])->get('/navigation', [NavigationControll
 
 Route::get('/pin', [NavigationController::class, 'pin'])->name('pin');
 Route::post('/pin', [NavigationController::class, 'verifyPin']);
-
+Route::post('/logout', [AuthController::class, 'logout']);
 
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout']);
+
 
 Route::prefix('income')->middleware([CompanyMiddleware::class])->group(function () {
 
     Route::get('/', [IncomeController::class, 'index']);
 
     Route::get('/customer', [CustomerController::class, 'index']);
+    Route::get('/customer/{id}', [CustomerController::class, 'getCustomer']);
+    Route::post('/customer', [CustomerController::class, 'addCustomer']);
+
+    Route::get('/api/customers', [CustomerController::class, 'getCustomers']);
+
     Route::post('/customer/add', [CustomerController::class, 'customer_add']);
     Route::get('/customer/get', [CustomerController::class, 'customer_get']);
-    Route::get('/customer/select', [CustomerController::class, 'customer_select']);
     Route::put('/customer/update', [CustomerController::class, 'customer_update']);
     Route::post('/customer/salutation/add', [CustomerController::class, 'salutation_add']);
     Route::get('/customer/salutation/get', [CustomerController::class, 'salutation_get']);
@@ -74,30 +85,37 @@ Route::prefix('income')->middleware([CompanyMiddleware::class])->group(function 
 Route::get('/pdf', [PdfController::class, 'index']);
 
 Route::prefix('expense')->group(function () {
+    Route::middleware(['auth', CheckUserPin::class])->group(function () {
 
-    Route::middleware(['auth', SetGlobalVariables::class])->group(function () {
-
+        Route::get('/home', [HomeController::class, 'index']);
         Route::get('/request', [RequestController::class, 'index']);
-        Route::get('/requests', [RequestController::class, 'getRequests']);
+
+        Route::get('/forms', [DownloadableFormController::class, 'index']);
+
+        Route::get('/next-request/{requestID}', [RequestController::class, 'nextRequest']);
+        Route::get('/prev-request/{requestID}', [RequestController::class, 'prevRequest']);
+
+        Route::middleware([CompanyData::class])->get('/requests', [RequestController::class, 'getRequests']);
+
+        Route::get('/daily-request', [RequestController::class, 'getDailyRequest']);
         Route::post('/api/request/status/{expenseRequest}', [RequestController::class, 'updateRequestStatus']);
 
         Route::post('/api/request/voucher/{expenseRequest}', [RequestVoucher::class, 'generate']);
-
         Route::get('/api/my-requests', [RequestController::class, 'getRequestsData']);
 
-        Route::get('/book-keeper', [BookKeeperController::class, 'index']);
+        Route::middleware([CompanyData::class])->get('/book-keeper', [BookKeeperController::class, 'index']);
         Route::get('/api/book-keeper', [BookKeeperController::class, 'getRequests']);
 
-        Route::get('/accountant', [AccountantController::class, 'index']);
+        Route::middleware([CompanyData::class])->get('/accountant', [AccountantController::class, 'index']);
         Route::get('/api/accountant', [AccountantController::class, 'getRequests']);
 
-        Route::get('/finance', [FinanceController::class, 'index']);
+        Route::middleware([CompanyData::class])->get('/finance', [FinanceController::class, 'index']);
         Route::get('/api/finance', [FinanceController::class, 'getRequests']);
 
-        Route::get('/president', [PresidentController::class, 'index']);
+        Route::middleware([CompanyData::class])->get('/president', [PresidentController::class, 'index']);
         Route::get('/api/president', [PresidentController::class, 'getRequests']);
 
-        Route::get('/auditor', [AuditorController::class, 'index']);
+        Route::middleware([CompanyData::class])->get('/auditor', [AuditorController::class, 'index']);
         Route::get('/api/auditor', [AuditorController::class, 'getRequests']);
 
         Route::get('/job-order', [JobOrderController::class, 'index']);
@@ -115,9 +133,8 @@ Route::prefix('expense')->group(function () {
         Route::delete('/unit-of-measure/{measurement}', [UnitOfMeasureController::class, 'deleteMeasurement']);
         Route::post('/unit-of-measure', [UnitOfMeasureController::class, 'addMeasurement']);
 
-
         Route::post('/request', [RequestController::class, 'addRequest']);
-        Route::get('/request/{id}', [RequestController::class, 'viewRequest'])->name('request');
+        Route::middleware([ExpenseCategoryData::class, BankData::class, BankCodesData::class])->get('/request/{id}', [RequestController::class, 'viewRequest'])->name('request');
 
         Route::post('/api/request-item/update/{requestItem}', [RequestItemController::class, 'updateRequestItem']);
         Route::post('/api/request-item', [RequestItemController::class, 'addRequestItem']);
@@ -139,7 +156,6 @@ Route::prefix('expense')->group(function () {
 
         Route::post('/api/expense-request/delivery/supplier/{requestID}', [RequestDeliveryController::class, 'verifySupplier']);
         Route::delete('/api/expense-request/delivery/supplier/{requestID}', [RequestDeliveryController::class, 'deleteSupplier']);
-
 
         Route::post('/api/expense-request/payment-method/{requestID}', [RequestController::class, 'updatePaymentMethod']);
 
@@ -173,6 +189,10 @@ Route::prefix('expense')->group(function () {
 
         // Route::get('/accounts', [AccountController::class, 'accounts']);
 
+        Route::get('/logs', [RequestLogsController::class, 'index']);
+
+        Route::get('/chat', [ChatController::class, 'index']);
+        Route::post('/chat', [ChatController::class, 'addMessage']);
     });
 });
 

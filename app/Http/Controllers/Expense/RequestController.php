@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Expense;
 
+use App\Actions\AddRequestLog;
 use App\Enums\AccountingAttachment;
 use App\Enums\AccountingReceipt;
 use App\Enums\AccountingType;
@@ -19,6 +20,7 @@ use App\Models\Expense\Measurement;
 use App\Models\Expense\Request as ModelsRequest;
 use App\Models\Expense\RequestApproval;
 use App\Models\Expense\RequestItem;
+use App\Models\Expense\RequestLogs;
 use App\Models\Expense\Role;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
@@ -43,7 +45,30 @@ class RequestController extends Controller
         ]);
     }
 
-    public function addRequest(Request $request)
+    public function getDailyRequest(Request $request)
+    {
+
+        $query = \App\Models\Expense\Request::query();
+
+
+        $query->when($request->input('status') && $request->input('status') != 'ALL', function ($query) use ($request) {
+            $query->where('status', RequestStatus::valueOf($request->input('status')));
+        });
+
+        $query->with('company');
+        $query->with('preparedBy');
+
+        $query->where(function ($query) {
+            $query->where('created_at', '>=', Carbon::now()->startOfDay()->format('Y-m-d H:i:s'));
+            $query->where('created_at', '<=', Carbon::now()->endOfDay()->format('Y-m-d H:i:s'));
+        });
+
+        return view('expense.daily-requests', [
+            'requests' => $query->paginate(25),
+        ]);
+    }
+
+    public function addRequest(Request $request, AddRequestLog $addRequestLog)
     {
 
         DB::beginTransaction();
@@ -87,10 +112,11 @@ class RequestController extends Controller
                 ]);
             }
 
+            $addRequestLog->handle($expenseRequest->id, 'Request was created');
 
             DB::commit();
 
-            return ['message' => 'expense request added'];
+            return redirect('/expense/requests');
 
         } catch (\Exception $e) {
             DB::rollback();
@@ -100,7 +126,8 @@ class RequestController extends Controller
 
     public function getRequests(Request $request)
     {
-        return view('expense.requests');
+        return view('expense.requests',
+            []);
     }
 
     public function getRequestsData(Request $request)
@@ -205,15 +232,22 @@ class RequestController extends Controller
         $measurements = Measurement::select(['id', 'name'])->get();
         $jobOrder = JobOrder::select(['id', 'name', 'reference'])->get();
 
+        $logs = RequestLogs::select(['id','description','user_id','created_at'])
+            ->where('request_id', '=', $id)
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         return view('expense.printable-request-form', [
             'request' => $expenseRequest,
             'jobOrders' => $jobOrder,
-            'measurements' => $measurements
+            'measurements' => $measurements,
+            'logs' => $logs,
         ]);
 
     }
 
-    public function updatePaymentMethod(Request $request, $requestID)
+    public function updatePaymentMethod(Request $request, AddRequestLog $addRequestLog, $requestID)
     {
         try {
 
@@ -221,9 +255,13 @@ class RequestController extends Controller
 
             $requestModel = ModelsRequest::where('id', $requestID)->firstOrFail();
 
-            $requestModel->payment_method = PaymentMethod::valueOf($request->input('mode'));
+            $paymentMethod = PaymentMethod::valueOf($request->input('mode'));
+
+            $requestModel->payment_method = $paymentMethod;
 
             $requestModel->save();
+
+            $addRequestLog->handle($requestID->id, 'payment method was set to ' . $paymentMethod->name);
 
             DB::commit();
 
@@ -245,7 +283,7 @@ class RequestController extends Controller
         }
     }
 
-    public function updateAttachment(Request $request, $id)
+    public function updateAttachment(Request $request, AddRequestLog $addRequestLog, $id)
     {
 
         try {
@@ -253,9 +291,13 @@ class RequestController extends Controller
 
             $modelsRequest = ModelsRequest::where('id', $id)->firstOrFail();
 
-            $modelsRequest->attachment = AccountingAttachment::valueOf($request->input('attachment'));
+            $attachment = AccountingAttachment::valueOf($request->input('attachment'));
+
+            $modelsRequest->attachment = $attachment;
 
             $modelsRequest->save();
+
+            $addRequestLog->handle($id, 'request attachment was set to ' . $attachment->name);
 
             DB::commit();
 
@@ -275,7 +317,7 @@ class RequestController extends Controller
 
     }
 
-    public function updateType(Request $request, $id)
+    public function updateType(Request $request, AddRequestLog $addRequestLog, $id)
     {
 
         try {
@@ -283,9 +325,13 @@ class RequestController extends Controller
 
             $modelsRequest = ModelsRequest::where('id', $id)->firstOrFail();
 
-            $modelsRequest->type = AccountingType::valueOf($request->input('type'));
+            $type = AccountingType::valueOf($request->input('type'));
+
+            $modelsRequest->type = $type;
 
             $modelsRequest->save();
+
+            $addRequestLog->handle($id, 'request type was set to ' . $type->name);
 
             DB::commit();
 
@@ -305,7 +351,7 @@ class RequestController extends Controller
 
     }
 
-    public function updateReceipt(Request $request, $id)
+    public function updateReceipt(Request $request, AddRequestLog $addRequestLog, $id)
     {
 
         try {
@@ -313,9 +359,12 @@ class RequestController extends Controller
 
             $modelsRequest = ModelsRequest::where('id', $id)->firstOrFail();
 
-            $modelsRequest->receipt = AccountingReceipt::valueOf($request->input('receipt'));
+            $receipt = AccountingReceipt::valueOf($request->input('receipt'));
+            $modelsRequest->receipt = $receipt;
 
             $modelsRequest->save();
+
+            $addRequestLog->handle($id, 'request receipt was set to ' . $receipt->name);
 
             DB::commit();
 
@@ -336,7 +385,7 @@ class RequestController extends Controller
 
     }
 
-    public function updatePriorityLevel(Request $request, $id)
+    public function updatePriorityLevel(Request $request, AddRequestLog $addRequestLog, $id)
     {
         try {
 
@@ -344,9 +393,12 @@ class RequestController extends Controller
 
             $modelsRequest = ModelsRequest::where('id', $id)->firstOrFail();
 
-            $modelsRequest->priority_level = RequestPriorityLevel::valueOf($request->input('priority_level'));
+            $priority = RequestPriorityLevel::valueOf($request->input('priority_level'));
+            $modelsRequest->priority_level = $priority;
 
             $modelsRequest->save();
+
+            $addRequestLog->handle($id, 'request priority was set to ' . $priority->name);
 
             DB::commit();
 
@@ -366,16 +418,20 @@ class RequestController extends Controller
 
     }
 
-    public function updateRequestStatus(Request $request, ModelsRequest $expenseRequest)
+    public function updateRequestStatus(Request $request, AddRequestLog $addRequestLog, ModelsRequest $expenseRequest)
     {
         try {
 
             DB::beginTransaction();
 
-            $expenseRequest->status = RequestStatus::valueOf($request->input('status'));
+            $status = RequestStatus::valueOf($request->input('status'));
+
+            $expenseRequest->status = $status;
 
             $expenseRequest->save();
 
+            $addRequestLog->handle($expenseRequest->id, 'request payment status was set to ' . $status->name);
+
             DB::commit();
 
             return response()->json([
@@ -394,7 +450,7 @@ class RequestController extends Controller
 
     }
 
-    public function updateFundStatus(Request $request, $requestID)
+    public function updateFundStatus(Request $request, AddRequestLog $addRequestLog, $requestID)
     {
         try {
 
@@ -406,6 +462,8 @@ class RequestController extends Controller
 
             $requestModel->save();
 
+            $addRequestLog->handle($requestID->id, 'request fund status was set to ' . $requestModel->fund_status->name);
+
             DB::commit();
 
             return response()->json([
@@ -425,4 +483,64 @@ class RequestController extends Controller
             );
         }
     }
+
+    public function nextRequest($requestID)
+    {
+
+        try {
+
+            $id = ModelsRequest::select(['requests.id'])
+                ->join('request_approvals', 'requests.id', '=', 'request_approvals.request_id')
+                ->join('roles', 'roles.id', '=', 'request_approvals.role_id')
+                ->where(function ($query) use ($requestID) {
+
+                    $query->where('request_approvals.status', '=', RequestApprovalStatus::PENDING->name);
+                    $query->where('roles.name', '=', Auth::user()->role->name);
+
+                    $query->where('requests.id', '>', $requestID);
+
+                })
+                ->orderBy('requests.id')
+                ->pluck('id')
+                ->firstOrFail();
+
+            return redirect()->route('request', ['id' => $id]);
+
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['msg' => $e->getMessage()]);
+        }
+
+    }
+
+    public function prevRequest($requestID)
+    {
+
+        try {
+
+            $id = ModelsRequest::select(['requests.id'])
+                ->join('request_approvals', 'requests.id', '=', 'request_approvals.request_id')
+                ->join('roles', 'roles.id', '=', 'request_approvals.role_id')
+                ->where(function ($query) use ($requestID) {
+
+                    $query->where('request_approvals.status', '=', RequestApprovalStatus::PENDING->name);
+                    $query->where('roles.name', '=', Auth::user()->role->name);
+
+                    $query->where('requests.id', '<', $requestID);
+
+                })
+                ->orderBy('requests.id', 'DESC')
+                ->pluck('id')
+                ->first();
+
+            if (!isset($id)) {
+                throw new \Exception('No more previous request');
+            }
+
+            return redirect()->route('request', ['id' => $id]);
+
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
+        }
+    }
+
 }

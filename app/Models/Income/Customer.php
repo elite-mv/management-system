@@ -18,11 +18,16 @@ class Customer extends Model
         'email',
         'contact_number',
         'address',
-        'currency_id'
+        'currency_id',
+        'salutation_id',
     ];
 
     public function currency(): HasOne{
         return $this->hasOne(Currency::class, 'id', 'currency_id');
+    }
+
+    public function salutation(): HasOne{
+        return $this->hasOne(Salutation::class, 'id', 'salutation_id');
     }
 
     public function clientOf(): HasMany
