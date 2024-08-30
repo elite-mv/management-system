@@ -39,14 +39,17 @@ use App\Http\Middleware\SetGlobalVariables;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'index'])->name('login');
-
-Route::middleware([CheckUserPin::class])->get('/navigation', [NavigationController::class, 'index']);
-
-Route::get('/pin', [NavigationController::class, 'pin'])->name('pin');
-Route::post('/pin', [NavigationController::class, 'verifyPin']);
-Route::post('/logout', [AuthController::class, 'logout']);
-
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/pin', [NavigationController::class, 'pin'])->name('pin');
+    Route::post('/pin', [NavigationController::class, 'verifyPin']);
+
+    Route::middleware([CheckUserPin::class])->get('/navigation', [NavigationController::class, 'index']);
+    Route::middleware([CheckUserPin::class])->post('/logout', [AuthController::class, 'logout']);
+
+});
 
 
 Route::prefix('income')->middleware([CompanyMiddleware::class])->group(function () {
@@ -80,9 +83,6 @@ Route::prefix('income')->middleware([CompanyMiddleware::class])->group(function 
 
     Route::get('/invoice', [InvoiceController::class, 'index']);
 });
-
-
-Route::get('/pdf', [PdfController::class, 'index']);
 
 Route::prefix('expense')->group(function () {
     Route::middleware(['auth', CheckUserPin::class])->group(function () {
@@ -196,6 +196,7 @@ Route::prefix('expense')->group(function () {
     });
 });
 
+Route::get('/pdf', [PdfController::class, 'index']);
 Route::get('/test', [PdfController::class, 'index']);
 Route::get('/test/{expenseRequest}', [PdfController::class, 'test']);
 Route::get('/test2/{expenseRequest}', [PdfController::class, 'test2']);
