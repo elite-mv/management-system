@@ -22,13 +22,15 @@ $('#signin_form').find('input[name="email"]').on('input', function() {
             'border': '1px solid #000'
         });
     } else {
-        $(this).siblings('span').css({
-            'transform': '',
-            'padding': '',
-            'background': '',
-            'letter-spacing': '',
-            'border': ''
-        });
+        if ($(this).val().trim() === '') {
+            $(this).siblings('span').css({
+                'transform': '',
+                'padding': '',
+                'background': '',
+                'letter-spacing': '',
+                'border': ''
+            });
+        }
     }
 });
 
@@ -47,17 +49,17 @@ $('#signin_form').find('input[name="password"]').on('input', function() {
             'border': '1px solid #000'
         });
     } else {
-        $(this).siblings('span').css({
-            'transform': '',
-            'padding': '',
-            'background': '',
-            'letter-spacing': '',
-            'border': ''
-        });
+        if ($(this).val().trim() === '') {
+            $(this).siblings('span').css({
+                'transform': '',
+                'padding': '',
+                'background': '',
+                'letter-spacing': '',
+                'border': ''
+            });
+        }
     }
 });
-
-
 
 $('#username_span').on('click, mouseover', function() {
     $('#signin_form').find('input[name="email"]').focus();

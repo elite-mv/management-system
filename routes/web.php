@@ -169,7 +169,9 @@ Route::prefix('expense')->group(function () {
         Route::post('/expense-request/comment/{requestID}', [RequestCommentController::class, 'addComment']);
 
         Route::get('/account', [AccountController::class, 'index']);
-        Route::get('/accounts', [AccountController::class, 'accounts']);
+        Route::patch('/account/update', [AccountController::class, 'update_account']);
+
+        // Route::get('/accounts', [AccountController::class, 'accounts']);
 
     });
 });

@@ -18,21 +18,27 @@ class AccountController
         ]);
     }
 
-    public function accounts(Request $request){
+    public function update_account(){
 
-        $query = User::query();
-
-        $query->when($request->input('search'), function ($query) use ($request) {
-            $query->where('name', 'like', '%' . $request->input('search'));
-            $query->orWhere('email', 'like', $request->input('search') . '%');
-        });
-
-        $query->with('role', function ($query){
-            $query->select('id', 'name');
-        });
-
-        return view('expense.accounts', [
-            'users' => $query->paginate(20)
-        ]);
+        
+        
     }
+
+    // public function accounts(Request $request){
+
+    //     $query = User::query();
+
+    //     $query->when($request->input('search'), function ($query) use ($request) {
+    //         $query->where('name', 'like', '%' . $request->input('search'));
+    //         $query->orWhere('email', 'like', $request->input('search') . '%');
+    //     });
+
+    //     $query->with('role', function ($query){
+    //         $query->select('id', 'name');
+    //     });
+
+    //     return view('expense.accounts', [
+    //         'users' => $query->paginate(20)
+    //     ]);
+    // }
 }

@@ -106,19 +106,21 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body d-flex align-items-center justify-content-around">
-                        <div style="width: 7.95in; height: 2.9in; position: relative;" class="my-auto" id="printable_check">
-                            <img src="https://html.scribdassets.com/5xqh18575sa7ssqi/images/1-f2cc24c5d0.jpg" class="img-fluid h-100" alt="check-writer">
+                        <div style="width: 6.25in; height: 2.75in; position: relative;" class="my-auto" id="printable_check">
+                            <img style="position: absolute; z-index: 1; width: 100%; height: 100%;" src="https://html.scribdassets.com/5xqh18575sa7ssqi/images/1-f2cc24c5d0.jpg" class="img-fluid h-100" alt="check-writer">
 
-                            <div style="position: absolute; top: 0.23in; right: 0.35in; width: 2in;">
-                                <input type="text" class="form-control rounded-0 bg-transparent border-0 text-end fw-bold" style="line-height: 8px;" name="date" placeholder="0  0    0  0    0  0  0  0">
+                            <div id="grid" style="position: absolute; z-index: 2; width: 100%; height: 100%; background-color: #e5e5f7; opacity: 0.3; background-image: linear-gradient(#444cf7 1px, transparent 1px), linear-gradient(to right, #444cf7 1px, #e5e5f7 1px); background-size: 20px 20px;"></div>
+
+                            <div style="position: absolute; z-index: 3; top: 0.22in; right: 0.28in; width: 2in;">
+                                <input type="text" class="form-control rounded-0 bg-transparent border-0 text-end fw-bold" style="line-height: 5px;" name="date" placeholder="0 0   0 0   0 0 0 0">
                             </div>
-                            <div style="position: absolute; top: 0.6in; left: 0.95in; width: 4.43in;">
+                            <div style="position: absolute; z-index: 3; top: 0.57in; left: 0.7in; width: 3.7in;">
                                 <input type="text" class="form-control rounded-0 bg-transparent border-0 fw-bold" style="line-height: 8px;" name="paid_to" placeholder="*** JOHN CASTILLO ***">
                             </div>
-                            <div style="position: absolute; top: 0.6in; left: 5.5in; width: 2in;">
+                            <div style="position: absolute; z-index: 3; top: 0.55in; left: 4.25in; width: 1.7in;">
                                 <input type="text" class="form-control rounded-0 bg-transparent border-0 fw-bold" style="line-height: 8px;" name="amount_words" placeholder="*** 1,000,000 ***">
                             </div>
-                            <div style="position: absolute; top: 0.92in; left: 0.695in; width: 6.8in;">
+                            <div style="position: absolute; z-index: 3; top: 0.85in; left: 0.52in; width: 5.5in;">
                                 <input type="text" class="form-control rounded-0 bg-transparent border-0 fw-bold" style="line-height: 8px;" name="amount_value" placeholder="*** ONE MILLION ONLY ***">
                             </div>
                         </div>
@@ -2421,8 +2423,8 @@
                 image: { type: 'jpg', quality: 1.0 },
                 html2canvas: { scale: 1 },
                 jsPDF: { 
-                    unit: 'mm', 
-                    format: 'dl', 
+                    unit: 'in', 
+                    format: [6.25, 2.75], 
                     orientation: 'landscape',
                 }
             });

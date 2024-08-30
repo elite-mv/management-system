@@ -106,7 +106,7 @@
             <div class="col-sm-12 col-md-7 col-lg-7" id="profile_container">
                 <div class="w-100 bg-white p-3 border border-dark rounded border-2 mx-auto">
                     <p class="fw-bold">MY PROFILE</p>
-                    <form method="POST" action="/expense/account" id="accountForm">
+                    <form method="POST" action="/expense/account/update" id="accountForm">
                         @csrf
                         <div class="mb-3 small form-group">
                             <label CLASS="fw-bold text-danger form-label">USERNAME</label>
