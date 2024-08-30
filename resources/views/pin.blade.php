@@ -48,23 +48,23 @@
                 @csrf
                 <div style="width: 50px; height: 50px;">
                     <input class="pin" type="text" minlength="1" maxlength="1" style="width: 50px; height: 50px; text-align: center;"
-                           name="otp1">
+                           name="pin[]">
                 </div>
                 <div style="width: 50px; height: 50px;">
                     <input class="pin" type="text" minlength="1" maxlength="1" style="width: 50px; height: 50px; text-align: center;"
-                           name="otp2">
+                           name="pin[]">
                 </div>
                 <div style="width: 50px; height: 50px;">
                     <input class="pin" type="text" minlength="1" maxlength="1" style="width: 50px; height: 50px; text-align: center;"
-                           name="otp3">
+                           name="pin[]">
                 </div>
                 <div style="width: 50px; height: 50px;">
                     <input class="pin" type="text" maxlength="1" style="width: 50px; height: 50px; text-align: center;"
-                           name="otp4">
+                           name="pin[]">
                 </div>
                 <div style="width: 50px; height: 50px;">
                     <input class="pin" type="text" minlength="1" maxlength="1" style="width: 50px; height: 50px; text-align: center;"
-                           name="otp5">
+                           name="pin[]">
                 </div>
             </div>
         </div>
@@ -74,8 +74,14 @@
 <script>
 
 
+    const firstPin = document.querySelector('.pin');
     const pins = document.querySelectorAll('.pin');
     const pinForm = document.querySelector('#pinForm');
+
+
+    window.addEventListener('load',()=>{
+        firstPin.focus();
+    })
 
     pins.forEach((pin, index) => {
         pin.addEventListener('input', () => {

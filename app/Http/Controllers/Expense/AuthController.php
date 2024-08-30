@@ -44,6 +44,7 @@ class AuthController extends Controller
 
     public function logout(Request $request){
         Auth::logout();
+        $request->session()->forget('pin_verified');
         return redirect('/');
     }
 }

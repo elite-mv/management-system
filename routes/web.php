@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DownloadableFormController;
 use App\Http\Controllers\Expense\AccountantController;
 use App\Http\Controllers\Expense\AccountController;
 use App\Http\Controllers\Expense\AuditorController;
@@ -89,8 +90,12 @@ Route::prefix('expense')->group(function () {
         Route::get('/home', [HomeController::class, 'index']);
         Route::get('/request', [RequestController::class, 'index']);
 
-        Route::middleware([CompanyData::class])->get('/requests', [RequestController::class, 'getRequests']);
+        Route::get('/forms', [DownloadableFormController::class, 'index']);
 
+        Route::get('/next-request/{requestID}', [RequestController::class, 'nextRequest']);
+        Route::get('/prev-request/{requestID}', [RequestController::class, 'prevRequest']);
+
+        Route::middleware([CompanyData::class])->get('/requests', [RequestController::class, 'getRequests']);
 
         Route::get('/daily-request', [RequestController::class, 'getDailyRequest']);
         Route::post('/api/request/status/{expenseRequest}', [RequestController::class, 'updateRequestStatus']);
