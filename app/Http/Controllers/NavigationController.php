@@ -27,19 +27,17 @@ class NavigationController
 
             $valid = User::select(['id','pin'])
                 ->where('id', '=', Auth::id())
-                ->where('pin','=', $pin . '1')
+                ->where('pin','=', $pin)
                 ->pluck('pin')
                 ->first();
 
-            return $valid;
-//
-//            if(empty($valid)){
-//                throw new \Exception('Incorrect pin');
-//            }
-//
-//            session(['pin_verified' => true]);
-//
-//            return redirect('/navigation');
+            if(empty($valid)){
+                throw new \Exception('Incorrect pin');
+            }
+
+            session(['pin_verified' => true]);
+
+            return redirect('/navigation');
 
         }catch (\Exception $exception){
             return redirect()->back()->withErrors(['error' => $exception->getMessage()]);
