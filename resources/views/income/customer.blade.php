@@ -38,8 +38,20 @@
                                     <i class="fas fa-table me-1"></i>
                                     <b>List of Customers</b>
                                 </div>
-                                <form class="col-9">
-                                    <input placeholder="Search ..." name="search" type="search" class="form-control" value="{{$app->request->search}}">
+                                <form class="col-9" style="display: flex; justify-content: center; align-items: center;">
+                                    {{-- <input placeholder="Search ..." name="search" type="search" class="form-control" value="{{$app->request->search}}"> --}}
+                                    <div class="w-100 rounded-pill border d-flex align-items-start flex-direction-row gap-2 py-2 px-3">
+                                        <div>
+                                            <button class="border-0 bg-transparent" style="border-radius: 50%;">
+                                                <i class="fas fa-search text-secondary"></i>
+                                            </button>
+                                        </div>
+                                        <div class="w-100 mx-1">
+                                            <small>
+                                                <input placeholder="Search ..." name="search" type="search" value="{{$app->request->search}}" class="rounded-0 border-0 w-100 bg-transparent">
+                                            </small>
+                                        </div>
+                                    </div>
                                 </form>
                             </div>
                             <div class="ms-auto">
