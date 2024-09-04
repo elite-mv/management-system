@@ -49,7 +49,6 @@ class AppServiceProvider extends ServiceProvider
             return $isAllowed;
         });
 
-
         Blade::if('management', function () {
 
             switch (Auth::user()->role->name) {

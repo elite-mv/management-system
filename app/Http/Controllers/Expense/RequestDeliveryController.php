@@ -10,11 +10,15 @@ class RequestDeliveryController extends Controller
     public function addDelivery(Request $request, $requestID)
     {
 
+        $validated = $request->validate([
+            'completed' => 'required',
+        ]);
+
         try{
             DB::beginTransaction();
 
             RequestDelivery::updateOrCreate(['request_id' => $requestID], [
-                'completed' => $request->input('completed'),
+                'completed' => $validated['completed'],
             ]);
 
             DB::commit();
@@ -23,6 +27,7 @@ class RequestDeliveryController extends Controller
                 'message' => 'ok',
                 'status' => '200',
             ]);
+
         }catch (\Exception $e){
 
             DB::rollBack();

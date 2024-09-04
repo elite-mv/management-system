@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Expense;
 
+use App\Actions\AddRequestLog;
 use App\Models\Expense\RequestVat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -40,17 +41,23 @@ class VatController
         }
     }
 
-    public function updateInvoice(Request $request, $requestID)
+    public function updateInvoice(Request $request, AddRequestLog $addRequestLog, $requestID)
     {
         try {
+
+            $validated = $request->validate([
+                'invoice' => 'required',
+            ]);
 
             DB::beginTransaction();
 
             RequestVat::updateOrCreate( ['request_id' => $requestID ],
                 [
-                    'invoice' => $request->input('invoice'),
+                    'invoice' => $validated['invoice']
                 ]
             );
+
+            $addRequestLog->handle($requestID, 'Request Invoice was set to ' . $validated['invoice']);
 
             DB::commit();
 
@@ -72,17 +79,23 @@ class VatController
         }
     }
 
-    public function updateBill(Request $request, $requestID)
+    public function updateBill(Request $request,AddRequestLog $addRequestLog, $requestID)
     {
         try {
+
+            $validated = $request->validate([
+                'bill' => 'required',
+            ]);
 
             DB::beginTransaction();
 
             RequestVat::updateOrCreate( ['request_id' => $requestID ],
                 [
-                    'bill' => $request->input('bill'),
+                    'bill' => $validated['bill'],
                 ]
             );
+
+            $addRequestLog->handle($requestID, 'Request Bill number was set to ' . $validated['bill']);
 
             DB::commit();
 
@@ -103,17 +116,23 @@ class VatController
             );
         }
     }
-    public function updateOfficialReceipt(Request $request, $requestID)
+    public function updateOfficialReceipt(Request $request,AddRequestLog $addRequestLog, $requestID)
     {
         try {
+
+            $validated = $request->validate([
+                'official_receipt' => 'required',
+            ]);
 
             DB::beginTransaction();
 
             RequestVat::updateOrCreate( ['request_id' => $requestID ],
                 [
-                    'official_receipt' => $request->input('receipt'),
+                    'official_receipt' => $validated['official_receipt'],
                 ]
             );
+
+            $addRequestLog->handle($requestID, 'Request Official Receipt was set to ' . $validated['official_receipt']);
 
             DB::commit();
 
@@ -135,9 +154,13 @@ class VatController
         }
     }
 
-    public function updateOptionA(Request $request, $requestID)
+    public function updateOptionA(Request $request, AddRequestLog $addRequestLog, $requestID)
     {
         try {
+
+            $validated = $request->validate([
+                'option' => 'required',
+            ]);
 
             DB::beginTransaction();
 
@@ -147,6 +170,8 @@ class VatController
                 ]
             );
 
+            $addRequestLog->handle($requestID, 'Vat input Option A was set to ' . $validated['option']);
+
             DB::commit();
 
             return response()->json([
@@ -166,9 +191,13 @@ class VatController
             );
         }
     }
-    public function updateOptionB(Request $request, $requestID)
+    public function updateOptionB(Request $request,AddRequestLog $addRequestLog, $requestID)
     {
         try {
+
+            $validated = $request->validate([
+                'option' => 'required',
+            ]);
 
             DB::beginTransaction();
 
@@ -177,6 +206,8 @@ class VatController
                     'option_b' => $request->input('option'),
                 ]
             );
+
+            $addRequestLog->handle($requestID, 'Vat input Option B was set to ' . $validated['option']);
 
             DB::commit();
 

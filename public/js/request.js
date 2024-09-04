@@ -5,7 +5,6 @@ const requestPriorityLevel = document.querySelector('#requestPriorityLevel');
 const requestPriority = document.querySelector('#requestPriority');
 const itemTotal = document.querySelector('#itemTotal');
 
-
 const requestItemId = document.querySelector('#requestId');
 const requestItemQuantity = document.querySelector('#requestQuantity');
 const requestItemUnitOfMeasure = document.querySelector('#requestUnitOfMeasure');

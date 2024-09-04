@@ -6,6 +6,7 @@ use App\Enums\AccountingAttachment;
 use App\Enums\AccountingReceipt;
 use App\Enums\AccountingType;
 use App\Enums\PaymentMethod;
+use App\Enums\RequestApprovalStatus;
 use App\Enums\RequestFundStatus;
 use App\Enums\RequestItemStatus;
 use App\Enums\RequestPriorityLevel;
@@ -37,9 +38,13 @@ class Request extends Model
         'receipt',
         'fund_status',
         'reference',
+        'released_by',
+        'received_by',
+        'audited_by',
     ];
 
     protected $appends = ['total', 'reference', 'fund', 'fund_item'];
+
     protected function casts(): array
     {
         return [
@@ -56,62 +61,73 @@ class Request extends Model
     protected static function booted()
     {
         static::created(function ($request) {
-            $request->reference = $request->created_at->format('Ymd') . '-' . str_pad($request->id,3,"0",STR_PAD_LEFT);;
+            $request->reference = $request->created_at->format('Ymd') . '-' . str_pad($request->id, 3, "0", STR_PAD_LEFT);;
             $request->save();
         });
     }
 
-
-    public function getTotalAttribute(): float{
+    public function getTotalAttribute(): float
+    {
         return $this->items()->sum(DB::raw('quantity * cost'));
     }
 
-    public function getFundAttribute(): float{
+    public function getFundAttribute(): float
+    {
         return $this->items()
-        ->whereIn('status', [
-            RequestItemStatus::APPROVED->name,
-            RequestItemStatus::PRIORITY->name
-        ])
-        ->sum(DB::raw('quantity * cost'));
+            ->whereIn('status', [
+                RequestItemStatus::APPROVED->name,
+                RequestItemStatus::PRIORITY->name
+            ])
+            ->sum(DB::raw('quantity * cost'));
     }
 
-    public function company(): BelongsTo{
+    public function company(): BelongsTo
+    {
         return $this->belongsTo(Company::class);
     }
 
-    public function items(): HasMany{
+    public function items(): HasMany
+    {
         return $this->hasMany(RequestItem::class);
     }
 
-    public function approvedItems(): HasMany{
+    public function approvedItems(): HasMany
+    {
         return $this->hasMany(RequestItem::class);
     }
 
-    public function approvals(): HasMany{
+    public function approvals(): HasMany
+    {
         return $this->hasMany(RequestApproval::class);
     }
 
-    public function preparedBy(): BelongsTo{
-        return $this->belongsTo(User::class,'prepared_by');
+    public function preparedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'prepared_by');
     }
 
-    public function checkVoucher(): HasOne{
+    public function checkVoucher(): HasOne
+    {
         return $this->hasOne(CheckVoucher::class);
     }
 
-    public function delivery(): HasOne{
+    public function delivery(): HasOne
+    {
         return $this->hasOne(RequestDelivery::class);
     }
 
-    public function bankDetails(): HasOne{
+    public function bankDetails(): HasOne
+    {
         return $this->hasOne(BankDetail::class);
     }
 
-    public function expenseTypes(): HasMany{
+    public function expenseTypes(): HasMany
+    {
         return $this->hasMany(RequestExpenseType::class);
     }
 
-    public function accountingDetail(): HasOne{
+    public function accountingDetail(): HasOne
+    {
         return $this->hasOne(AccountingDetail::class);
     }
 
@@ -135,29 +151,32 @@ class Request extends Model
         return $this->hasOne(RequestApproval::class);
     }
 
-    public function vat(): HasOne{
+    public function vat(): HasOne
+    {
         return $this->hasOne(RequestVat::class);
     }
 
-    public function getFundItemAttribute(){
+    public function getFundItemAttribute()
+    {
         return $this->items()
-        ->whereIn('status', [
-            RequestItemStatus::APPROVED->name,
-            RequestItemStatus::PRIORITY->name
-        ])->get();
+            ->whereIn('status', [
+                RequestItemStatus::APPROVED->name,
+                RequestItemStatus::PRIORITY->name
+            ])->get();
     }
 
     public function getPadIdAttribute()
     {
-        return str_pad($this->id,3,"0",STR_PAD_LEFT);
+        return str_pad($this->id, 3, "0", STR_PAD_LEFT);
     }
+
     public function getTimeLapseAttribute(): float
     {
         $start = Carbon::parse($this->created_at);
         $end = Carbon::now();
 //
 //        $days = $start->diffInDays($end);
-        $hours = (int) $start->diffInHours($end);
+        $hours = (int)$start->diffInHours($end);
 //        $minutes = $start->diffInMinutes($end) - ($hours * 60) - ($days * 24 * 60);
 //
 //        return $days + $hours / 24 + $minutes / 1440;
@@ -166,18 +185,24 @@ class Request extends Model
     }
 
 
-    public function getApprovalStatus(){
+    public function getRequestStatusAttribute()
+    {
 
-//        return
-//            $this->approvals()
-//            ->whereHas('role', function ($query) {
-//                $query->where('name', UserRole::BOOK_KEEPER->value);
-//                $query->where('name', UserRole::ACCOUNTANT->value);
-//                $query->where('name', UserRole::FINANCE->value);
-//                $query->where('name', UserRole::AUDITOR->value);
-//            })->whereHas()
-//
-//                ->first();
+        $approvedCount = $this->approvals()
+            ->whereHas('role', function ($qb) {
+                $approvedRoles = [
+                    UserRole::BOOK_KEEPER->value,
+                    UserRole::ACCOUNTANT->value,
+                    UserRole::FINANCE->value,
+                    UserRole::AUDITOR->value,
+                ];
+
+                $qb->whereIn('name', $approvedRoles)
+                    ->where('status', RequestApprovalStatus::APPROVED);
+            })
+            ->count();
+
+        return $approvedCount >= 4 ? 'CLOSE' : 'OPEN';
     }
 
 }

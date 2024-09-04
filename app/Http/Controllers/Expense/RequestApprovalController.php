@@ -27,6 +27,12 @@ class RequestApprovalController
     {
         try {
 
+            $data = true;
+
+            if ($data) {
+                throw new \Exception('tae');
+            }
+
             $roleID = Role::where('name', UserRole::BOOK_KEEPER->value)
                 ->pluck('id')
                 ->first();
@@ -35,13 +41,14 @@ class RequestApprovalController
 
             $this->updateRequest($status, $roleID, $expenseRequestID);
 
-            return redirect()->route('request', ['id' => $expenseRequestID]);
+            return redirect()->back();
+
         } catch (\Exception $exception) {
-            return redirect()->route('request', ['id' => $expenseRequestID])->withErrors('message', 'Something went wrong');
+            return redirect()->back()->withErrors(['message' => 'something went wrong']);
         }
     }
 
-    public function updateAccountant(Request $request, UpdateRequestApproval $updateRequestApproval, $expenseRequestID)
+    public function updateAccountant(Request $request, $expenseRequestID)
     {
 
         try {
@@ -54,9 +61,10 @@ class RequestApprovalController
 
             $this->updateRequest($status, $roleID, $expenseRequestID);
 
-            return redirect()->route('request', ['id' => $expenseRequestID]);
+            return redirect()->back();
+
         } catch (\Exception $exception) {
-            return redirect()->route('request', ['id' => $expenseRequestID])->withErrors('message', 'Something went wrong');
+            return redirect()->back()->withErrors(['message' => 'something went wrong']);
         }
     }
 
@@ -73,9 +81,10 @@ class RequestApprovalController
 
             $this->updateRequest($status, $roleID, $expenseRequestID);
 
-            return redirect()->route('request', ['id' => $expenseRequestID]);
+            return redirect()->back();
+
         } catch (\Exception $exception) {
-            return redirect()->route('request', ['id' => $expenseRequestID])->withErrors('message', 'Something went wrong');
+            return redirect()->back()->withErrors(['message' => 'something went wrong']);
         }
     }
 
@@ -92,9 +101,10 @@ class RequestApprovalController
 
             $this->updateRequest($status, $roleID, $expenseRequestID);
 
-            return redirect()->route('request', ['id' => $expenseRequestID]);
+            return redirect()->back();
+
         } catch (\Exception $exception) {
-            return redirect()->route('request', ['id' => $expenseRequestID])->withErrors('message', 'Something went wrong');
+            return redirect()->back()->withErrors(['message' => 'something went wrong']);
         }
     }
 

@@ -28,6 +28,14 @@
 @section('body')
 
 
+    <div class="container-fluid">
+        @if($errors->any())
+            <div class="alert alert-danger" role="alert">
+               {{$errors->first()}}
+            </div>
+        @endif
+    </div>
+
     <form id="requestForm" method="POST" action="/expense/request">
 
         @csrf
@@ -41,7 +49,7 @@
                             <div class="col-auto p-0"
                                  style="display: flex; flex-direction: column; margin-inline: auto;">
                                 <div style="width: 100px; height:100px">
-                                    <img style="object-fit:contain;" src="images/logos/{{ $company->logo }}"
+                                    <img style="object-fit:contain;" src="{{\Illuminate\Support\Facades\Storage::url($company->logo)}}"
                                          class="w-100 h-100 d-block mx-auto img-fluid" alt="{{ $company->name }}">
                                 </div>
 
@@ -212,10 +220,10 @@
                             <div class="col-12 col-md-3 p-3">
                                 <div class="d-flex align-items-center justify-content-between gap-1">
                                     <select class="form-control" name="priorityLevel" id="requestPriorityLevel">
-                                        <option value="None">Pick a level</option>
-                                        <option value="Low">Low (5 Days)</option>
-                                        <option value="Medium">Medium (3 Days)</option>
-                                        <option value="High">High (1 Day)</option>
+                                        <option value="{{\App\Enums\RequestPriorityLevel::NONE->name}}">Pick a level</option>
+                                        <option value="{{\App\Enums\RequestPriorityLevel::LOW->name}}">Low (5 Days)</option>
+                                        <option value="{{\App\Enums\RequestPriorityLevel::MEDIUM->name}}">Medium (3 Days)</option>
+                                        <option value="{{\App\Enums\RequestPriorityLevel::HIGH->name}}">High (1 Day)</option>
                                     </select>
                                 </div>
                             </div>

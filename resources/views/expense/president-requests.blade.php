@@ -3,6 +3,15 @@
 @section('title', 'President')
 
 @section('body')
+
+    @if($errors->any())
+        <div class="container-fluid">
+            <div class="alert alert-danger" role="alert">
+                {{$errors->first()}}
+            </div>
+        </div>
+    @endif
+
     <div class="container p-3" style="position: relative;">
         <form id="filterForm" class="row align-items-center mb-2">
 
@@ -115,6 +124,14 @@
             </div>
         </form>
 
+        <form>
+            <div class="p-2">
+                <button class="btn btn-primary">Approve</button>
+                <button class="btn btn-danger">Reject</button>
+                <button class="btn btn-secondary">Donwload Check</button>
+            </div>
+        </form>
+
         <div class="row mb-3">
 
             <div class="col-12">
@@ -131,11 +148,17 @@
                         <table class="table sortable">
                             <thead>
                             <tr>
+                                <td>
+                                    <input id="requestInput" type="checkbox" class="form-check-input request-input-selection">
+                                </td>
                                 <th>REFERENCE</th>
                                 <th>DURATION</th>
                                 <th>ENTITY</th>
                                 <th>REQUESTED BY</th>
                                 <th>STATUS</th>
+                                <th>BANK NAME</th>
+                                <th>BANK CODE</th>
+                                <th>CHECK NUMBER</th>
                                 <th>TOTAL</th>
                                 <th>ACTION</th>
                             </tr>
@@ -179,7 +202,7 @@
             let formData = new FormData(filterForm);
             const params = new URLSearchParams(formData);
 
-            fetch(`/api/president?${params.toString()}`, {
+            fetch(`/expense/api/president?${params.toString()}`, {
                 headers: {
                     "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
                 }

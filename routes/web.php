@@ -9,6 +9,7 @@ use App\Http\Controllers\Expense\BankDetailController;
 use App\Http\Controllers\Expense\BookKeeperController;
 use App\Http\Controllers\Expense\ChatController;
 use App\Http\Controllers\Expense\CompanyController;
+use App\Http\Controllers\Expense\DashboardController;
 use App\Http\Controllers\Expense\FinanceController;
 use App\Http\Controllers\Expense\HomeController;
 use App\Http\Controllers\Expense\JobOrderController;
@@ -35,7 +36,6 @@ use App\Http\Middleware\CheckUserPin;
 use App\Http\Middleware\CompanyData;
 use App\Http\Middleware\CompanyMiddleware;
 use App\Http\Middleware\ExpenseCategoryData;
-use App\Http\Middleware\SetGlobalVariables;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'index'])->name('login');
@@ -90,33 +90,18 @@ Route::prefix('expense')->group(function () {
         Route::get('/home', [HomeController::class, 'index']);
         Route::get('/request', [RequestController::class, 'index']);
 
-        Route::get('/forms', [DownloadableFormController::class, 'index']);
+        Route::middleware([CompanyData::class])->get('/forms', [DownloadableFormController::class, 'index']);
 
         Route::get('/next-request/{requestID}', [RequestController::class, 'nextRequest']);
         Route::get('/prev-request/{requestID}', [RequestController::class, 'prevRequest']);
-
         Route::middleware([CompanyData::class])->get('/requests', [RequestController::class, 'getRequests']);
-
         Route::get('/daily-request', [RequestController::class, 'getDailyRequest']);
-        Route::post('/api/request/status/{expenseRequest}', [RequestController::class, 'updateRequestStatus']);
-
-        Route::post('/api/request/voucher/{expenseRequest}', [RequestVoucher::class, 'generate']);
-        Route::get('/api/my-requests', [RequestController::class, 'getRequestsData']);
 
         Route::middleware([CompanyData::class])->get('/book-keeper', [BookKeeperController::class, 'index']);
-        Route::get('/api/book-keeper', [BookKeeperController::class, 'getRequests']);
-
         Route::middleware([CompanyData::class])->get('/accountant', [AccountantController::class, 'index']);
-        Route::get('/api/accountant', [AccountantController::class, 'getRequests']);
-
         Route::middleware([CompanyData::class])->get('/finance', [FinanceController::class, 'index']);
-        Route::get('/api/finance', [FinanceController::class, 'getRequests']);
-
         Route::middleware([CompanyData::class])->get('/president', [PresidentController::class, 'index']);
-        Route::get('/api/president', [PresidentController::class, 'getRequests']);
-
         Route::middleware([CompanyData::class])->get('/auditor', [AuditorController::class, 'index']);
-        Route::get('/api/auditor', [AuditorController::class, 'getRequests']);
 
         Route::get('/job-order', [JobOrderController::class, 'index']);
         Route::post('/job-order', [JobOrderController::class, 'addJobOrder']);
@@ -134,66 +119,87 @@ Route::prefix('expense')->group(function () {
         Route::post('/unit-of-measure', [UnitOfMeasureController::class, 'addMeasurement']);
 
         Route::post('/request', [RequestController::class, 'addRequest']);
-        Route::middleware([ExpenseCategoryData::class, BankData::class, BankCodesData::class])->get('/request/{id}', [RequestController::class, 'viewRequest'])->name('request');
 
-        Route::post('/api/request-item/update/{requestItem}', [RequestItemController::class, 'updateRequestItem']);
-        Route::post('/api/request-item', [RequestItemController::class, 'addRequestItem']);
-        Route::get('/api/request-item', [RequestItemController::class, 'getRequestItems']);
+        Route::middleware([ExpenseCategoryData::class, BankData::class, BankCodesData::class])
+            ->get('/request/{id}', [RequestController::class, 'viewRequest'])
+            ->name('request');
 
-        Route::get('/api/request-item/total', [RequestItemController::class, 'getRequestTotal']);
-        Route::get('/api/request-item/{id}', [RequestItemController::class, 'getRequestItem']);
-
-        Route::delete('/api/request-item/{id}', [RequestItemController::class, 'removeItem']);
-        Route::post('/api/request-item/{id}', [RequestItemController::class, 'updateItem']);
-
-        Route::post('/api/request-item/file/{id}', [RequestItemController::class, 'addRequestItemImage']);
-
-        Route::post('/api/expense-request/bank-details', [BankDetailController::class, 'addBankDetails']);
-        Route::delete('/api/expense-request/bank-details/{requestID}', [BankDetailController::class, 'removeBankDetails']);
-
-        Route::post('/api/expense-request/delivery/status/{requestID}', [RequestDeliveryController::class, 'addDelivery']);
-        Route::delete('/api/expense-request/delivery/status/{requestID}', [RequestDeliveryController::class, 'deleteDelivery']);
-
-        Route::post('/api/expense-request/delivery/supplier/{requestID}', [RequestDeliveryController::class, 'verifySupplier']);
-        Route::delete('/api/expense-request/delivery/supplier/{requestID}', [RequestDeliveryController::class, 'deleteSupplier']);
-
-        Route::post('/api/expense-request/payment-method/{requestID}', [RequestController::class, 'updatePaymentMethod']);
-
-        Route::post('/api/expense-request/attachment/{id}', [RequestController::class, 'updateAttachment']);
-        Route::post('/api/expense-request/type/{id}', [RequestController::class, 'updateType']);
-        Route::post('/api/expense-request/receipt/{id}', [RequestController::class, 'updateReceipt']);
-        Route::post('/api/expense-request/priority-level/{id}', [RequestController::class, 'updatePriorityLevel']);
-
-        Route::post('/api/expense-request/expense-type/{expenseRequest}', [RequestExpenseController::class, 'updateRequestExpense']);
-
-        Route::post('/api/expense-request/fund-status/{requestID}', [RequestController::class, 'updateFundStatus']);
 
         Route::post('/expense-request/book-keeper/approval/{requestID}', [RequestApprovalController::class, 'updateBookKeeper']);
         Route::post('/expense-request/accountant/approval/{requestID}', [RequestApprovalController::class, 'updateAccountant']);
         Route::post('/expense-request/finance/approval/{requestID}', [RequestApprovalController::class, 'updateFinance']);
         Route::post('/expense-request/auditor/approval/{requestID}', [RequestApprovalController::class, 'updateAuditor']);
 
-        Route::post('/expense-request/expense/vat/purchase-order/{requestID}', [VatController::class, 'updatePurchaseOrder']);
-        Route::post('/expense-request/expense/vat/invoice/{requestID}', [VatController::class, 'updateInvoice']);
-        Route::post('/expense-request/expense/vat/bill/{requestID}', [VatController::class, 'updateBill']);
-        Route::post('/expense-request/expense/vat/official-receipt/{requestID}', [VatController::class, 'updateOfficialReceipt']);
+        Route::prefix('/expense-request')->group(function () {
 
-        Route::post('/expense-request/expense/vat/option-a/{requestID}', [VatController::class, 'updateOptionA']);
-        Route::post('/expense-request/expense/vat/option-b/{requestID}', [VatController::class, 'updateOptionB']);
+            // expense/expense-request/expense/
+            Route::prefix('/expense/vat')->group(function () {
+                Route::post('/purchase-order/{requestID}', [VatController::class, 'updatePurchaseOrder']);
+                Route::post('/invoice/{requestID}', [VatController::class, 'updateInvoice']);
+                Route::post('/bill/{requestID}', [VatController::class, 'updateBill']);
+                Route::post('/official-receipt/{requestID}', [VatController::class, 'updateOfficialReceipt']);
+                Route::post('/option-a/{requestID}', [VatController::class, 'updateOptionA']);
+                Route::post('/option-b/{requestID}', [VatController::class, 'updateOptionB']);
+            });
 
-        Route::get('/expense-request/comments/{requestID}', [RequestCommentController::class, 'viewComments'])->name('comments');
-        Route::post('/expense-request/comment/{requestID}', [RequestCommentController::class, 'addComment']);
+
+            Route::get('/comments/{requestID}', [RequestCommentController::class, 'viewComments'])->name('comments');
+            Route::post('/comment/{requestID}', [RequestCommentController::class, 'addComment']);
+
+        });
+
+        Route::prefix('/api')->group(function () {
+            Route::post('/request/status/{expenseRequest}', [RequestController::class, 'updateRequestStatus']);
+            Route::post('/request/voucher/{expenseRequest}', [RequestVoucher::class, 'generate']);
+            Route::get('/my-requests', [RequestController::class, 'getRequestsData']);
+            Route::get('/book-keeper', [BookKeeperController::class, 'getRequests']);
+            Route::get('/accountant', [AccountantController::class, 'getRequests']);
+            Route::get('/finance', [FinanceController::class, 'getRequests']);
+            Route::get('/president', [PresidentController::class, 'getRequests']);
+            Route::get('/auditor', [AuditorController::class, 'getRequests']);
+            Route::post('/request-item/update/{requestItem}', [RequestItemController::class, 'updateRequestItem']);
+            Route::post('/request-item', [RequestItemController::class, 'addRequestItem']);
+            Route::get('/request-item', [RequestItemController::class, 'getRequestItems']);
+            Route::get('/request-item/total', [RequestItemController::class, 'getRequestTotal']);
+            Route::get('/request-item/{id}', [RequestItemController::class, 'getRequestItem']);
+            Route::delete('/request-item/{id}', [RequestItemController::class, 'removeItem']);
+            Route::post('/request-item/{id}', [RequestItemController::class, 'updateItem']);
+            Route::post('/request-item/file/{id}', [RequestItemController::class, 'addRequestItemImage']);
+            Route::post('/expense-request/bank-details', [BankDetailController::class, 'addBankDetails']);
+            Route::delete('/expense-request/bank-details/{requestID}', [BankDetailController::class, 'removeBankDetails']);
+            Route::post('/expense-request/delivery/status/{requestID}', [RequestDeliveryController::class, 'addDelivery']);
+            Route::delete('/expense-request/delivery/status/{requestID}', [RequestDeliveryController::class, 'deleteDelivery']);
+            Route::post('/expense-request/delivery/supplier/{requestID}', [RequestDeliveryController::class, 'verifySupplier']);
+            Route::delete('/expense-request/delivery/supplier/{requestID}', [RequestDeliveryController::class, 'deleteSupplier']);
+            Route::post('/expense-request/payment-method/{requestID}', [RequestController::class, 'updatePaymentMethod']);
+            Route::post('/expense-request/attachment/{id}', [RequestController::class, 'updateAttachment']);
+            Route::post('/expense-request/type/{id}', [RequestController::class, 'updateType']);
+            Route::post('/expense-request/receipt/{id}', [RequestController::class, 'updateReceipt']);
+            Route::post('/expense-request/priority-level/{id}', [RequestController::class, 'updatePriorityLevel']);
+            Route::post('/expense-request/expense-type/{expenseRequest}', [RequestExpenseController::class, 'updateRequestExpense']);
+            Route::post('/expense-request/fund-status/{requestID}', [RequestController::class, 'updateFundStatus']);
+        });
+
+        Route::post('/expense-request/received-by/{requestID}', [RequestController::class, 'updateReceivedBy']);
+        Route::post('/expense-request/audited-by/{requestID}', [RequestController::class, 'auditedBy']);
 
         Route::get('/account', [AccountController::class, 'index']);
         Route::patch('/account/update', [AccountController::class, 'update_account']);
 
-        // Route::get('/accounts', [AccountController::class, 'accounts']);
+        Route::get('/accounts', [AccountController::class, 'accounts']);
 
         Route::get('/logs', [RequestLogsController::class, 'index']);
 
+        Route::get('/chats', [ChatController::class, 'chatDetails']);
         Route::get('/chat', [ChatController::class, 'index']);
         Route::post('/chat', [ChatController::class, 'addMessage']);
+
+        Route::get('/dashboard', [DashboardController::class, 'index']);
     });
+});
+
+Route::get('/tae', function (){
+    return 'tae';
 });
 
 Route::get('/pdf', [PdfController::class, 'index']);

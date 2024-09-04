@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.6/viewer.css"
           integrity="sha512-eG8C/4QWvW9MQKJNw2Xzr0KW7IcfBSxljko82RuSs613uOAg/jHEeuez4dfFgto1u6SRI/nXmTr9YPCjs1ozBg=="
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
 @endsection
 
 @section('title', 'View Request')
@@ -71,7 +72,21 @@
             background-color: var(--gray);
         }
 
+        .selectable > * {
+            background-color: transparent;
+        }
+
+
+        .selectable > form > select {
+            background-color: transparent;
+        }
+
+
         select {
+            cursor: pointer;
+        }
+
+        input[type=checkbox]:hover {
             cursor: pointer;
         }
 
@@ -80,10 +95,15 @@
 
 @section('body')
 
-    @if($errors->any())
 
-        @dd($errors)
-{{--        <h4>{{$errors->first()}}</h4>--}}
+{{--    {{count($errors) }}--}}
+
+    @if($errors->any())
+        <div class="container-fluid mt-2">
+            <div class="alert alert-danger" role="alert">
+                An error occurred!, please contact developer
+            </div>
+        </div>
     @endif
 
     <div class="row m-0">
@@ -197,7 +217,7 @@
                                          style="border-style: none solid solid none !important;">
                                         <input
                                             @checked($request->fund_status == \App\Enums\RequestFundStatus::FUNDED )  value="{{\App\Enums\RequestFundStatus::FUNDED->value}}"
-                                            class="fundStatus" type="checkbox" name="FUNDED">
+                                            class="fundStatus" type="checkbox" name="FUNDED" id="fundedStatus">
                                     </div>
                                     <div class="w-75 text-start border border-dark px-2"
                                          style="border-style: none none solid none !important;">
@@ -210,7 +230,7 @@
                                          style="border-style: none solid none none !important;">
                                         <input
                                             @checked($request->fund_status == \App\Enums\RequestFundStatus::DECLINED ) value="{{\App\Enums\RequestFundStatus::DECLINED->value}}"
-                                            class="fundStatus" type="checkbox" name="FUNDED">
+                                            class="fundStatus" type="checkbox" name="FUNDED" id="declinedStatus">
                                     </div>
                                     <div class="w-75 text-start border border-dark px-2"
                                          style="border-style: none none none none !important;">
@@ -227,8 +247,7 @@
                             </div>
                             <div class="border border-dark"
                                  style="height: 100px; display: flex; align-items: center; justify-content: center;">
-
-                                <h1 class="text-danger">CLOSE</h1>
+                                <h1 class="text-danger">{{$request->requestStatus}}</h1>
                             </div>
                         </div>
 
@@ -461,15 +480,17 @@
                         </tr>
                         <tr style="height: 80px">
                             <td colspan="8" class="text-center align-bottom fw-bold small" style="height: 24px">
-                                <input readonly value="MR. RYLAN C. ALINGAROG"
+                                <input readonly value="{{$request->released_by}}"
                                        class="border-0 outline-0 w-100 small fw-bold text-uppercase text-center">
 
                             </td>
                             <td colspan="4" class="text-center align-bottom fw-bold small" style="height: 24px">
-                                <input class="border-0 outline-0 w-100 small fw-bold text-uppercase text-center">
+                                <input value="{{$request->received_by}}" id="receivedBy"
+                                       class="border-0 outline-0 w-100 small fw-bold text-uppercase text-center">
                             </td>
                             <td colspan="6" class="text-center align-bottom fw-bold small" style="height: 24px">
-                                <input class="border-0 outline-0 w-100 small fw-bold text-uppercase text-center">
+                                <input value="{{$request->audited_by}}" id="auditedBy"
+                                       class="border-0 outline-0 w-100 small fw-bold text-uppercase text-center">
                             </td>
                         </tr>
 
@@ -510,7 +531,7 @@
                             <td colspan="1" class="text-center" style="width: 32px">
                                 <input type="checkbox">
                             </td>
-                            <td colspan="3" class="small px-2" style="width: 146px">
+                            <td colspan="3" class="small px-2 selectable" style="width: 146px">
                                 <select data-index="1" name="expenseCategory[]" class="w-100 border-0 outline-0">
                                     @foreach($expense_category as $case)
                                         @if($request->expenseTypes->get(0) && $request->expenseTypes->get(0)->expense_category_id == $case->id)
@@ -525,7 +546,9 @@
                                 <select id="bankNameSelection" class="w-100 h-100 border-0 box outline-0 small">
                                     <option value="-1" selected>SELECT AN OPTION</option>
                                     @foreach($bank_names as $bankName)
-                                        <option class="text-dark" value="{{$bankName->id}}">{{$bankName->name}}</option>
+                                        <option
+                                            @selected($request->bankDetails && $request->bankDetails->bank_name_id == $bankName->id) class="text-dark"
+                                            value="{{$bankName->id}}">{{$bankName->name}}</option>
                                     @endforeach
                                 </select>
                             </td>
@@ -542,7 +565,7 @@
 
                             </td>
                             <td colspan="3" class="px-2 bg-green small">Complete</td>
-                            <td colspan="5" class="px-2 small">
+                            <td colspan="5" class="px-2 small selectable">
 
                                 @if($request->priority)
                                     Priority
@@ -580,7 +603,7 @@
                             <td colspan="1" class="text-center">
                                 <input type="checkbox">
                             </td>
-                            <td colspan="3" class="small px-2">
+                            <td colspan="3" class="small px-2 selectable">
                                 <select data-index="2" name="expenseCategory[]" class="w-100 border-0 outline-0">
                                     @foreach($expense_category as $case)
                                         @if($request->expenseTypes->get(1) && $request->expenseTypes->get(1)->expense_category_id == $case->id)
@@ -629,7 +652,7 @@
                             <td colspan="1" class="text-center">
                                 <input type="checkbox">
                             </td>
-                            <td colspan="3" class="small px-2">
+                            <td colspan="3" class="small px-2 selectable">
                                 <select data-index="3" name="expenseCategory[]" class="w-100 border-0 outline-0">
                                     @foreach($expense_category as $case)
                                         @if($request->expenseTypes->get(2) && $request->expenseTypes->get(2)->expense_category_id == $case->id)
@@ -644,7 +667,9 @@
                                 <select id="bankCodeSelection" class="w-100 h-100 border-0 box outline-0 small">
                                     <option value="-1" selected>SELECT AN OPTON</option>
                                     @foreach($bank_codes as $bankCode)
-                                        <option class="text-dark" value="{{$bankCode->id}}">{{$bankCode->code}}</option>
+                                        <option
+                                            @selected($request->bankDetails && $request->bankDetails->bank_code_id == $bankCode->id) class="text-dark"
+                                            value="{{$bankCode->id}}">{{$bankCode->code}}</option>
                                     @endforeach
                                 </select>
                             </td>
@@ -656,7 +681,7 @@
                             <td colspan="1" class="text-center">
                                 <input type="checkbox">
                             </td>
-                            <td colspan="3" class="small px-2">
+                            <td colspan="3" class="small px-2 selectable">
                                 <select data-index="4" name="expenseCategory[]" class="w-100 border-0 outline-0">
                                     @foreach($expense_category as $case)
                                         @if($request->expenseTypes->get(3) && $request->expenseTypes->get(3)->expense_category_id == $case->id)
@@ -676,7 +701,7 @@
                                 @endif
                             </td>
                             <td colspan="3" class="small px-2">Yes</td>
-                            <td colspan="5" class="small px-2">
+                            <td colspan="5" class="small px-2 selectable">
                                 @if($request->priority)
                                     Priority
                                 @else
@@ -710,7 +735,7 @@
                             <td colspan="1" class="text-center">
                                 <input type="checkbox">
                             </td>
-                            <td colspan="3" class="small px-2">
+                            <td colspan="3" class="small px-2 selectable">
                                 <select data-index="5" name="expenseCategory[]" class="w-100 border-0 outline-0">
                                     @foreach($expense_category as $case)
                                         @if($request->expenseTypes->get(4) && $request->expenseTypes->get(4)->expense_category_id == $case->id)
@@ -722,7 +747,12 @@
                                 </select>
                             </td>
                             <td colspan="1">
-                                <input id="checkNumberInput" class="w-100 border-0 outline-0">
+                                @if($request->bankDetails && $request->bankDetails->check_number)
+                                    <input value="{{ $request->bankDetails->check_number}}" id="checkNumberInput"
+                                           class="w-100 border-0 outline-0">
+                                @else
+                                    <input id="checkNumberInput" class="w-100 border-0 outline-0">
+                                @endif
                             </td>
                             <td colspan="1" class="text-center">
                                 @if($request->delivery && !$request->delivery->supplier_verified)
@@ -756,7 +786,7 @@
                             <td colspan="1" class="text-center">
                                 <input type="checkbox">
                             </td>
-                            <td colspan="3" class="small px-2">
+                            <td colspan="3" class="small px-2 selectable">
                                 <select data-index="6" name="expenseCategory[]" class="w-100 border-0 outline-0">
                                     @foreach($expense_category as $case)
                                         @if($request->expenseTypes->get(5) && $request->expenseTypes->get(5)->expense_category_id == $case->id)
@@ -776,7 +806,7 @@
                             <td colspan="1" class="text-center">
                                 <input type="checkbox">
                             </td>
-                            <td colspan="3" class="small px-2">
+                            <td colspan="3" class="small px-2 selectable">
                                 <select data-index="7" name="expenseCategory[]" class="w-100 border-0 outline-0">
                                     @foreach($expense_category as $case)
                                         @if($request->expenseTypes->get(6) && $request->expenseTypes->get(6)->expense_category_id == $case->id)
@@ -795,7 +825,7 @@
                                     <input type="text" id="vatOption1" class="h-100 w-100 border-0 outline-0">
                                 @endif
                             </td>
-                            <td colspan="5" class="small px-2">
+                            <td colspan="5" class="small px-2 selectable">
                                 <form id="financeForm" method="POST"
                                       action="/expense/expense-request/finance/approval/{{$request->id}}">
                                     @csrf
@@ -825,7 +855,7 @@
                             <td colspan="1" class="text-center">
                                 <input type="checkbox">
                             </td>
-                            <td colspan="3" class="small px-2">
+                            <td colspan="3" class="small px-2 selectable">
                                 <select data-index="8" name="expenseCategory[]" class="w-100 border-0 outline-0">
                                     @foreach($expense_category as $case)
                                         @if($request->expenseTypes->get(7) && $request->expenseTypes->get(7)->expense_category_id == $case->id)
@@ -864,7 +894,7 @@
                             <td colspan="1" class="text-center">
                                 <input type="checkbox">
                             </td>
-                            <td colspan="3" class="small px-2">
+                            <td colspan="3" class="small px-2 selectable">
                                 <select data-index="9" name="expenseCategory[]" class="w-100 border-0 outline-0">
                                     @foreach($expense_category as $case)
                                         @if($request->expenseTypes->get(8) && $request->expenseTypes->get(8)->expense_category_id == $case->id)
@@ -890,7 +920,7 @@
                             <td colspan="1" class="text-center">
                                 <input type="checkbox">
                             </td>
-                            <td colspan="3" class="small px-2">
+                            <td colspan="3" class="small px-2 selectable">
                                 <select data-index="10" name="expenseCategory[]" class="w-100 border-0 outline-0">
                                     @foreach($expense_category as $case)
                                         @if($request->expenseTypes->get(9) && $request->expenseTypes->get(9)->expense_category_id == $case->id)
@@ -910,7 +940,7 @@
                                     <input id="invoiceNumberInput" class="w-100 border-0 outline-0">
                                 @endif
                             </td>
-                            <td colspan="5" class="small px-2">
+                            <td colspan="5" class="small px-2 selectable">
                                 <form id="auditorForm" method="POST"
                                       action="/expense/expense-request/auditor/approval/{{$request->id}}">
                                     @csrf
@@ -940,7 +970,7 @@
                             <td colspan="1" class="text-center">
                                 <input type="checkbox">
                             </td>
-                            <td colspan="3" class="small px-2">
+                            <td colspan="3" class="small px-2 selectable">
                                 <select data-index="11" name="expenseCategory[]" class="w-100 border-0 outline-0">
                                     @foreach($expense_category as $case)
                                         @if($request->expenseTypes->get(10) && $request->expenseTypes->get(10)->expense_category_id == $case->id)
@@ -1081,24 +1111,25 @@
             </div>
         </div>
 
-        <div id="requestHistory" class="d-none col-2 d-flex flex-column align-items-stretch flex-shrink-0 bg-white" style="width: 380px; transition: 0.5s linear !important;">
-            <a href="/"
-               class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">
-                <svg class="bi me-2" width="30" height="24">
-                    <use xlink:href="#bootstrap"></use>
-                </svg>
-                <span class="fs-5 fw-semibold">Logs</span>
-            </a>
-            <div class="list-group list-group-flush border-bottom scrollarea">
-                @foreach($logs as $log)
-                    <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">
-                        <div class="d-flex w-100 align-items-center justify-content-between">
-                            <strong class="mb-1">{{$log->user->name}}</strong>
-                            <small class="text-muted">{{$log->created_at->format('Y-m-d h:m A')}}</small>
-                        </div>
-                        <div class="col-10 mb-1 small">{{$log->description}}</div>
-                    </a>
-                @endforeach
+        <div id="requestHistory" class="d-none h-100 col-3 flex-shrink-0">
+            <div class="bg-white position-relative" style="width: 380px;">
+                <div
+                    class="bg-white sticky-top d-flex align-items-center gap-2 flex-shrink-0 p-3 border-bottom"
+                    style="z-index:100">
+                    <i class="fas fa-times mt-1"></i>
+                    <span class="fs-5 fw-semibold">Logs</span>
+                </div>
+                <div class="list-group list-group-flush border-bottom scroll-area">
+                    @foreach($logs as $log)
+                        <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">
+                            <div class="d-flex w-100 align-items-center justify-content-between">
+                                <strong class="mb-1">{{$log->user->name}}</strong>
+                                <small class="text-muted">{{$log->created_at->format('Y-m-d h:m A')}}</small>
+                            </div>
+                            <div class="col-10 mb-1 small">{{$log->description}}</div>
+                        </a>
+                    @endforeach
+                </div>
             </div>
         </div>
     </div>
@@ -1106,16 +1137,31 @@
     <!-- Toast Message For Errors -->
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
         <div id="errorToast" class="toast text-danger" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
+            <div class="toast-header bg-danger text-white">
                 <strong class="me-auto">Error</strong>
                 <small>Just now</small>
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
-            <div class="toast-body">
+            <div class="toast-body" id="toastErrorBody">
 
             </div>
         </div>
     </div>
+
+    <!-- Toast Message For Errors -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="successToast" class="toast text-success" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-success text-white">
+                <strong class="me-auto">Success</strong>
+                <small>Just now</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toastSuccessBody">
+
+            </div>
+        </div>
+    </div>
+
 
     <!-- Modal For Request Item -->
     <div class="modal fade" id="editItemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -1271,7 +1317,10 @@
         const editItemRemarks = document.querySelector('#editItemRemarks');
 
         const toastErrorModal = new bootstrap.Toast(document.getElementById('errorToast'));
-        const toastErrorBody = document.querySelector('.toast-body');
+        const toastErrorBody = document.querySelector('#toastErrorBody');
+
+        const toastSuccessModal = new bootstrap.Toast(document.getElementById('successToast'));
+        const toastSuccessBody = document.querySelector('#toastSuccessBody');
 
         const bankNameSelection = document.querySelector('#bankNameSelection');
         const bankCodeSelection = document.querySelector('#bankCodeSelection');
@@ -1303,171 +1352,235 @@
         const vatOptionB = document.querySelector('#vatOption2');
 
         const requestStatus = document.querySelector('#requestStatus');
+        const receivedBy = document.querySelector('#receivedBy');
+        const auditedBy = document.querySelector('#auditedBy');
+
+        const fundedStatus = document.querySelector('#fundedStatus');
+        const declinedStatus = document.querySelector('#declinedStatus');
 
         const commentForm = document.querySelector('#commentForm');
         const commentHolder = document.querySelector('#commentsHolder');
         let initialLoad = true;
 
-        purchaseOrderInput.addEventListener('change', () => {
+        receivedBy.addEventListener('change', async () => {
 
-            let formData = new FormData();
+            try {
 
-            formData.append('purchaseOrder', purchaseOrderInput.value);
+                const formData = new FormData();
 
-            fetch('/expense/expense-request/expense/vat/purchase-order/{{$request->id}}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
-                return response.json();
-            }).then(data => {
-                if (data.status !== 200) {
-                    throw new Error(data.message)
-                }
-            }).catch(err => {
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: err.message,
+                formData.append('received_by', receivedBy.value);
+
+                const response = await fetch('/expense/expense-request/received-by/{{$request->id}}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
                 });
-            });
+
+                if (!response.ok) {
+                    throw new Error('Received by updated failed!');
+                }
+
+                showSuccessMessage('Received by updated');
+
+            } catch (error) {
+                receivedBy.value = null;
+                showErrorMessage(error.message);
+            }
+        });
+
+        auditedBy.addEventListener('change', async () => {
+            try {
+
+                const formData = new FormData();
+
+                formData.append('audited_by', auditedBy.value);
+
+                const response = await fetch('/expense/expense-request/audited-by/{{$request->id}}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Audited by updated failed!');
+                }
+
+                showSuccessMessage('Audited by updated');
+
+            } catch (error) {
+                auditedBy.value = null;
+                showErrorMessage(error.message);
+            }
+        });
+
+        purchaseOrderInput.addEventListener('change', async () => {
+
+            try {
+
+                const formData = new FormData();
+
+                formData.append('purchaseOrder', purchaseOrderInput.value);
+
+                const response = await fetch('/expense/expense-request/expense/vat/purchase-order/{{$request->id}}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                })
+
+                if (!response.ok) {
+                    throw new Error('Purchase Order update failed!')
+                }
+
+                showSuccessMessage('Purchase Order updated!')
+            } catch (error) {
+                purchaseOrderInput.value = null;
+                showErrorMessage(error.message)
+            }
         })
 
-        invoiceNumberInput.addEventListener('change', () => {
+        invoiceNumberInput.addEventListener('change', async () => {
 
-            let formData = new FormData();
+            try {
 
-            formData.append('invoice', invoiceNumberInput.value);
+                let formData = new FormData();
 
-            fetch('/expense/expense-request/expense/vat/invoice/{{$request->id}}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
-                return response.json();
-            }).then(data => {
-                if (data.status !== 200) {
-                    throw new Error(data.message)
-                }
-            }).catch(err => {
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: err.message,
+                formData.append('invoice', invoiceNumberInput.value);
+
+                const response = await fetch('/expense/expense-request/expense/vat/invoice/{{$request->id}}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
                 });
-            });
+
+                if (!response.ok) {
+                    throw new Error('Invoice number update failed!');
+                }
+
+                showSuccessMessage('Invoice number updated!')
+
+            } catch (error) {
+                invoiceNumberInput.value = null
+                showErrorMessage(error.message)
+            }
         })
 
-        billNumberInput.addEventListener('change', () => {
+        billNumberInput.addEventListener('change', async () => {
 
-            let formData = new FormData();
+            try {
 
-            formData.append('bill', billNumberInput.value);
+                const formData = new FormData();
 
-            fetch('/expense/expense-request/expense/vat/bill/{{$request->id}}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
-                return response.json();
-            }).then(data => {
-                if (data.status !== 200) {
-                    throw new Error(data.message)
-                }
-            }).catch(err => {
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: err.message,
+                formData.append('bill', billNumberInput.value);
+
+                const response = await fetch('/expense/expense-request/expense/vat/bill/{{$request->id}}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
                 });
-            });
+
+                if (!response.ok) {
+                    throw new Error('Bill number updated failed!')
+                }
+
+                showSuccessMessage('Bill number updated!');
+            } catch (error) {
+                billNumberInput.value = null
+                showErrorMessage(error.message)
+            }
         })
 
-        orNumberInput.addEventListener('change', () => {
+        orNumberInput.addEventListener('change', async () => {
 
-            let formData = new FormData();
+            try {
 
-            formData.append('receipt', orNumberInput.value);
+                const formData = new FormData();
 
-            fetch('/expense/expense-request/expense/vat/official-receipt/{{$request->id}}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                formData.append('receipt', orNumberInput.value);
+
+                const response = await fetch('/expense/expense-request/expense/vat/official-receipt/{{$request->id}}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                })
+
+                if (!response.ok) {
+                    throw new Error('Official receipt number update failed')
                 }
-            }).then(response => {
-                return response.json();
-            }).then(data => {
-                if (data.status !== 200) {
-                    throw new Error(data.message)
-                }
-            }).catch(err => {
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: err.message,
-                });
-            });
+
+                showSuccessMessage('Official receipt number updated!');
+
+            } catch (error) {
+                orNumberInput.check = null;
+                showErrorMessage(error.message);
+            }
         })
 
-        vatOptionA.addEventListener('change', () => {
+        vatOptionA.addEventListener('change', async () => {
 
-            let formData = new FormData();
+            try {
 
-            formData.append('option', vatOptionA.value);
+                const formData = new FormData();
 
-            fetch('/expense/expense-request/expense/vat/option-a/{{$request->id}}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
-                return response.json();
-            }).then(data => {
-                if (data.status !== 200) {
-                    throw new Error(data.message)
-                }
-            }).catch(err => {
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: err.message,
+                formData.append('option', vatOptionA.value);
+
+                const response = await fetch('/expense/expense-request/expense/vat/option-a/{{$request->id}}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
                 });
-            });
+
+                if (!response.ok) {
+                    throw new Error('Vat input amount update failed!');
+                }
+
+                showSuccessMessage('Vat input amount updated!');
+
+            } catch (error) {
+                showErrorMessage(error.message)
+                vatOptionA.value = null;
+            }
         })
 
-        vatOptionB.addEventListener('change', () => {
+        vatOptionB.addEventListener('change', async () => {
 
-            let formData = new FormData();
+            try {
 
-            formData.append('option', vatOptionB.value);
+                const formData = new FormData();
 
-            fetch('/expense/expense-request/expense/vat/option-b/{{$request->id}}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
-                return response.json();
-            }).then(data => {
-                if (data.status !== 200) {
-                    throw new Error(data.message)
-                }
-            }).catch(err => {
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: err.message,
+                formData.append('option', vatOptionB.value);
+
+                const response = await fetch('/expense/expense-request/expense/vat/option-b/{{$request->id}}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
                 });
-            });
+
+                if (!response.ok) {
+                    throw new Error('Vat input amount update failed!');
+                }
+
+                showSuccessMessage('Vat input amount updated!');
+
+            } catch (error) {
+                showErrorMessage(error.message)
+                vatOptionB.value = null;
+            }
         })
 
         if (bookerKeeperStatus) {
@@ -1498,54 +1611,35 @@
 
             category.addEventListener('input', async () => {
 
-                selectedExpensesCategory[index] = category.value;
+                try {
 
-                const formData = new FormData();
+                    selectedExpensesCategory[index] = category.value;
 
-                selectedExpensesCategory.forEach(category => {
-                    formData.append('category[]', category);
-                })
+                    const formData = new FormData();
 
-                fetch('/expense/api/expense-request/expense-type/{{$request->id}}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                    }
-                }).then(response => {
-                    return response.json();
-                }).then(data => {
+                    selectedExpensesCategory.forEach(category => {
+                        formData.append('category[]', category);
+                    })
 
-                    console.log(data);
-
-                    bankNameSelection.classList.add('bg-red')
-                    bankCodeSelection.classList.add('bg-red')
-                    checkNumberInput.classList.add('bg-red')
-
-                    if (data.status === 400) {
-                        toastErrorBody.innerHTML = data.message;
-                        toastErrorModal.show();
-                        return;
-                    }
-
-                    if (data.status === 500) {
-                        throw new Error(data.message);
-                    }
-
-                    bankNameSelection.classList.remove('bg-red')
-                    bankCodeSelection.classList.remove('bg-red')
-                    checkNumberInput.classList.remove('bg-red')
-
-                }).catch(err => {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: err.message,
+                    const response = await fetch('/expense/api/expense-request/expense-type/{{$request->id}}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                        }
                     });
-                })
 
+                    if (!response.ok) {
+                        throw new Error('Update expense type failed!');
+                    }
+
+                    showSuccessMessage('Expense type updated!');
+
+                } catch (error) {
+                    category.value = 1;
+                    showErrorMessage(error.message);
+                }
             });
-
         })
 
         bankNameSelection.addEventListener('change', updateBankDetails);
@@ -1558,7 +1652,7 @@
                 const formData = new FormData();
                 formData.append('mode', requestPaymentMethodInput.value);
 
-                const result = await fetch('/expense/api/expense-request/payment-method/{{$request->id}}', {
+                const response = await fetch('/expense/api/expense-request/payment-method/{{$request->id}}', {
                     method: 'POST',
                     body: formData,
                     headers: {
@@ -1566,37 +1660,17 @@
                     }
                 });
 
-                const data = await result.json();
+                const data = await response.json();
 
-                bankNameSelection.classList.add('bg-red')
-                bankCodeSelection.classList.add('bg-red')
-                checkNumberInput.classList.add('bg-red')
-
-                if (data.status === 400) {
-                    toastErrorBody.innerHTML = data.message;
-                    toastErrorModal.show();
-                    return;
+                if (!response.ok) {
+                    throw new Error('Unable to update payment method!');
                 }
-
-                if (data.status === 500) {
-                    throw new Error(data.message);
-                }
-
-                bankNameSelection.classList.remove('bg-red')
-                bankCodeSelection.classList.remove('bg-red')
-                checkNumberInput.classList.remove('bg-red')
 
                 await generateVoucher();
 
             } catch (error) {
-
-                console.error(error);
-
-                // Swal.fire({
-                //     icon: "error",
-                //     title: "Oops...",
-                //     text: error.message,
-                // });
+                requestPaymentMethodInput.value = 0;
+                showErrorMessage(error.message)
             }
         })
 
@@ -1625,7 +1699,7 @@
                 initialLoad = true;
 
             } catch (error) {
-                console.error(error)
+                showErrorMessage(error.message);
             }
         })
 
@@ -1638,10 +1712,6 @@
                         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
                     }
                 });
-
-                const data = await result.json();
-
-                console.log(data);
 
                 if (!result.ok) {
                     throw new Error('something went wrong');
@@ -1664,7 +1734,6 @@
                         console.log("I was closed by the timer");
                     }
                 });
-
 
             } catch (error) {
                 Swal.fire({
@@ -1737,32 +1806,31 @@
                     }
                 });
 
-                const data = await result.json();
-
                 if (!result.ok) {
-                    throw new Error(data.message);
+                    throw new Error('Something went wrong');
                 }
 
-                console.info(data);
+                showSuccessMessage('Status updated!');
+
             } catch (error) {
-                console.error(error)
+                requestStatus.value = null;
+                showErrorMessage('Status updated failed!');
             }
         })
 
         async function viewItem(id) {
 
             try {
+
                 const result = await fetch(`/expense/api/request-item/${id}`);
 
                 const response = await result.json();
 
                 const data = response.item;
 
-
                 if (!result.ok) {
                     throw new Error(data.message);
                 }
-
 
                 fileUpload.setAttribute("data-id", id);
 
@@ -1779,7 +1847,6 @@
 
                 $('#uploads').html('');
 
-
                 data.attachments.forEach(attachment => {
 
                     let imageSrc = (attachment.file.split('/'))[1];
@@ -1788,650 +1855,471 @@
 
                     $('#uploads').append(thumbnail);
 
-
                 });
 
                 editItemModal.show();
 
                 viewer.update();
 
-                console.info(response);
-
             } catch (error) {
-                console.error(error)
+                showErrorMessage('Unable to view item');
             }
 
         }
 
-        function updateBankDetails() {
+        async function updateBankDetails() {
 
-            if (parseInt(bankNameSelection.value) === -1 && parseInt(bankCodeSelection.value) === -1) {
-                deleteBankDetails();
-                return;
-            }
+            try {
 
-            let formData = new FormData();
+                let formData = new FormData();
 
-            formData.append('bankName', bankNameSelection.value);
-            formData.append('bankNumber', bankCodeSelection.value);
-            formData.append('checkNumber', checkNumberInput.value);
-            formData.append('requestID', {{$request->id}});
+                formData.append('bank_name_id', bankNameSelection.value);
+                formData.append('bank_code_id', bankCodeSelection.value);
+                formData.append('check_number', checkNumberInput.value);
+                formData.append('request_id', {{$request->id}});
 
-            fetch('/expense/api/expense-request/bank-details', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
-                return response.json();
-            }).then(data => {
+                const response = await fetch('/expense/api/expense-request/bank-details', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                })
 
-                console.log(data);
+                const data = await response.json();
 
-                bankNameSelection.classList.add('bg-red')
-                bankCodeSelection.classList.add('bg-red')
-                checkNumberInput.classList.add('bg-red')
-
-                if (data.status === 400) {
-                    toastErrorBody.innerHTML = data.message;
-                    toastErrorModal.show();
-                    return;
-                }
-
-                if (data.status === 500) {
+                if (!response.ok) {
+                    // throw new Error('Bank details update failed!');
                     throw new Error(data.message);
                 }
 
-                bankNameSelection.classList.remove('bg-red')
-                bankCodeSelection.classList.remove('bg-red')
-                checkNumberInput.classList.remove('bg-red')
-            }).catch(err => {
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: err.message,
+                showSuccessMessage('Bank details updated!');
+
+            } catch (error) {
+                showErrorMessage(error.message)
+            }
+        }
+
+        async function deleteBankDetails() {
+
+            try {
+
+                const response = await fetch('/expense/api/expense-request/bank-details/{{$request->id}}', {
+                    method: 'DELETE',
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
                 });
-            })
-        }
-
-        function deleteBankDetails() {
-            fetch('/expense/api/expense-request/bank-details/{{$request->id}}', {
-                method: 'DELETE',
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
 
                 if (!response.ok) {
-                    throw new Error("Something went wrong!");
+                    throw new Error('Unable to deselect bank details');
                 }
 
-                return response.json();
-
-            }).then(data => {
-                bankNameSelection.classList.remove('bg-red')
-                bankCodeSelection.classList.remove('bg-red')
-                checkNumberInput.classList.remove('bg-red')
-                checkNumberInput.value = '';
-            }).catch(err => {
-                bankNameSelection.classList.add('bg-red')
-                bankCodeSelection.classList.add('bg-red')
-                checkNumberInput.classList.add('bg-red')
-            })
-
+            } catch (error) {
+                showErrorMessage(error.message)
+            }
         }
 
-        function setDeliveryStatus(target) {
+        async function setDeliveryStatus(target) {
 
-            const formData = new FormData();
+            try {
 
-            formData.append('completed', target.value);
+                const formData = new FormData();
 
-            fetch('/expense/api/expense-request/delivery/status/{{$request->id}}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
+                formData.append('completed', target.value);
+
+                const response = await fetch('/expense/api/expense-request/delivery/status/{{$request->id}}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
 
                 if (!response.ok) {
-                    throw new Error("Something went wrong!");
+                    throw new Error('Delivery status updated failed!');
                 }
 
-                return response.json();
+                showSuccessMessage('Delivery status updated');
 
-            }).then(data => {
-
-                console.log(data);
-
-                bankNameSelection.classList.remove('bg-red')
-                bankCodeSelection.classList.remove('bg-red')
-                checkNumberInput.classList.remove('bg-red')
-                checkNumberInput.value = '';
-            }).catch(err => {
-
-                console.log(err.message);
-
-                bankNameSelection.classList.add('bg-red')
-                bankCodeSelection.classList.add('bg-red')
-                checkNumberInput.classList.add('bg-red')
-            })
+            } catch (error) {
+                showErrorMessage(error.message)
+            }
         }
 
-        function deleteDeliveryStatus(target) {
+        async function deleteDeliveryStatus(target) {
 
-            fetch('/expense/api/expense-request/delivery/status/{{$request->id}}', {
-                method: 'DELETE',
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
+            try {
+                const response = await fetch('/expense/api/expense-request/delivery/status/{{$request->id}}', {
+                    method: 'DELETE',
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
 
                 if (!response.ok) {
-                    throw new Error("Something went wrong!");
+                    throw new Error('Delivery status updated failed!')
                 }
 
-                return response.json();
+                showSuccessMessage('Delivery status updated!')
 
-            }).then(data => {
-
-                console.log(data);
-
-                bankNameSelection.classList.remove('bg-red')
-                bankCodeSelection.classList.remove('bg-red')
-                checkNumberInput.classList.remove('bg-red')
-                checkNumberInput.value = '';
-            }).catch(err => {
-
-                console.log(err.message);
-
-                bankNameSelection.classList.add('bg-red')
-                bankCodeSelection.classList.add('bg-red')
-                checkNumberInput.classList.add('bg-red')
-            })
+            } catch (error) {
+                showErrorMessage(error.message)
+            }
         }
 
-        function verifyDelivery(target) {
+        async function verifyDelivery(target) {
 
-            const formData = new FormData();
+            try {
 
-            formData.append('verified', target.value);
+                const formData = new FormData();
 
-            fetch('/expense/api/expense-request/delivery/supplier/{{$request->id}}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
+                formData.append('verified', target.value);
+
+                const response = await fetch('/expense/api/expense-request/delivery/supplier/{{$request->id}}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
 
                 if (!response.ok) {
-                    throw new Error("Something went wrong!");
+                    throw new Error('Supplier verification update failed!')
                 }
 
-                return response.json();
+                showSuccessMessage('Supplier verification updated')
 
-            }).then(data => {
-
-                console.log(data);
-
-                bankNameSelection.classList.remove('bg-red')
-                bankCodeSelection.classList.remove('bg-red')
-                checkNumberInput.classList.remove('bg-red')
-                checkNumberInput.value = '';
-            }).catch(err => {
-
-                console.log(err.message);
-
-                bankNameSelection.classList.add('bg-red')
-                bankCodeSelection.classList.add('bg-red')
-                checkNumberInput.classList.add('bg-red')
-            })
+            } catch (error) {
+                showErrorMessage(error.message)
+            }
         }
 
-        function removeDelivery(target) {
+        async function removeDelivery(target) {
 
-            fetch('/expense/api/expense-request/delivery/supplier/{{$request->id}}', {
-                method: 'DELETE',
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
+            try {
+
+                const response = await fetch('/expense/api/expense-request/delivery/supplier/{{$request->id}}', {
+                    method: 'DELETE',
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
 
                 if (!response.ok) {
-                    throw new Error("Something went wrong!");
+                    throw new Error('Supplier verification update failed!')
                 }
 
-                return response.json();
+                showSuccessMessage('Supplier verification updated')
 
-            }).then(data => {
-
-                console.log(data);
-
-                bankNameSelection.classList.remove('bg-red')
-                bankCodeSelection.classList.remove('bg-red')
-                checkNumberInput.classList.remove('bg-red')
-                checkNumberInput.value = '';
-            }).catch(err => {
-
-                console.log(err.message);
-
-                bankNameSelection.classList.add('bg-red')
-                bankCodeSelection.classList.add('bg-red')
-                checkNumberInput.classList.add('bg-red')
-            })
+            } catch (error) {
+                showErrorMessage(error.message)
+            }
         }
 
-        function updateAttachment(target) {
+        async function updateAttachment(target) {
 
-            const formData = new FormData();
+            try {
 
-            formData.append('attachment', target.value);
+                const formData = new FormData();
 
-            fetch('/expense/api/expense-request/attachment/{{$request->id}}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
+                formData.append('attachment', target.value);
+
+                const response = await fetch('/expense/api/expense-request/attachment/{{$request->id}}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
 
                 if (!response.ok) {
-                    throw new Error("Something went wrong!");
+                    throw new Error('Request updated attachment failed!');
                 }
 
-                return response.json();
+                showSuccessMessage('Request attachment updated!');
 
-            }).then(data => {
-
-                console.log(data.message);
-
-                bankNameSelection.classList.remove('bg-red')
-                bankCodeSelection.classList.remove('bg-red')
-                checkNumberInput.classList.remove('bg-red')
-                checkNumberInput.value = '';
-            }).catch(err => {
-
-                console.log(err.message);
-
-                bankNameSelection.classList.add('bg-red')
-                bankCodeSelection.classList.add('bg-red')
-                checkNumberInput.classList.add('bg-red')
-            })
+            } catch (error) {
+                target.checked = false;
+                showErrorMessage(error.message)
+            }
         }
 
-        function removeAttachment(target) {
+        async function removeAttachment(target) {
 
-            const formData = new FormData();
-            formData.append('attachment', '{{\App\Enums\AccountingAttachment::DEFAULT->name}}');
+            try {
 
-            fetch('/expense/api/expense-request/attachment/{{$request->id}}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
+                const formData = new FormData();
+
+                formData.append('attachment', '{{\App\Enums\AccountingAttachment::DEFAULT->name}}');
+
+                const response = await fetch('/expense/api/expense-request/attachment/{{$request->id}}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
 
                 if (!response.ok) {
-                    throw new Error("Something went wrong!");
+                    throw new Error('Request updated attachment failed!');
                 }
 
-                return response.json();
+                showSuccessMessage('Request attachment updated!');
 
-            }).then(data => {
-
-                console.log(data);
-
-                bankNameSelection.classList.remove('bg-red')
-                bankCodeSelection.classList.remove('bg-red')
-                checkNumberInput.classList.remove('bg-red')
-                checkNumberInput.value = '';
-            }).catch(err => {
-
-                console.log(err.message);
-
-                bankNameSelection.classList.add('bg-red')
-                bankCodeSelection.classList.add('bg-red')
-                checkNumberInput.classList.add('bg-red')
-            })
+            } catch (error) {
+                target.checked = false;
+                showErrorMessage(error.message)
+            }
         }
 
-        function updateType(target) {
+        async function updateType(target) {
 
-            const formData = new FormData();
+            try {
 
-            formData.append('type', target.value);
+                const formData = new FormData();
+                formData.append('type', target.value);
 
-            fetch('/expense/api/expense-request/type/{{$request->id}}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
+                const response = await fetch('/expense/api/expense-request/type/{{$request->id}}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
 
                 if (!response.ok) {
-                    throw new Error("Something went wrong!");
+                    throw new Error('Request update type failed!');
                 }
 
-                return response.json();
+                showSuccessMessage('Request type updated!');
 
-            }).then(data => {
-
-                console.log(data.message);
-
-                bankNameSelection.classList.remove('bg-red')
-                bankCodeSelection.classList.remove('bg-red')
-                checkNumberInput.classList.remove('bg-red')
-                checkNumberInput.value = '';
-            }).catch(err => {
-
-                console.log(err.message);
-
-                bankNameSelection.classList.add('bg-red')
-                bankCodeSelection.classList.add('bg-red')
-                checkNumberInput.classList.add('bg-red')
-            })
+            } catch (error) {
+                target.checked = false;
+                showErrorMessage(error.message)
+            }
         }
 
-        function removeType(target) {
+        async function removeType(target) {
 
-            const formData = new FormData();
-            formData.append('type', '{{\App\Enums\AccountingType::DEFAULT->name}}');
+            try {
 
-            fetch('/expense/api/expense-request/type/{{$request->id}}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
+                const formData = new FormData();
+                formData.append('type', '{{\App\Enums\AccountingType::DEFAULT->name}}');
+
+                const response = await fetch('/expense/api/expense-request/type/{{$request->id}}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
 
                 if (!response.ok) {
-                    throw new Error("Something went wrong!");
+                    throw new Error('Request update type failed!');
                 }
 
-                return response.json();
+                showSuccessMessage('Request type updated!');
 
-            }).then(data => {
-
-                console.log(data);
-
-                bankNameSelection.classList.remove('bg-red')
-                bankCodeSelection.classList.remove('bg-red')
-                checkNumberInput.classList.remove('bg-red')
-                checkNumberInput.value = '';
-            }).catch(err => {
-
-                console.log(err.message);
-
-                bankNameSelection.classList.add('bg-red')
-                bankCodeSelection.classList.add('bg-red')
-                checkNumberInput.classList.add('bg-red')
-            })
+            } catch (error) {
+                target.checked = false;
+                showErrorMessage(error.message)
+            }
         }
 
-        function updateReceipt(target) {
+        async function updateReceipt(target) {
 
-            const formData = new FormData();
+            try {
 
-            formData.append('receipt', target.value);
+                const formData = new FormData();
+                formData.append('receipt', target.value);
 
-            fetch('/expense/api/expense-request/receipt/{{$request->id}}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
-
-                // if (!response.ok) {
-                //     throw new Error("Something went wrong!");
-                // }
-
-                return response.json();
-
-            }).then(data => {
-
-                console.log(data.message);
-
-                bankNameSelection.classList.remove('bg-red')
-                bankCodeSelection.classList.remove('bg-red')
-                checkNumberInput.classList.remove('bg-red')
-                checkNumberInput.value = '';
-            }).catch(err => {
-
-                console.log(err.message);
-
-                bankNameSelection.classList.add('bg-red')
-                bankCodeSelection.classList.add('bg-red')
-                checkNumberInput.classList.add('bg-red')
-            })
-        }
-
-        function removeReceipt(target) {
-
-            const formData = new FormData();
-            formData.append('receipt', '{{\App\Enums\AccountingReceipt::DEFAULT->name}}');
-
-            fetch('/expense/api/expense-request/receipt/{{$request->id}}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
+                const response = await fetch('/expense/api/expense-request/receipt/{{$request->id}}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                })
 
                 if (!response.ok) {
-                    throw new Error("Something went wrong!");
+                    throw new Error('Request receipt update failed!');
                 }
 
-                return response.json();
+                showSuccessMessage('Request receipt updated!');
 
-            }).then(data => {
-
-                console.log(data);
-
-                bankNameSelection.classList.remove('bg-red')
-                bankCodeSelection.classList.remove('bg-red')
-                checkNumberInput.classList.remove('bg-red')
-                checkNumberInput.value = '';
-            }).catch(err => {
-
-                console.log(err.message);
-
-                bankNameSelection.classList.add('bg-red')
-                bankCodeSelection.classList.add('bg-red')
-                checkNumberInput.classList.add('bg-red')
-            })
+            } catch (error) {
+                target.checked = false;
+                showErrorMessage(error.message)
+            }
         }
 
-        function updatePriorityLevel(target) {
+        async function removeReceipt(target) {
 
-            const formData = new FormData();
+            try {
 
-            formData.append('priority_level', target.value);
+                const formData = new FormData();
+                formData.append('receipt', '{{\App\Enums\AccountingReceipt::DEFAULT->name}}');
 
-            fetch('/expense/api/expense-request/priority-level/{{$request->id}}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
+                const response = await fetch('/expense/api/expense-request/receipt/{{$request->id}}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                })
 
                 if (!response.ok) {
-                    throw new Error("Something went wrong!");
+                    throw new Error('Request receipt update failed!');
                 }
 
-                return response.json();
+                showSuccessMessage('Request receipt updated!');
 
-            }).then(data => {
-
-                console.log(data.message);
-
-                bankNameSelection.classList.remove('bg-red')
-                bankCodeSelection.classList.remove('bg-red')
-                checkNumberInput.classList.remove('bg-red')
-                checkNumberInput.value = '';
-            }).catch(err => {
-
-                console.log(err.message);
-
-                bankNameSelection.classList.add('bg-red')
-                bankCodeSelection.classList.add('bg-red')
-                checkNumberInput.classList.add('bg-red')
-            })
+            } catch (error) {
+                target.checked = false;
+                showErrorMessage(error.message)
+            }
         }
 
-        function removePriorityLevel(target) {
+        async function updatePriorityLevel(target) {
 
-            const formData = new FormData();
-            formData.append('priority_level', '{{\App\Enums\RequestPriorityLevel::NONE->name}}');
+            try {
 
-            fetch('/expense/api/expense-request/priority-level/{{$request->id}}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
+                const formData = new FormData();
+                formData.append('priority_level', target.value);
+
+                const response = await fetch('/expense/api/expense-request/priority-level/{{$request->id}}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                })
 
                 if (!response.ok) {
-                    throw new Error("Something went wrong!");
+                    throw new Error('Request priority level update failed!');
                 }
 
-                return response.json();
+                showSuccessMessage('Request priority level updated!');
 
-            }).then(data => {
-
-                console.log(data);
-
-                bankNameSelection.classList.remove('bg-red')
-                bankCodeSelection.classList.remove('bg-red')
-                checkNumberInput.classList.remove('bg-red')
-                checkNumberInput.value = '';
-            }).catch(err => {
-
-                console.log(err.message);
-
-                bankNameSelection.classList.add('bg-red')
-                bankCodeSelection.classList.add('bg-red')
-                checkNumberInput.classList.add('bg-red')
-            })
+            } catch (error) {
+                target.checked = false;
+                showErrorMessage(error.message)
+            }
         }
 
+        async function removePriorityLevel(target) {
 
-        function updateFundStatus(target) {
+            try {
 
-            const formData = new FormData();
+                const formData = new FormData();
+                formData.append('priority_level', '{{\App\Enums\RequestPriorityLevel::NONE->name}}');
 
-            formData.append('status', target.value);
-
-            fetch('/expense/api/expense-request/fund-status/{{$request->id}}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
+                const response = await fetch('/expense/api/expense-request/priority-level/{{$request->id}}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                })
 
                 if (!response.ok) {
-                    throw new Error("Something went wrong!");
+                    throw new Error('Request priority level update failed!');
                 }
 
-                return response.json();
+                showSuccessMessage('Request priority level updated!');
 
-            }).then(data => {
-
-                console.log(data.message);
-
-                bankNameSelection.classList.remove('bg-red')
-                bankCodeSelection.classList.remove('bg-red')
-                checkNumberInput.classList.remove('bg-red')
-                checkNumberInput.value = '';
-            }).catch(err => {
-
-                console.log(err.message);
-
-                bankNameSelection.classList.add('bg-red')
-                bankCodeSelection.classList.add('bg-red')
-                checkNumberInput.classList.add('bg-red')
-            })
+            } catch (error) {
+                target.checked = false;
+                showErrorMessage(error.message)
+            }
         }
 
-        function removeFundStatus(target) {
+        async function updateFundStatus(target) {
 
-            const formData = new FormData();
+            try {
 
-            formData.append('status', '{{\App\Enums\RequestFundStatus::NONE}}');
+                const formData = new FormData();
 
+                formData.append('status', target.value);
 
-            fetch('/expense/api/expense-request/fund-status/{{$request->id}}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
+                const response = await fetch('/expense/api/expense-request/fund-status/{{$request->id}}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                })
 
                 if (!response.ok) {
-                    throw new Error("Something went wrong!");
+                    throw new Error('Unable to update fund status!');
                 }
 
-                return response.json();
+                showSuccessMessage('Fund status updated!');
 
-            }).then(data => {
-
-                console.log(data);
-
-                bankNameSelection.classList.remove('bg-red')
-                bankCodeSelection.classList.remove('bg-red')
-                checkNumberInput.classList.remove('bg-red')
-                checkNumberInput.value = '';
-            }).catch(err => {
-
-                console.log(err.message);
-
-                bankNameSelection.classList.add('bg-red')
-                bankCodeSelection.classList.add('bg-red')
-                checkNumberInput.classList.add('bg-red')
-            })
+            } catch (error) {
+                target.checked = false;
+                showErrorMessage('Fund status updated failed!');
+            }
         }
 
-        function loadComments() {
-            fetch('/expense/expense-request/comments/{{$request->id}}', {
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            }).then(response => {
+        async function removeFundStatus(target) {
+
+            try {
+
+                const formData = new FormData();
+
+                formData.append('status', '{{\App\Enums\RequestFundStatus::NONE}}');
+
+                const response = await fetch('/expense/api/expense-request/fund-status/{{$request->id}}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                })
 
                 if (!response.ok) {
-                    throw new Error("Something went wrong!");
+                    throw new Error('Unable to update fund status!');
                 }
 
-                return response.text();
+                showSuccessMessage('Fund status updated!');
 
-            }).then(data => {
+            } catch (error) {
+                target.checked = false;
+                showErrorMessage('Fund status updated failed!');
+            }
+        }
 
-                commentHolder.innerHTML = data;
+        async function loadComments() {
+
+            try {
+                const response = await fetch('/expense/expense-request/comments/{{$request->id}}', {
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Unable to load comments! please contact developer');
+                }
+
+                commentHolder.innerHTML = await response.text();
 
                 if (initialLoad) {
                     commentHolder.scrollTop = commentHolder.scrollHeight - commentHolder.clientHeight;
                     initialLoad = false;
                 }
 
-            }).catch(err => {
+            } catch (error) {
 
-                console.log(err.message);
+                let p = document.createElement('p');
+                p.classList.add('h-100', 'text-danger', 'd-flex', 'align-items-center', 'justify-content-center', 'text-center');
+                p.innerText = error.message;
 
-                bankNameSelection.classList.add('bg-red')
-                bankCodeSelection.classList.add('bg-red')
-                checkNumberInput.classList.add('bg-red')
-            })
+                commentsHolder.innerHTML = '';
+                commentsHolder.appendChild(p);
+            }
         }
 
         window.addEventListener('load', () => {
@@ -2454,7 +2342,6 @@
         function generatePDF() {
             html2pdf().set(expenseRequestPrintableOption).from(expenseRequestPrintable).save();
         }
-
 
         fileUpload.addEventListener('change', async () => {
 
@@ -2487,8 +2374,6 @@
                         text: 'An error occurred while uploading attachment',
                     });
 
-                    console.log(data);
-
                     return;
                 }
 
@@ -2504,8 +2389,6 @@
 
                 });
 
-                console.log(files.images);
-
                 viewer.update();
 
             } catch (error) {
@@ -2519,6 +2402,17 @@
                 fileUpload.value = null;
             }
         })
+
+        function showSuccessMessage(message) {
+            toastSuccessBody.innerHTML = message;
+            toastSuccessModal.show();
+        }
+
+        function showErrorMessage(message) {
+            toastErrorBody.innerHTML = message;
+            toastErrorModal.show();
+        }
+
     </script>
 
     <script>
@@ -2528,11 +2422,11 @@
             html2pdf(element, {
                 margin: 0,
                 filename: 'CHECK_BDO.pdf',
-                image: { type: 'jpg', quality: 1.0 },
-                html2canvas: { scale: 1 },
-                jsPDF: { 
-                    unit: 'in', 
-                    format: [6.25, 2.75], 
+                image: {type: 'jpg', quality: 1.0},
+                html2canvas: {scale: 1},
+                jsPDF: {
+                    unit: 'in',
+                    format: [6.25, 2.75],
                     orientation: 'landscape',
                 }
             });
@@ -2543,9 +2437,10 @@
 
         const historyHolder = document.querySelector('#requestHistory');
 
-        function viewHistory(){
+        function viewHistory() {
             historyHolder.classList.toggle('d-none')
         }
 
     </script>
 @endsection
+

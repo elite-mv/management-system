@@ -9,11 +9,13 @@
         "ext-intl": "*",
         "bacon/bacon-qr-code": "^3.0",
         "barryvdh/laravel-dompdf": "*",
+        "beganovich/snappdf": "^5.0",
         "codedge/laravel-fpdf": "^1.12",
         "kwn/number-to-words": "^2.9",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
         "lorisleiva/laravel-actions": "^2.8",
+        "mpdf/mpdf": "^6.1",
         "pragmarx/google2fa-laravel": "^2.2",
         "pusher/pusher-php-server": "^7.2",
         "spatie/laravel-activitylog": "^4.8"

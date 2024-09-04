@@ -13,7 +13,7 @@ return new class extends Migration
     {
 
         Schema::table('bank_details', function (Blueprint $table) {
-            $table->foreignId('bank_name_id')->constrained('bank_names');
+            $table->foreignId('bank_name_id')->nullable()->constrained('bank_names');
             $table->foreignId('bank_code_id')->nullable()->constrained('bank_codes');
         });
 

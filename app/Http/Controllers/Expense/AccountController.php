@@ -20,25 +20,24 @@ class AccountController
 
     public function update_account(){
 
-        
-        
+
     }
 
-    // public function accounts(Request $request){
+     public function accounts(Request $request){
 
-    //     $query = User::query();
+         $query = User::query();
 
-    //     $query->when($request->input('search'), function ($query) use ($request) {
-    //         $query->where('name', 'like', '%' . $request->input('search'));
-    //         $query->orWhere('email', 'like', $request->input('search') . '%');
-    //     });
+         $query->when($request->input('search'), function ($query) use ($request) {
+             $query->where('name', 'like', '%' . $request->input('search'));
+             $query->orWhere('email', 'like', $request->input('search') . '%');
+         });
 
-    //     $query->with('role', function ($query){
-    //         $query->select('id', 'name');
-    //     });
+         $query->with('role', function ($query){
+             $query->select('id', 'name');
+         });
 
-    //     return view('expense.accounts', [
-    //         'users' => $query->paginate(20)
-    //     ]);
-    // }
+         return view('expense.accounts', [
+             'users' => $query->paginate(20)
+         ]);
+     }
 }

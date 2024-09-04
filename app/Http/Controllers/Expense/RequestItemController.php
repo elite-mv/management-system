@@ -13,7 +13,8 @@ use Illuminate\Support\Facades\Session;
 class RequestItemController extends Controller
 {
 
-    public function addRequestItem(Request $request){
+    public function addRequestItem(Request $request)
+    {
 
         $requestItem = new RequestItem();
         $measurement = Measurement::where('id', $request->input('measurement'))->firstOrFail();
@@ -32,9 +33,10 @@ class RequestItemController extends Controller
         return ['message' => 'item added'];
     }
 
-    public function updateRequestItem(Request $request, RequestItem $requestItem){
+    public function updateRequestItem(Request $request, RequestItem $requestItem)
+    {
 
-        try{
+        try {
             DB::beginTransaction();
 
             $requestItem->job_order_id = $request->input('jobOrder');
@@ -51,34 +53,43 @@ class RequestItemController extends Controller
 
             return redirect()->route('request', ['id' => $requestItem->request_id]);
 
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             DB::rollBack();
             return redirect()->route('request', ['id' => $requestItem->request_id])->withErrors();
         }
 
     }
 
-    public function getRequestItems(){
+    public function getRequestItems()
+    {
 
-        $requestItems =  RequestItem::where('session_id', Session::getId())
-        ->whereNull('request_id')->get();
+        $requestItems = RequestItem::where('session_id', Session::getId())
+            ->whereNull('request_id')->get();
 
         return view('expense.partials.request-cart', [
             'requestItems' => $requestItems,
         ]);
     }
 
-    public function getRequestItem($id){
+    public function getRequestItem($id)
+    {
 
-        $requestItem =  RequestItem::where('id', $id)->with('attachments')->firstOrFail();
+        try {
+            $requestItem = RequestItem::with('attachments')
+                ->findOrFail($id);
 
-        return response()->json([
-            'item' => $requestItem,
-        ]);
+            return response()->json([
+                'item' => $requestItem,
+            ]);
+
+        } catch (\Exception $exception) {
+            return response()->json(['message' => 'unable to fetch request item'], 400);
+        }
 
     }
 
-    public function updateItem(Request $request, $id){
+    public function updateItem(Request $request, $id)
+    {
 
         //check first if the item is present
         $requestItem = RequestItem::findOrFail($id);
@@ -92,51 +103,54 @@ class RequestItemController extends Controller
         $requestItem->save();
     }
 
-    public function removeItem($id){
+    public function removeItem($id)
+    {
         RequestItem::findOrFail($id)->delete();
 
         return ['message' => 'item deleted'];
     }
 
-    public function addRequestItemImage(Request $request, $id){
+    public function addRequestItemImage(Request $request, $id)
+    {
 
         $images = [];
 
 
-        try{
+        try {
 
 
-        foreach ($request->file('files') as $file) {
+            foreach ($request->file('files') as $file) {
 
-            $filename = $file->store('public');
+                $filename = $file->store('public');
 
-            $requestImage = new RequestItemImage();
+                $requestImage = new RequestItemImage();
                 $requestImage->file = $filename;
                 $requestImage->request_item_id = $id;
                 $requestImage->save();
                 $images[] = $filename;
+            }
+
+            return ['images' => $images];
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
+
         }
 
-        return ['images' =>  $images];
-
-    }catch(\Exception $e){
-
-        return response()->json([
-            'message' => $e->getMessage(),
-        ], 500);
 
     }
 
-
-    }
-
-    public function getRequestTotal(){
+    public function getRequestTotal()
+    {
         $total = DB::table('request_items')
-        ->select(DB::raw('SUM(quantity * cost) as total'))
+            ->select(DB::raw('SUM(quantity * cost) as total'))
             ->where('session_id', '=', Session::getId())
             ->whereNull('request_id')
             ->first();
 
-            return $total;
+        return $total;
     }
 }

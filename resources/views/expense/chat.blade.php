@@ -33,7 +33,6 @@
                             </div>
                         @endif
                     @endforeach
-
                 </div>
                 <div class="p-0">
                     <form id="commentForm">
@@ -62,34 +61,43 @@
 
     const commentsHolder = document.querySelector('#commentsHolder');
     const commentForm = document.querySelector('#commentForm');
+    let initialLoad = true;
+
+    function loadComments() {
+
+        fetch('/expense/chats', {
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+            }
+        }).then(response => {
+
+            if (!response.ok) {
+                throw new Error("Something went wrong!");
+            }
+
+            return response.text();
+
+        }).then(data => {
+
+            commentHolder.innerHTML = data;
+
+            if (initialLoad) {
+                commentHolder.scrollTop = commentHolder.scrollHeight - commentHolder.clientHeight;
+                initialLoad = false;
+            }
+
+        }).catch(err => {
+            console.log(err.message);
+        })
+    }
 
     window.addEventListener('load', () => {
 
-        commentsHolder.scrollTop = commentsHolder.scrollHeight;
+        loadComments();
 
-        var pusher = new Pusher('e97a0e3c36e5f02024a5', {
-            cluster: 'ap1'
-        });
-
-        var channel = pusher.subscribe('my-channel');
-
-        channel.bind('my-event', function (data) {
-
-            const scroll = commentsHolder.scrollHeight - commentsHolder.clientHeight <= commentsHolder.scrollTop + 1;
-
-            console.log(data);
-
-            //
-            // const p = document.createElement('p');
-            // p.innerHTML = data.message;
-            // commentsHolder.appendChild(p);
-            //
-            // if(scroll){
-            //     commentsHolder.scrollTop = commentsHolder.scrollHeight;
-            // }
-
-        });
+        setInterval(loadComments, 1000);
     })
+
 
     commentForm.addEventListener('submit',(e)=>{
 

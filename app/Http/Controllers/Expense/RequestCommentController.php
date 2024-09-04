@@ -11,27 +11,40 @@ class RequestCommentController
 
     public function viewComments($requestID)
     {
-        $comments = RequestComment::where('request_id',$requestID)->get();
+        try {
+            $comments = RequestComment::where('request_id',$requestID)
+            ->with('user')
+            ->get();
 
-        return view('expense.partials.request-comments', ['comments' => $comments]);
+            return view('expense.partials.request-comments', ['comments' => $comments]);
+        }catch (\Exception $e){
+            return response()->json(['message'=> 'unable to load comments'], 500);
+        }
     }
 
     public function addComment(Request $request, $requestID){
 
         try{
+
+            $validated = $request->validate([
+                'message' => 'required'
+            ]);
+
             DB::beginTransaction();
 
             RequestComment::create([
                 'user_id' => Auth::id(),
                 'request_id' => $requestID,
-                'message' => $request->input('message'),
+                'message' => $validated['message'],
             ]);
 
             DB::commit();
+
+            return redirect()->route('comments', ['requestID' => $requestID]);
+
         }catch(\Exception $exception){
             DB::rollBack();
-        } finally {
-            return redirect()->route('comments', ['requestID' => $requestID]);
+            return response()->json(['message'=> 'unable to add comment'], 500);
         }
     }
 

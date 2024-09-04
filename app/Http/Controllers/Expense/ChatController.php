@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\DB;
 class ChatController
 {
 
-    public function index(){
+    public function index()
+    {
 
         $messages = Chat::with('user')
             ->where('created_at', '>=', Carbon::now()->subDays(7)->format('Y-m-d'))
@@ -24,7 +25,21 @@ class ChatController
         ]);
     }
 
-    public function addMessage(Request $request){
+    public function chatDetails()
+    {
+
+        $messages = Chat::with('user')
+                ->where('created_at', '>=', Carbon::now()->subDays(7)->format('Y-m-d'))
+                ->take(200)
+                ->get();
+
+        return view('expense.partials.chat-details', [
+            'messages' => $messages,
+        ]);
+    }
+
+    public function addMessage(Request $request)
+    {
 
         try {
 
@@ -32,27 +47,26 @@ class ChatController
 
             $message = $request->input('message');
 
-             Chat::create([
+            Chat::create([
                 'message' => $message,
                 'user_id' => Auth::id(),
             ]);
 
-            event(new ChatEvent([
-                'message' => $message,
-                'user_id' => Auth::id(),
-            ]));
-
             DB::commit();
-        }catch (\Exception $e){
+
+            return response()->json(['message' => 'message sent']);
+        } catch (\Exception $e) {
             DB::rollBack();
+            return response()->json(['message' => 'message failed'], 400);
         }
     }
 
-    public function test(){
+    public function test()
+    {
 
         try {
             event(new ChatEvent('test'));
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
         }
     }

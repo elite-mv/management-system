@@ -74,16 +74,26 @@ class RequestController extends Controller
         DB::beginTransaction();
 
         try {
+
+            $validated = $request->validate([
+                'company' => 'required',
+                'supplier' => 'required',
+                'requestedBy' => 'required',
+                'paidTo' => 'required',
+                'priorityLevel' => 'required',
+                'priority' => 'nullable',
+            ]);
+
             $expenseRequest = new ModelsRequest();
 
-            $expenseRequest->company_id = $request->input('company');
-            $expenseRequest->supplier = $request->input('supplier');
-            $expenseRequest->request_by = $request->input('requestedBy');
+            $expenseRequest->company_id = $validated['company'];
+            $expenseRequest->supplier = $validated['supplier'];
+            $expenseRequest->request_by = $validated['requestedBy'];
             $expenseRequest->prepared_by = Auth::id();
-            $expenseRequest->paid_to = $request->input('paidTo');
+            $expenseRequest->paid_to = $validated['paidTo'];
 
-            $expenseRequest->priority_level = RequestPriorityLevel::LOW->name;
-            $expenseRequest->priority = true;
+            $expenseRequest->priority_level = RequestPriorityLevel::valueOf($validated['priorityLevel']);
+            $expenseRequest->priority = isset($validated['priority']) ? 1 : 0;
 
             $expenseRequest->save();
 
@@ -91,6 +101,10 @@ class RequestController extends Controller
             $requestItems = RequestItem::where('session_id', Session::getId())
                 ->whereNull('request_id')
                 ->get();
+
+            if (!count($requestItems)) {
+                throw new \Exception('Empty items');
+            }
 
             foreach ($requestItems as $item) {
                 $item->request_id = $expenseRequest->id;
@@ -120,7 +134,7 @@ class RequestController extends Controller
 
         } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['message' => $e->getMessage()], 500);
+            return redirect()->back()->withErrors(['message' => $e->getMessage()]);
         }
     }
 
@@ -222,6 +236,12 @@ class RequestController extends Controller
                         $query->where('name', UserRole::AUDITOR->value);
                     }, '=', '1');
                 },
+                'expenseTypes' => function ($q) {
+                    $q->with(['category']);
+                },
+                'bankDetails' => function ($q) {
+                    $q->with(['bank', 'code']);
+                }
             ])
             ->firstOrFail();
 
@@ -232,7 +252,7 @@ class RequestController extends Controller
         $measurements = Measurement::select(['id', 'name'])->get();
         $jobOrder = JobOrder::select(['id', 'name', 'reference'])->get();
 
-        $logs = RequestLogs::select(['id','description','user_id','created_at'])
+        $logs = RequestLogs::select(['id', 'description', 'user_id', 'created_at'])
             ->where('request_id', '=', $id)
             ->with('user')
             ->orderBy('created_at', 'desc')
@@ -251,17 +271,21 @@ class RequestController extends Controller
     {
         try {
 
+            $validated = $request->validate([
+                'mode' => 'required'
+            ]);
+
             DB::beginTransaction();
 
-            $requestModel = ModelsRequest::where('id', $requestID)->firstOrFail();
+            $requestModel = ModelsRequest::findOrFail($requestID);
 
-            $paymentMethod = PaymentMethod::valueOf($request->input('mode'));
+            $paymentMethod = PaymentMethod::valueOf($validated['mode']);
 
             $requestModel->payment_method = $paymentMethod;
 
             $requestModel->save();
 
-            $addRequestLog->handle($requestID->id, 'payment method was set to ' . $paymentMethod->name);
+            $addRequestLog->handle($requestID, 'payment method was set to ' . $paymentMethod->name);
 
             DB::commit();
 
@@ -287,11 +311,16 @@ class RequestController extends Controller
     {
 
         try {
+
+            $validated = $request->validate([
+                'attachment' => 'required'
+            ]);
+
             DB::beginTransaction();
 
-            $modelsRequest = ModelsRequest::where('id', $id)->firstOrFail();
+            $modelsRequest = ModelsRequest::findOrFail($id);
 
-            $attachment = AccountingAttachment::valueOf($request->input('attachment'));
+            $attachment = AccountingAttachment::valueOf($validated['attachment']);
 
             $modelsRequest->attachment = $attachment;
 
@@ -301,18 +330,11 @@ class RequestController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'message' => 'ok',
-                'status' => '200',
-            ]);
+            return response()->json(['message' => 'ok',]);
 
         } catch (\Exception $e) {
             DB::rollBack();
-
-            return response()->json([
-                'message' => 'Something went wrong',
-                'status' => '200',
-            ], 500);
+            return response()->json(['message' => 'Something went wrong'], 400);
         }
 
     }
@@ -321,11 +343,16 @@ class RequestController extends Controller
     {
 
         try {
+
+            $validated = $request->validate([
+                'type' => 'required'
+            ]);
+
             DB::beginTransaction();
 
-            $modelsRequest = ModelsRequest::where('id', $id)->firstOrFail();
+            $modelsRequest = ModelsRequest::findOrFail($id);
 
-            $type = AccountingType::valueOf($request->input('type'));
+            $type = AccountingType::valueOf($validated['type']);
 
             $modelsRequest->type = $type;
 
@@ -335,18 +362,11 @@ class RequestController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'message' => 'ok',
-                'status' => '200',
-            ]);
+            return response()->json(['message' => 'ok']);
 
         } catch (\Exception $e) {
             DB::rollBack();
-
-            return response()->json([
-                'message' => 'Something went wrong',
-                'status' => '200',
-            ], 500);
+            return response()->json(['message' => 'Something went wrong'], 500);
         }
 
     }
@@ -355,11 +375,15 @@ class RequestController extends Controller
     {
 
         try {
+            $validated = $request->validate([
+                'receipt' => 'required'
+            ]);
+
             DB::beginTransaction();
 
-            $modelsRequest = ModelsRequest::where('id', $id)->firstOrFail();
+            $modelsRequest = ModelsRequest::findOrFail($id);
 
-            $receipt = AccountingReceipt::valueOf($request->input('receipt'));
+            $receipt = AccountingReceipt::valueOf($validated['receipt']);
             $modelsRequest->receipt = $receipt;
 
             $modelsRequest->save();
@@ -368,19 +392,13 @@ class RequestController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'message' => 'ok',
-                'status' => '200',
-            ]);
+            return response()->json(['message' => 'ok']);
 
         } catch (\Exception $e) {
 
             DB::rollBack();
 
-            return response()->json([
-                'message' => $e->getMessage(),
-                'status' => '200',
-            ]);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
 
     }
@@ -436,7 +454,6 @@ class RequestController extends Controller
 
             return response()->json([
                 'message' => 'ok',
-                'status' => 200,
             ]);
 
         } catch (\Exception $e) {
@@ -444,7 +461,6 @@ class RequestController extends Controller
 
             return response()->json([
                 'message' => $e->getMessage(),
-                'status' => 200,
             ], 500);
         }
 
@@ -454,15 +470,95 @@ class RequestController extends Controller
     {
         try {
 
+            $validated = $request->validate([
+                'status' => 'required|string'
+            ]);
+
             DB::beginTransaction();
 
-            $requestModel = ModelsRequest::where('id', $requestID)->firstOrFail();
+            $requestModel = ModelsRequest::findOrFail($requestID);
 
-            $requestModel->fund_status = RequestFundStatus::valueOf($request->input('status'));
+            $requestModel->fund_status = RequestFundStatus::valueOf($validated['status']);
 
             $requestModel->save();
 
-            $addRequestLog->handle($requestID->id, 'request fund status was set to ' . $requestModel->fund_status->name);
+            $addRequestLog->handle($requestID, 'request fund status was set to ' . $requestModel->fund_status->name);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'ok',
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    public function updateReceivedBy(Request $request, AddRequestLog $addRequestLog, $requestID)
+    {
+
+        try {
+
+            $validated = $request->validate([
+                'received_by' => 'required|string',
+            ]);
+
+            DB::beginTransaction();
+
+            $receivedBy = $validated['received_by'];
+
+            $requestModel = ModelsRequest::findOrFail($requestID);
+
+            $requestModel->received_by = $receivedBy;
+
+            $requestModel->save();
+
+            $addRequestLog->handle($requestID, 'request received by was change to ' . $receivedBy);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'ok',
+                'status' => '200',
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => '500',
+            ],
+                500
+            );
+        }
+    }
+
+    public function auditedBy(Request $request, AddRequestLog $addRequestLog, $requestID)
+    {
+
+        try {
+
+            $validated = $request->validate([
+                'audited_by' => 'required|string',
+            ]);
+
+            DB::beginTransaction();
+
+            $auditedBy = $validated['audited_by'];
+
+            $requestModel = ModelsRequest::findOrFail($requestID);
+
+            $requestModel->audited_by = $auditedBy;
+
+            $requestModel->save();
+
+            $addRequestLog->handle($requestID, 'request audited by was change to ' . $auditedBy);
 
             DB::commit();
 

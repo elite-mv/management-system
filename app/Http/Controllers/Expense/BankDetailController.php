@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers\Expense;
 
-use App\Enums\PaymentMethod;
-use App\Exceptions\Expense\InvalidBankDetails;
-use App\Models\Expense\BankCode;
+use App\Actions\AddRequestLog;
 use App\Models\Expense\BankDetail;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -15,49 +12,42 @@ class BankDetailController extends Controller
     public function addBankDetails(Request $request)
     {
 
-        $bankName = $request->input('bankName');
-        $bankCode = $request->input('bankNumber');
-        $checkNumber = $request->input('checkNumber');
-        $requestID = $request->input('requestID');
+        $validated = $request->validate([
+            'bank_name_id' => 'nullable',
+            'bank_code_id' => 'nullable',
+            'check_number' => 'nullable',
+            'request_id' => 'required',
+        ]);
+
+        $requestID = $validated['request_id'];
 
         try {
 
-            $expenseRequest = \App\Models\Expense\Request::where('id', $requestID)
-                ->whereIn('payment_method', [
-                    PaymentMethod::CHECK->name,
-                    PaymentMethod::ONLINE_TRANSFER->name,
-                    PaymentMethod::CREDIT_CARD->name,
-                ])
-                ->first();
-
-            if (!isset($expenseRequest)) {
-                throw new InvalidBankDetails('Bank details are not required for the Cash payment method');
-            }
-
-            if ($expenseRequest->payment_method == PaymentMethod::CREDIT_CARD || $expenseRequest->payment_method == PaymentMethod::ONLINE_TRANSFER) {
-                if (!(empty($checkNumber) && $bankCode == -1)) {
-                    throw new InvalidBankDetails('check number and bank code is not need for credit card/online transfer');
-                }
-            }
-
-            if ($expenseRequest->payment_method == PaymentMethod::CHECK) {
-
-                $valid = BankCode::where('id', $bankCode)
-                    ->where('bank_name_id', $bankName)
-                    ->first();
-
-                if (!isset($valid)) {
-                    throw new InvalidBankDetails('Bank Name and Bank Code does not match!');
-                }
-            }
-
             DB::beginTransaction();
 
-            $bankDetail = BankDetail::updateOrCreate(['request_id' => $requestID], [
-                'bank_name_id' => $bankName,
-                'bank_code_id' => $bankCode == -1 ? null : $bankCode,
-                'check_number' => $checkNumber,
-            ]);
+            $bankDetail = BankDetail::firstOrNew(['request_id' => $requestID]);
+
+            if (isset($validated['bank_name_id'])) {
+                if( ($validated['bank_name_id']) == -1){
+                    $bankDetail->bank_name_id = null;
+                }else{
+                    $bankDetail->bank_name_id = $validated['bank_name_id'];
+                }
+            }
+
+            if (isset($validated['bank_code_id'])) {
+                if( ($validated['bank_code_id']) == -1){
+                    $bankDetail->bank_code_id = null;
+                }else{
+                    $bankDetail->bank_code_id = $validated['bank_code_id'];
+                }
+            }
+
+            if (isset($validated['check_number'])) {
+                $bankDetail->check_number = $validated['check_number'];
+            }
+
+            $bankDetail->save();
 
             DB::commit();
 
@@ -66,16 +56,10 @@ class BankDetailController extends Controller
                 'status' => 200,
             ]);
 
-        } catch (InvalidBankDetails $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-                'status' => 400
-            ], 400);
-        } catch (\Exception $e) {
+        }  catch (\Exception $e) {
             DB::rollback();
             return response()->json([
-                'message' => 'Something went wrong!, please contact developer',
-                'status' => 500
+                'message' => $e->getMessage(),
             ], 500);
         }
     }

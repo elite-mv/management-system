@@ -37,7 +37,7 @@ class PdfController
 
 //        $pdf->Set = 10;
 //
-        $pdf->SetXY(4.8,3.44);
+        $pdf->SetXY(4.8, 3.44);
         $pdf->Cell(4.2, 0.25, $text);
 //        $pdf->rect(4.8,3.45,4.2,0.3,);
 
@@ -57,7 +57,6 @@ class PdfController
 
 
         $pdf->Output(); // This will output the PDF to the browser
-
 
 
         //
@@ -84,29 +83,7 @@ class PdfController
         $bankCodes = BankCode::get();
         $expenseCategory = ExpenseCategory::get();
 
-        $pdf = PDF::loadView('expense.pdf.expense-request-form',  [
-            'bank_names' => $bankNames,
-            'bank_codes' => $bankCodes,
-            'expense_category' => $expenseCategory,
-            'request' => $expenseRequest,
-            'measurements' => $measurements,
-            'jobOrders' => $jobOrder,
-        ])->setPaper('A4');
-
-
-        return $pdf->download('invoice.pdf');
-    }
-
-    public function test2(ExpenseRequest $expenseRequest)
-    {
-
-        $measurements = Measurement::get();
-        $jobOrder = JobOrder::get();
-        $bankNames = BankName::get();
-        $bankCodes = BankCode::get();
-        $expenseCategory = ExpenseCategory::get();
-
-        return view('expense.pdf.expense-request-form',  [
+        return view('expense.pdf.expense-request-form', [
             'bank_names' => $bankNames,
             'bank_codes' => $bankCodes,
             'expense_category' => $expenseCategory,
@@ -114,5 +91,53 @@ class PdfController
             'measurements' => $measurements,
             'jobOrders' => $jobOrder,
         ]);
+
+    }
+
+    public function test2(ExpenseRequest $expenseRequest)
+    {
+
+        try {
+
+            $measurements = Measurement::get();
+            $jobOrder = JobOrder::get();
+            $bankNames = BankName::get();
+            $bankCodes = BankCode::get();
+            $expenseCategory = ExpenseCategory::get();
+
+
+            $options = [
+                'format' => 'A4', // Specify the page format (A4, Letter, etc.)
+                'margin' => [
+                    'top' => '10mm',
+                    'right' => '10mm',
+                    'bottom' => '10mm',
+                    'left' => '10mm',
+                ],
+            ];
+
+            $snappdf = new \Beganovich\Snappdf\Snappdf();
+
+            $field = [
+                'bank_names' => $bankNames,
+                'bank_codes' => $bankCodes,
+                'expense_category' => $expenseCategory,
+                'request' => $expenseRequest,
+                'measurements' => $measurements,
+                'jobOrders' => $jobOrder,
+            ];
+
+            $html = view('expense.pdf.expense-request-form', $field)->render();
+
+            $pdf = $snappdf
+                ->setHtml($html)
+                ->save('pdf/tangin.pdf');
+
+            return 'ok';
+
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+
     }
 }
