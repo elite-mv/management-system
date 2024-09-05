@@ -180,7 +180,7 @@
                         <div>
                             <div class="border border-dark"
                                  style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
-                                <img src="./src/logos/PERSONAL_LOGO.png" class="img-fluid" alt="LOGO"
+                                <img src="{{\Illuminate\Support\Facades\Storage::url($request->company->logo)}}" class="img-fluid" alt="LOGO"
                                      style="height: 100px; width: auto;">
                             </div>
                             <div class="bg-red text-center text-white border border-dark"
@@ -1824,9 +1824,7 @@
 
                 const result = await fetch(`/expense/api/request-item/${id}`);
 
-                const response = await result.json();
-
-                const data = response.item;
+                const data =  await result.json();
 
                 if (!result.ok) {
                     throw new Error(data.message);

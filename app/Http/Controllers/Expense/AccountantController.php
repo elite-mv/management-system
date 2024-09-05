@@ -22,10 +22,10 @@ class AccountantController extends Controller
 
         $query = ModelsRequest::query();
 
-        $query->select(['id','reference', 'request_by', 'company_id', 'status']);
+        $query->select(['id', 'reference', 'request_by', 'company_id', 'status']);
 
         $query->with('items', function ($query) {
-            $query->select('request_id',DB::raw('SUM(quantity * cost) as total_cost'))
+            $query->select('request_id', DB::raw('SUM(quantity * cost) as total_cost'))
                 ->groupBy('request_id');
         });
 
@@ -57,25 +57,47 @@ class AccountantController extends Controller
             $qb->whereDate('created_at', '<=', Carbon::createFromFormat('Y-m-d', $request->input('to'))->toDateString());
         });
 
-        $query->whereHas('approvals', function ($qb) use ($request) {
-
-            $qb->where(function ($qb) use ($request) {
-                $qb->whereHas('role', function ($qb) use ($request) {
-                    $qb->where('name', UserRole::BOOK_KEEPER->value)
-                        ->where('status', RequestApprovalStatus::APPROVED);
-                });
-            });
-
-            $qb->orWhere(function ($qb) use ($request) {
-                $qb->whereHas('role', function ($qb) use ($request) {
-                    $qb->where('name', UserRole::ACCOUNTANT->value);
-                    $qb->when($request->input('status') && $request->input('status') != 'ALL', function ($qb) use ($request) {
-                        $qb->where('status', RequestApprovalStatus::valueOf($request->input('status')));
+        $query->when($request->input('status') && $request->input('status') != 'ALL', function ($query) use ($request) {
+            $query->whereHas('approvals', function ($qb) use ($request) {
+                $qb->where(function ($qb) use ($request) {
+                    $qb->whereHas('role', function ($qb) use ($request) {
+                        $qb->where('name', UserRole::BOOK_KEEPER->value)
+                            ->where('status', RequestApprovalStatus::APPROVED);
                     });
                 });
-            });
 
-        }, '=', 2);
+                $qb->orWhere(function ($qb) use ($request) {
+                    $qb->whereHas('role', function ($qb) use ($request) {
+                        $qb->where(function ($qb) use ($request) {
+                            $qb->where('name', UserRole::ACCOUNTANT->value);
+                            $qb->where('status', RequestApprovalStatus::valueOf($request->input('status')));
+                        });
+                    });
+                });
+
+            }, '=', 2);
+        });
+
+
+//        $query->whereHas('approvals', function ($qb) use ($request) {
+//
+//            $qb->where(function ($qb) use ($request) {
+//                $qb->whereHas('role', function ($qb) use ($request) {
+//                    $qb->where('name', UserRole::BOOK_KEEPER->value)
+//                        ->where('status', RequestApprovalStatus::APPROVED);
+//                });
+//            });
+//
+//            $qb->orWhere(function ($qb) use ($request) {
+//                $qb->whereHas('role', function ($qb) use ($request) {
+//                    $qb->where('name', UserRole::ACCOUNTANT->value);
+//                    $qb->when($request->input('status') && $request->input('status') != 'ALL', function ($qb) use ($request) {
+//                        $qb->where('status', RequestApprovalStatus::valueOf($request->input('status')));
+//                    });
+//                });
+//            });
+//
+//        }, '=', 2);
 
         $requests = $query->paginate($request->input('entries') ?? 10, ['*'], 'page', $request->input('page') ?? 1);
 

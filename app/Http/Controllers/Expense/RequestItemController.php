@@ -16,21 +16,39 @@ class RequestItemController extends Controller
     public function addRequestItem(Request $request)
     {
 
-        $requestItem = new RequestItem();
-        $measurement = Measurement::where('id', $request->input('measurement'))->firstOrFail();
-        $jobOrder = Measurement::where('id', $request->input('jobOrder'))->firstOrFail();
+        try {
+            $validated = $request->validate([
+                'measurement' => 'required',
+                'jobOrder' => 'required',
+                'quantity' => 'required|numeric|min:1',
+                'cost' => 'required',
+                'description' => 'required',
+            ]);
 
-        $requestItem->quantity = $request->input('quantity');
-        $requestItem->cost = $request->input('cost');
-        $requestItem->description = $request->input('description');
+            DB::beginTransaction();
 
-        $requestItem->measurement_id = $measurement->id;
-        $requestItem->job_order_id = $jobOrder->id;
-        $requestItem->session_id = Session::getId();
+            $requestItem = new RequestItem();
+            $measurement = Measurement::where('id', $validated['measurement'])->firstOrFail();
+            $jobOrder = Measurement::where('id', $validated['jobOrder'])->firstOrFail();
 
-        $requestItem->save();
+            $requestItem->quantity = $validated['quantity'];
+            $requestItem->cost = $validated['cost'];
+            $requestItem->description = $validated['description'];
 
-        return ['message' => 'item added'];
+            $requestItem->measurement_id = $measurement->id;
+            $requestItem->job_order_id = $jobOrder->id;
+            $requestItem->session_id = Session::getId();
+
+            $requestItem->save();
+
+            DB::commit();
+
+            return response()->json(['message' => 'item added']);
+
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json(['message' => 'failed in adding item'], 500);
+        }
     }
 
     public function updateRequestItem(Request $request, RequestItem $requestItem)
@@ -39,23 +57,40 @@ class RequestItemController extends Controller
         try {
             DB::beginTransaction();
 
-            $requestItem->job_order_id = $request->input('jobOrder');
-            $requestItem->measurement_id = $request->input('measurement');
-            $requestItem->quantity = $request->input('quantity');
-            $requestItem->cost = $request->input('cost');
-            $requestItem->description = $request->input('description');
-            $requestItem->remarks = $request->input('remarks');
+            $validated = $request->validate([
+                'measurement' => 'required',
+                'jobOrder' => 'required',
+                'quantity' => 'required|numeric|min:1',
+                'cost' => 'required',
+                'description' => 'required',
+                'remarks' => 'nullable',
+                'status' => 'nullable',
+            ]);
 
-            $requestItem->status = RequestItemStatus::valueOf($request->input('status'))->name;
+            $requestItem->measurement_id = $validated['measurement'];
+            $requestItem->job_order_id = $validated['jobOrder'];
+
+            $requestItem->quantity = $validated['quantity'];
+            $requestItem->cost = $validated['cost'];
+            $requestItem->description = $validated['description'];
+
+            if ($request->input('remarks')) {
+                $requestItem->remarks = $validated['remarks'];
+            }
+
+            if ($request->input('status')) {
+                $requestItem->status = RequestItemStatus::valueOf($validated['status'])->name;
+            }
+
             $requestItem->save();
 
             Db::commit();
 
-            return redirect()->route('request', ['id' => $requestItem->request_id]);
+            return redirect()->back();
 
         } catch (\Exception $exception) {
             DB::rollBack();
-            return redirect()->route('request', ['id' => $requestItem->request_id])->withErrors();
+            return redirect()->back()->withErrors(['message' => 'Failed to update item']);
         }
 
     }
@@ -63,12 +98,18 @@ class RequestItemController extends Controller
     public function getRequestItems()
     {
 
-        $requestItems = RequestItem::where('session_id', Session::getId())
-            ->whereNull('request_id')->get();
+        try {
 
-        return view('expense.partials.request-cart', [
-            'requestItems' => $requestItems,
-        ]);
+            $requestItems = RequestItem::where('session_id', Session::getId())
+                ->whereNull('request_id')->get();
+
+            return view('expense.partials.request-cart', [
+                'requestItems' => $requestItems,
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     public function getRequestItem($id)
@@ -78,9 +119,7 @@ class RequestItemController extends Controller
             $requestItem = RequestItem::with('attachments')
                 ->findOrFail($id);
 
-            return response()->json([
-                'item' => $requestItem,
-            ]);
+            return response()->json($requestItem);
 
         } catch (\Exception $exception) {
             return response()->json(['message' => 'unable to fetch request item'], 400);
@@ -91,33 +130,69 @@ class RequestItemController extends Controller
     public function updateItem(Request $request, $id)
     {
 
-        //check first if the item is present
-        $requestItem = RequestItem::findOrFail($id);
+        try {
 
-        $requestItem->quantity = $request->input('quantity');
-        $requestItem->measurement_id = $request->input('measurement');
-        $requestItem->job_order_id = $request->input('jobOrder');
-        $requestItem->description = $request->input('description');
-        $requestItem->cost = $request->input('cost');
+            DB::beginTransaction();
 
-        $requestItem->save();
+            $validated = $request->validate([
+                'quantity' => 'required',
+                'measurement' => 'required',
+                'jobOrder' => 'required',
+                'description' => 'required',
+                'cost' => 'required',
+            ]);
+
+            //check first if the item is present
+            $requestItem = RequestItem::findOrFail($id);
+
+            $requestItem->quantity = $validated['quantity'];
+            $requestItem->measurement_id = $validated['measurement'];
+            $requestItem->job_order_id = $validated['jobOrder'];
+            $requestItem->description = $validated['description'];
+            $requestItem->cost = $validated['cost'];
+
+            $requestItem->save();
+
+            DB::commit();
+
+            return response()->json(['message' => 'item updated']);
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json(['message' => 'item updated'], 500);
+        }
     }
 
     public function removeItem($id)
     {
-        RequestItem::findOrFail($id)->delete();
+        try {
 
-        return ['message' => 'item deleted'];
+            DB::beginTransaction();
+
+            $item = RequestItem::findOrFail($id);
+
+            $item->delete();
+
+            DB::commit();
+
+            return response()->json(['message' => 'item deleted']);
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json(['message' => $exception->getMessage()], 500);
+        }
     }
 
     public function addRequestItemImage(Request $request, $id)
     {
 
-        $images = [];
-
-
         try {
 
+            $validated = $request->validate([
+                'files.*' => 'required|mimes:jpg,jpeg,png,pdf',
+            ]);
+
+            $images = [];
+
+            DB::beginTransaction();
 
             foreach ($request->file('files') as $file) {
 
@@ -130,17 +205,17 @@ class RequestItemController extends Controller
                 $images[] = $filename;
             }
 
-            return ['images' => $images];
+            DB::commit();
 
+            return response()->json(['images' => $images]);
         } catch (\Exception $e) {
+
+            DB::beginTransaction();
 
             return response()->json([
                 'message' => $e->getMessage(),
             ], 500);
-
         }
-
-
     }
 
     public function getRequestTotal()
@@ -151,6 +226,6 @@ class RequestItemController extends Controller
             ->whereNull('request_id')
             ->first();
 
-        return $total;
+        return $total ?? 0;
     }
 }

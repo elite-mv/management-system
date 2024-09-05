@@ -91,6 +91,7 @@ Route::prefix('expense')->group(function () {
         Route::get('/request', [RequestController::class, 'index']);
 
         Route::middleware([CompanyData::class])->get('/forms', [DownloadableFormController::class, 'index']);
+        Route::post('/forms/excel', [DownloadableFormController::class, 'generateExcel']);
 
         Route::get('/next-request/{requestID}', [RequestController::class, 'nextRequest']);
         Route::get('/prev-request/{requestID}', [RequestController::class, 'prevRequest']);
@@ -162,7 +163,9 @@ Route::prefix('expense')->group(function () {
             Route::get('/request-item', [RequestItemController::class, 'getRequestItems']);
             Route::get('/request-item/total', [RequestItemController::class, 'getRequestTotal']);
             Route::get('/request-item/{id}', [RequestItemController::class, 'getRequestItem']);
-            Route::delete('/request-item/{id}', [RequestItemController::class, 'removeItem']);
+
+            Route::post('/request-item/delete/{id}', [RequestItemController::class, 'removeItem']);
+
             Route::post('/request-item/{id}', [RequestItemController::class, 'updateItem']);
             Route::post('/request-item/file/{id}', [RequestItemController::class, 'addRequestItemImage']);
             Route::post('/expense-request/bank-details', [BankDetailController::class, 'addBankDetails']);

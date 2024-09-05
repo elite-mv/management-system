@@ -1,10 +1,15 @@
 <?php
 
 namespace App\Http\Controllers\Expense;
+
+use App\Jobs\Expense\ChatAlertJob;
+use App\Mail\Expense\ChatAlert;
 use App\Models\Expense\RequestComment;
+use App\Models\Expense\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class RequestCommentController
 {
@@ -12,19 +17,20 @@ class RequestCommentController
     public function viewComments($requestID)
     {
         try {
-            $comments = RequestComment::where('request_id',$requestID)
-            ->with('user')
-            ->get();
+            $comments = RequestComment::where('request_id', $requestID)
+                ->with('user')
+                ->get();
 
             return view('expense.partials.request-comments', ['comments' => $comments]);
-        }catch (\Exception $e){
-            return response()->json(['message'=> 'unable to load comments'], 500);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'unable to load comments'], 500);
         }
     }
 
-    public function addComment(Request $request, $requestID){
+    public function addComment(Request $request, $requestID)
+    {
 
-        try{
+        try {
 
             $validated = $request->validate([
                 'message' => 'required'
@@ -32,19 +38,21 @@ class RequestCommentController
 
             DB::beginTransaction();
 
-            RequestComment::create([
+            $comment = RequestComment::create([
                 'user_id' => Auth::id(),
                 'request_id' => $requestID,
                 'message' => $validated['message'],
             ]);
 
+            ChatAlertJob::dispatch($comment);
+
             DB::commit();
 
-            return redirect()->route('comments', ['requestID' => $requestID]);
+            return response()->json(['message' => 'ok']);
 
-        }catch(\Exception $exception){
+        } catch (\Exception $exception) {
             DB::rollBack();
-            return response()->json(['message'=> 'unable to add comment'], 500);
+            return response()->json(['message' => 'unable to add comment'], 500);
         }
     }
 

@@ -41,6 +41,7 @@ class Request extends Model
         'released_by',
         'received_by',
         'audited_by',
+        'status',
     ];
 
     protected $appends = ['total', 'reference', 'fund', 'fund_item'];
@@ -183,6 +184,7 @@ class Request extends Model
 
         return $hours;
     }
+
 
 
     public function getRequestStatusAttribute()

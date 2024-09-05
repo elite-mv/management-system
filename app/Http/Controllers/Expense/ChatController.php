@@ -27,15 +27,19 @@ class ChatController
 
     public function chatDetails()
     {
-
-        $messages = Chat::with('user')
+        try {
+            $messages = Chat::with('user')
                 ->where('created_at', '>=', Carbon::now()->subDays(7)->format('Y-m-d'))
                 ->take(200)
                 ->get();
 
-        return view('expense.partials.chat-details', [
-            'messages' => $messages,
-        ]);
+            return view('expense.partials.chat-data', [
+                'messages' => $messages,
+            ]);
+
+        } catch (\Exception $exception) {
+            return response()->json(['message' => $exception->getMessage()], 500);
+        }
     }
 
     public function addMessage(Request $request)
@@ -58,16 +62,6 @@ class ChatController
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['message' => 'message failed'], 400);
-        }
-    }
-
-    public function test()
-    {
-
-        try {
-            event(new ChatEvent('test'));
-        } catch (\Exception $e) {
-            DB::rollBack();
         }
     }
 

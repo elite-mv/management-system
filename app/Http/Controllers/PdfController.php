@@ -106,16 +106,6 @@ class PdfController
             $expenseCategory = ExpenseCategory::get();
 
 
-            $options = [
-                'format' => 'A4', // Specify the page format (A4, Letter, etc.)
-                'margin' => [
-                    'top' => '10mm',
-                    'right' => '10mm',
-                    'bottom' => '10mm',
-                    'left' => '10mm',
-                ],
-            ];
-
             $snappdf = new \Beganovich\Snappdf\Snappdf();
 
             $field = [
@@ -133,7 +123,7 @@ class PdfController
                 ->setHtml($html)
                 ->save('pdf/tangin.pdf');
 
-            return 'ok';
+            return response()->file('pdf/tangin.pdf');
 
         } catch (\Exception $e) {
             return $e->getMessage();

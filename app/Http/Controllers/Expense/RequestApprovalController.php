@@ -27,11 +27,11 @@ class RequestApprovalController
     {
         try {
 
-            $data = true;
-
-            if ($data) {
-                throw new \Exception('tae');
-            }
+//            $data = true;
+//
+//            if ($data) {
+//                throw new \Exception('tae');
+//            }
 
             $roleID = Role::where('name', UserRole::BOOK_KEEPER->value)
                 ->pluck('id')
