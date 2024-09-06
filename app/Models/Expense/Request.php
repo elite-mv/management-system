@@ -171,20 +171,10 @@ class Request extends Model
         return str_pad($this->id, 3, "0", STR_PAD_LEFT);
     }
 
-    public function getTimeLapseAttribute(): float
+    public function getTimeLapseAttribute(): string
     {
-        $start = Carbon::parse($this->created_at);
-        $end = Carbon::now();
-//
-//        $days = $start->diffInDays($end);
-        $hours = (int)$start->diffInHours($end);
-//        $minutes = $start->diffInMinutes($end) - ($hours * 60) - ($days * 24 * 60);
-//
-//        return $days + $hours / 24 + $minutes / 1440;
-
-        return $hours;
+        return 'ok';
     }
-
 
 
     public function getRequestStatusAttribute()

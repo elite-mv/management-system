@@ -17,52 +17,82 @@
                             <div class="text-start">
                                 <form id="searchForm" class="d-flex gap-2 align-items-center">
                                     <label class="form-label text-nowrap mb-0">Payment Status</label>
-                                    <select id="searchStatus" name="status" class="form-control">
-                                        <option @selected($app->request->status == 'ALL') value="ALL">ALL</option>
-                                        @foreach(\App\Enums\RequestStatus::cases() as $status)
-                                            <option @selected($app->request->status == $status->name) value="{{$status->name}}">{{$status->value}}</option>
-                                        @endforeach
-                                    </select>
                                 </form>
                             </div>
                         </div>
                     </div>
-                    <div class="card-body overflow-x-auto" >
+                    <div class="card-body overflow-x-auto">
                         <table class="table sortable" id="sortableTable">
 
                             <thead>
                             <tr>
+                                <th class="sorttable_nosort">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="requestAllInput">
+                                    </div>
+                                </th>
                                 <th>REFERENCE</th>
                                 <th>DURATION</th>
                                 <th>ENTITY</th>
                                 <th>REQUESTED BY</th>
                                 <th>STATUS</th>
+                                <th>BANK</th>
+                                <th>BANK CODE</th>
+                                <th>CHECK NUMBER</th>
                                 <th>TOTAL</th>
                                 <th>ACTION</th>
                             </tr>
                             </thead>
-                            <tbody  id="requestData">
-                                @forelse ($requests as $request)
-                                    <tr>
-                                        <td>{{ $request->reference}}</td>
-                                        <td>{{$request->timeLapse}}</td>
-                                        <td>{{ $request->company->name}}</td>
-                                        <td>{{ $request->request_by}}</td>
-                                        <td>{{ $request->status}}</td>
-                                        <td>{!! \App\Helper\Helper::formatPeso( $request->items->first()->total_cost ) !!}</td>
-                                        <td>
-                                            <a target="_blank"  role="button" href="/expense/request/{{$request->id}}" class="btn btn-primary">View</a>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td class="text-center" colspan='8'>
-                                            <p class="text-secondary">
-                                                EMPTY TABLE
-                                            </p>
-                                        </td>
-                                    </tr>
-                                @endforelse
+                            <tbody id="requestData">
+                            @forelse ($requests as $request)
+                                <tr>
+                                    <th>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="{{$request->id}}"
+                                                   id="requestAllInput{{$request->id}}">
+                                        </div>
+                                    </th>
+                                    <td>{{ $request->reference}}</td>
+                                    <td>{{$request->created_at->diffForHumans()}}</td>
+                                    <td>{{ $request->company->name}}</td>
+                                    <td>{{ $request->request_by}}</td>
+                                    <td>{{ $request->status}}</td>
+                                    <td>
+                                        @if($request->bankDetails)
+                                            {{ $request->bankDetails->bank->name}}
+                                        @else
+                                            --
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($request->bankDetails)
+                                            {{ $request->bankDetails->code->code}}
+                                        @else
+                                            --
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($request->bankDetails)
+                                            {{ $request->bankDetails->check_number}}
+                                        @else
+                                            --
+                                        @endif
+                                    </td>
+                                    <td>{!! \App\Helper\Helper::formatPeso( $request->items->first()->total_cost ) !!}</td>
+                                    <td>
+                                        <a target="_blank" role="button" href="/expense/request/{{$request->id}}"
+                                           class="btn btn-primary">View</a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td class="text-center" colspan='8'>
+                                        <p class="text-secondary">
+                                            EMPTY TABLE
+                                        </p>
+                                    </td>
+                                </tr>
+                            @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -78,7 +108,7 @@
         const searchForm = document.querySelector('#searchForm');
         const searchStatus = document.querySelector('#searchStatus');
 
-        searchStatus.addEventListener('change',()=>{
+        searchStatus.addEventListener('change', () => {
             searchForm.submit();
         })
 

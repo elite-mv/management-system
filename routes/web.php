@@ -9,6 +9,7 @@ use App\Http\Controllers\Expense\BankDetailController;
 use App\Http\Controllers\Expense\BookKeeperController;
 use App\Http\Controllers\Expense\ChatController;
 use App\Http\Controllers\Expense\CompanyController;
+use App\Http\Controllers\Expense\DailyRequest;
 use App\Http\Controllers\Expense\DashboardController;
 use App\Http\Controllers\Expense\FinanceController;
 use App\Http\Controllers\Expense\HomeController;
@@ -96,7 +97,7 @@ Route::prefix('expense')->group(function () {
         Route::get('/next-request/{requestID}', [RequestController::class, 'nextRequest']);
         Route::get('/prev-request/{requestID}', [RequestController::class, 'prevRequest']);
         Route::middleware([CompanyData::class])->get('/requests', [RequestController::class, 'getRequests']);
-        Route::get('/daily-request', [RequestController::class, 'getDailyRequest']);
+        Route::get('/daily-request', [DailyRequest::class, 'index']);
 
         Route::middleware([CompanyData::class])->get('/book-keeper', [BookKeeperController::class, 'index']);
         Route::middleware([CompanyData::class])->get('/accountant', [AccountantController::class, 'index']);
@@ -205,7 +206,7 @@ Route::get('/tae', function (){
     return 'tae';
 });
 
-Route::get('/pdf', [PdfController::class, 'index']);
+Route::get('/test-pdf', [PdfController::class, 'index']);
 Route::get('/test', [PdfController::class, 'index']);
 Route::get('/test/{expenseRequest}', [PdfController::class, 'test']);
 Route::get('/test2/{expenseRequest}', [PdfController::class, 'test2']);

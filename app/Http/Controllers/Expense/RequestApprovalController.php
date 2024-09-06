@@ -5,10 +5,15 @@ namespace App\Http\Controllers\Expense;
 use App\Actions\AddRequestLog;
 use App\Actions\UpdateRequestApproval;
 use App\Enums\RequestApprovalStatus;
+use App\Enums\RequestFundStatus;
+use App\Enums\RequestItemStatus;
+use App\Enums\RequestStatus;
 use App\Enums\UserRole;
+use App\Models\Expense\RequestItem;
 use App\Models\Expense\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use function PHPUnit\TestFixture\func;
 
 class RequestApprovalController
 {
@@ -59,7 +64,21 @@ class RequestApprovalController
 
             $status = RequestApprovalStatus::valueOf($request->input('status'));
 
-            $this->updateRequest($status, $roleID, $expenseRequestID);
+            $approveItems = function () use ($expenseRequestID, $status) {
+
+                if ($status != RequestApprovalStatus::APPROVED) {
+                    return;
+                }
+
+                RequestItem::where('request_id',$expenseRequestID)
+                    ->whereIn('status',[RequestItemStatus::PENDING->name])
+                    ->update(['status' => RequestItemStatus::APPROVED->name]);
+
+                $this->addRequestLog->handle($expenseRequestID, 'The system automatically approve all pending items upon accountant approval');
+            };
+
+
+            $this->updateRequest($status, $roleID, $expenseRequestID,$approveItems);
 
             return redirect()->back();
 
@@ -79,7 +98,20 @@ class RequestApprovalController
 
             $status = RequestApprovalStatus::valueOf($request->input('status'));
 
-            $this->updateRequest($status, $roleID, $expenseRequestID);
+            $releaseExpense = function () use ($expenseRequestID, $status) {
+
+                if ($status != RequestApprovalStatus::APPROVED) {
+                    return;
+                }
+
+                $request = \App\Models\Expense\Request::findOrFail($expenseRequestID);
+                $request->status = \App\Enums\RequestStatus::RELEASED->value;
+                $request->save();
+
+                $this->addRequestLog->handle($expenseRequestID, 'The system automatically released the expense upon finance/president approval');
+            };
+
+            $this->updateRequest($status, $roleID, $expenseRequestID, $releaseExpense);
 
             return redirect()->back();
 
@@ -112,7 +144,7 @@ class RequestApprovalController
     /**
      * @throws \Exception
      */
-    private function updateRequest(RequestApprovalStatus $status, $roleID, $expenseRequestID): void
+    private function updateRequest(RequestApprovalStatus $status, $roleID, $expenseRequestID, $callback = null): void
     {
         try {
 
@@ -121,6 +153,10 @@ class RequestApprovalController
             $this->updateRequestApproval->handle($expenseRequestID, $roleID, $status);
 
             $this->addRequestLog->handle($expenseRequestID, 'request status was set to ' . $status->name);
+
+            if (isset($callback)) {
+                $callback();
+            }
 
             DB::commit();
 

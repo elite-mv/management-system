@@ -45,28 +45,6 @@ class RequestController extends Controller
         ]);
     }
 
-    public function getDailyRequest(Request $request)
-    {
-
-        $query = \App\Models\Expense\Request::query();
-
-
-        $query->when($request->input('status') && $request->input('status') != 'ALL', function ($query) use ($request) {
-            $query->where('status', RequestStatus::valueOf($request->input('status')));
-        });
-
-        $query->with('company');
-        $query->with('preparedBy');
-
-        $query->where(function ($query) {
-            $query->where('created_at', '>=', Carbon::now()->startOfDay()->format('Y-m-d H:i:s'));
-            $query->where('created_at', '<=', Carbon::now()->endOfDay()->format('Y-m-d H:i:s'));
-        });
-
-        return view('expense.daily-requests', [
-            'requests' => $query->paginate(25),
-        ]);
-    }
 
     public function addRequest(Request $request, AddRequestLog $addRequestLog)
     {
