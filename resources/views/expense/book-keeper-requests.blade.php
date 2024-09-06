@@ -111,9 +111,12 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
-                            <div class="col-6 text-start">
+                            <div class="col-sm-12 col-md-6 text-start">
                                 <i class="fas fa-table me-1"></i>
                                 <b>Requests</b>
+                            </div>
+                            <div class="col-sm-12 col-md-6 text-end d-none" id="collapseLayout">
+                                <button class="btn btn-sm btn-outline-danger rounded-0 px-4" onclick="console.log(window.localStorage.getItem('checkedStorage'));">[DO NOT CLICK]</button>
                             </div>
                         </div>
                     </div>
@@ -157,7 +160,7 @@
             keyboard: false
         })
 
-        const checkedInputs = new Map();
+        let checkedInputs = new Map();
 
         const requestData = document.querySelector('#requestData');
         const filterForm = document.querySelector('#filterForm');
@@ -176,8 +179,6 @@
                 }
 
                 selection.checked =  requestAllInput.checked;
-
-                console.log(checkedInputs);
             })
         }
 
@@ -197,6 +198,39 @@
             getData();
         })
 
+        function saveMapToLocalStorage(map, key) {
+            // Convert the Map to an array of [key, value] pairs
+            const mapArray = Array.from(map.entries());
+            // Serialize the array to a JSON string
+            const mapString = JSON.stringify(mapArray);
+            // Save the JSON string to localStorage
+            localStorage.setItem(key, mapString);
+        }
+
+        function loadMapFromLocalStorage(key) {
+            // Get the JSON string from localStorage
+            const mapString = localStorage.getItem(key);
+            // If there's no data, return an empty Map
+            if (!mapString) return new Map();
+            // Parse the JSON string to an array of [key, value] pairs
+            const mapArray = JSON.parse(mapString);
+            // Convert the array to a Map
+            return new Map(mapArray);
+        }
+
+        function combineMaps(newMap, key) {
+            // Load existing data
+            const existingMap = loadMapFromLocalStorage(key);
+            
+            // Merge new data into existing data
+            for (const [key, value] of newMap.entries()) {
+                existingMap.set(key, value);
+            }
+
+            // Save the combined data back to localStorage
+            saveMapToLocalStorage(existingMap, key);
+        }
+
         function selectionEvent(e){
 
             if(e.target.checked){
@@ -204,8 +238,21 @@
             }else{
                 checkedInputs.delete(e.target.value);
             }
+            
+            if (window.localStorage.getItem('checkedStorage')) {
+                combineMaps(checkedInputs, 'checkedStorage');
+            } else {
+                saveMapToLocalStorage(checkedInputs, 'checkedStorage');
+            }
+            const checkedStorage = loadMapFromLocalStorage('checkedStorage');
 
-            console.log(checkedInputs);
+            if (checkedInputs instanceof Map ? checkedInputs.size === 0 : Object.keys(checkedInputs).length === 0) {
+                $('#collapseLayout').addClass('d-none');
+                window.localStorage.removeItem('checkedStorage')
+            } else {
+                $('#collapseLayout').removeClass('d-none');
+            }
+
         }
 
         function clearForm(){
@@ -242,8 +289,19 @@
 
 
                     requestInputSelections.forEach(selection =>{
+
+                        checkedInputs = loadMapFromLocalStorage('checkedStorage');
+                        checkedInputs.forEach(([key, value]) => {
+                            const targetId = `requestInput${key}`;
+                            if (selection.id === targetId) {
+                                selection.checked = true;
+                                $('#collapseLayout').removeClass('d-none');
+                            }
+                        });
+                        
                         selection.removeEventListener('change', selectionEvent)
                         selection.addEventListener('change', selectionEvent)
+                        document.querySelector('#requestAllInput').addEventListener('change', selectionEvent)
                     })
 
                     for (let key of checkedInputs.keys()) {

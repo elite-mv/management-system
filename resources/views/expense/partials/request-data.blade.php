@@ -5,7 +5,7 @@
 @forelse ($requests as $request)
     <tr>
         <td>
-            <input id="requestInput{{$request->id}}" type="checkbox" class="form-check-input request-input-selection">
+            <input id="requestInput{{$request->id}}" value="{{$request->id}}" type="checkbox" class="form-check-input request-input-selection">
         </td>
         <td>{{ $request->reference}}</td>
         <td>{{$request->timeLapse}}</td>

@@ -273,13 +273,10 @@
             </header>
         </div>
         {{-- background-color: #EDEEF1; --}}
-        <div class="col-10 m-0 p-0 d-flex flex-column" style="background-image: repeating-linear-gradient(0deg, rgb(17, 17, 17) 0px, rgb(17, 17, 17) 1px,transparent 1px, transparent 51px),repeating-linear-gradient(90deg, rgb(17, 17, 17) 0px, rgb(17, 17, 17) 1px,transparent 1px, transparent 51px),linear-gradient(90deg, hsl(49,0%,3%),hsl(49,0%,3%)); min-height: 100vh;" id="collapseLayout2">
-            <div class="d-flex align-items-center px-3" style="height: 70px;
-            background-color: rgba(255, 255, 255, 0.2);
-	        box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
-	        border: 1px solid rgba(255, 255, 255, 0.5);
-	        border-right: 1px solid rgba(255, 255, 255, 0.2);
-	        border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+        <div class="col-10 m-0 p-0 d-flex flex-column" style="
+        background-image: repeating-linear-gradient(0deg, rgb(221,219,219) 0px, rgb(221,219,219) 1px,transparent 1px, transparent 51px),repeating-linear-gradient(90deg, rgb(221,219,219) 0px, rgb(221,219,219) 1px,transparent 1px, transparent 51px),linear-gradient(90deg, rgb(201,201,201),rgb(201,201,201));
+        min-height: 100vh;" id="collapseLayout2">
+            <div class="d-flex align-items-center px-3 bg-white bg-gradient" style="height: 70px;">
                 <button class="btn btn-link text-dark me-auto collapsed" id="collapseButton">
                     <i class="fas fa-bars"></i>
                 </button>

@@ -46,7 +46,7 @@
                     border-bottom: 1px solid rgba(255, 255, 255, 0.2);" id="show_entity">
                         @foreach ($companies as $company)
                             <div class="col-auto p-0" style="display: flex; flex-direction: column; margin-inline: auto; min-width: 130px;
-                            background-color: rgba(255, 255, 255, 0.1);
+                            background-color: rgba(255, 255, 255, 0.3);
                             box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; 
                             border: 1px solid rgba(255, 255, 255, 0.5);
                             border-right: 1px solid rgba(255, 255, 255, 0.2);
@@ -67,8 +67,17 @@
                         @endforeach
                     </div>
 
-                    <div class="m-0 border p-3 bg-white bg-gradient mb-3" style="border-radius: 7px;" id="request_details">
-                        <div class="d-flex flex-column gap-2 p-4" style="box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;">
+                    <div class="m-0 border p-3 mb-3" style="border-radius: 7px;
+                    background-color: rgba(255, 255, 255, 0.2);
+                    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+                    border: 1px solid rgba(255, 255, 255, 0.5);
+                    border-right: 1px solid rgba(255, 255, 255, 0.2);
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.2);" id="request_details">
+                        <div class="d-flex flex-column gap-2 p-4" style="background-color: rgba(255, 255, 255, 0.3);
+                            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; 
+                            border: 1px solid rgba(255, 255, 255, 0.5);
+                            border-right: 1px solid rgba(255, 255, 255, 0.2);
+                            border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
                             <label class="text-center text-white bg-dark bg-gradient fw-bold py-1 mb-2">REQUEST DETAILS</label>
                             <div class="row">
                                 <p class="col-12 col-md-2 fw-bold">Supplier:</p>
@@ -97,10 +106,19 @@
                         </div>
                     </div>
 
-                    <div class="m-0 border p-3 bg-white bg-gradient mb-3" style="border-radius: 7px;" id="request_items">
-                        <div class="d-flex flex-column p-4 gap-4" style="box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;">
+                    <div class="m-0 border p-3 mb-3" style="border-radius: 7px;
+                    background-color: rgba(255, 255, 255, 0.2);
+                    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+                    border: 1px solid rgba(255, 255, 255, 0.5);
+                    border-right: 1px solid rgba(255, 255, 255, 0.2);
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.2);" id="request_items">
+                        <div class="d-flex flex-column p-4 gap-4" style="background-color: rgba(255, 255, 255, 0.3);
+                            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; 
+                            border: 1px solid rgba(255, 255, 255, 0.5);
+                            border-right: 1px solid rgba(255, 255, 255, 0.2);
+                            border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
 
-                            <div class="d-flex flex-column justify-content-start overflow-x-auto p-4" style="box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;">
+                            <div class="d-flex flex-column justify-content-start overflow-x-auto p-4">
                                 <table class="table table-bordered table-responsive table-hover" id="request_cart">
                                     <thead class="table-dark">
                                         <tr>
@@ -116,7 +134,7 @@
                                 </table>
                             </div>
 
-                            <div class="d-flex flex-column justify-content-start overflow-x-auto p-4 gap-2" style="box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;">
+                            <div class="d-flex flex-column justify-content-start overflow-x-auto p-4 gap-2">
                                 <label class="text-center text-white bg-dark bg-gradient fw-bold py-1 mb-2">REQUEST ITEMS</label>
 
                                 <input type="hidden" id="requestId" class="d-none">
@@ -212,8 +230,17 @@
                         </div>
                     </div>
 
-                    <div class="m-0 border p-3 bg-white bg-gradient mb-3" style="border-radius: 7px;" id="final_request">
-                        <div class="row m-0 gap-3 p-4" style="box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;">
+                    <div class="m-0 border p-3 mb-3" style="border-radius: 7px;
+                    background-color: rgba(255, 255, 255, 0.2);
+                    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+                    border: 1px solid rgba(255, 255, 255, 0.5);
+                    border-right: 1px solid rgba(255, 255, 255, 0.2);
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.2);" id="final_request">
+                        <div class="row m-0 gap-3 p-4" style="background-color: rgba(255, 255, 255, 0.3);
+                            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; 
+                            border: 1px solid rgba(255, 255, 255, 0.5);
+                            border-right: 1px solid rgba(255, 255, 255, 0.2);
+                            border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
                             <div class="col-auto d-flex flex-row gap-2 align-items-center me-auto">
                                 <label class="form-label text-nowrap m-0">TOTAL :</label>
                                 <input id="itemTotal" type="text" class="form-control p-2" name="total" disabled>
