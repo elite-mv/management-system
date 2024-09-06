@@ -118,59 +118,11 @@
                     <i class="fas fa-scroll"></i>
                     View Logs
                 </button>
-                <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#checkwriterModal">
+                <button class="btn btn-secondary" id="check_writer">
                     <i class="fas fa-plus-circle me-2"></i>Check Writer
+                    <input type="hidden" id="hidden_paid_to" value=" {{$request->paid_to}}">
+                    <input type="hidden" id="hidden_amount" value="{{$request->approvedItems->sum('total_cost')}}">
                 </button>
-            </div>
-
-            <div class="modal fade text-dark" id="checkwriterModal" tabindex="-1" aria-labelledby="Check Writer"
-                 aria-hidden="true">
-                <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                        <form id="checkwriterForm">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5">Check Writer</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body d-flex align-items-center justify-content-around">
-                                <div style="width: 7.95in; height: 2.9in; position: relative;" class="my-auto"
-                                     id="printable_check">
-                                    <img src="https://html.scribdassets.com/5xqh18575sa7ssqi/images/1-f2cc24c5d0.jpg"
-                                         class="img-fluid h-100" alt="check-writer">
-
-                                    <div style="position: absolute; top: 0.23in; right: 0.35in; width: 2in;">
-                                        <input type="text"
-                                               class="form-control rounded-0 bg-transparent border-0 text-end fw-bold"
-                                               style="line-height: 8px;" name="date"
-                                               placeholder="0  0    0  0    0  0  0  0">
-                                    </div>
-                                    <div style="position: absolute; top: 0.6in; left: 0.95in; width: 4.43in;">
-                                        <input type="text"
-                                               class="form-control rounded-0 bg-transparent border-0 fw-bold"
-                                               style="line-height: 8px;" name="paid_to"
-                                               placeholder="*** JOHN CASTILLO ***">
-                                    </div>
-                                    <div style="position: absolute; top: 0.6in; left: 5.5in; width: 2in;">
-                                        <input type="text"
-                                               class="form-control rounded-0 bg-transparent border-0 fw-bold"
-                                               style="line-height: 8px;" name="amount_words"
-                                               placeholder="*** 1,000,000 ***">
-                                    </div>
-                                    <div style="position: absolute; top: 0.92in; left: 0.695in; width: 6.8in;">
-                                        <input type="text"
-                                               class="form-control rounded-0 bg-transparent border-0 fw-bold"
-                                               style="line-height: 8px;" name="amount_value"
-                                               placeholder="*** ONE MILLION ONLY ***">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-success rounded-pill w-50 mx-auto">Print</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
             </div>
 
             <div class="container-fluid mx-auto bg-white">
@@ -358,6 +310,7 @@
                                 class="px-2 small text-end">{!! \App\Helper\Helper::formatPeso($request->total) !!}</td>
                             <td colspan="5"
                                 class="px-2 small text-center fw-bold bg-gray text-uppercase">{!! \App\Helper\Helper::formatPeso($request->approvedItems->sum('total_cost')) !!}</td>
+
                         </tr>
                         <tr>
                             <td class="small text-center bg-dark text-white" colspan="18">PURCHASE REQUEST</td>
@@ -2479,20 +2432,41 @@
     </script>
 
     <script>
-        document.getElementById('checkwriterForm').addEventListener('submit', function (event) {
+        document.getElementById('check_writer').addEventListener('click', function (event) {
             event.preventDefault();
-            var element = document.getElementById('printable_check');
-            html2pdf(element, {
-                margin: 0,
-                filename: 'CHECK_BDO.pdf',
-                image: {type: 'jpg', quality: 1.0},
-                html2canvas: {scale: 1},
-                jsPDF: {
-                    unit: 'in',
-                    format: [6.25, 2.75],
-                    orientation: 'landscape',
-                }
-            });
+            const date = new Date();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const year = date.getFullYear().toString();
+            const formattedDate = `${month.split('').join('   ')}     ${day.split('').join('   ')}     ${year.split('').join('   ')}`;
+
+            var number = parseFloat($('#hidden_amount').val());
+            var formattedNumber = number.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }) + '***';
+
+            const formattedPaidTo = '***' + $('#hidden_paid_to').val() + '***';
+
+            const fileUrl = '/excel/Check Writer-2024.xlsx';
+            fetch(fileUrl)
+                .then(response => response.arrayBuffer())
+                .then(async (data) => {
+                    const workbook = new ExcelJS.Workbook();
+                    await workbook.xlsx.load(data);
+                    const worksheet = workbook.worksheets[0];
+
+                    worksheet.getCell('C3').value = formattedPaidTo;
+                    worksheet.getCell('C4').value = formattedNumber;
+                    worksheet.getCell('C5').value = 'SAMPLE AMOUNT TO WORDS';
+                    worksheet.getCell('C6').value = formattedDate;
+
+                    const buffer = await workbook.xlsx.writeBuffer();
+                    const blob = new Blob([buffer], { type: 'application/octet-stream' });
+
+                    saveAs(blob, 'Check Writer-2024.xlsx');
+                })
+                .catch(error => console.error('Error fetching or processing the file:', error));
         });
     </script>
 

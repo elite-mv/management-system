@@ -1,7 +1,14 @@
 @extends('layouts.expense-index')
 
-
 @section('title', 'Accountant')
+
+@section('style')
+    <style type="text/css">
+        .finance_nav {
+            color: rgb(255, 255, 255, 1.0);
+        }
+    </style>
+@endsection
 
 @section('body')
     <div class="container p-3" style="position: relative;">
@@ -104,9 +111,12 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
-                            <div class="col-6 text-start">
+                            <div class="col-sm-12 col-md-6 text-start">
                                 <i class="fas fa-table me-1"></i>
                                 <b>Requests</b>
+                            </div>
+                            <div class="col-sm-12 col-md-6 text-end">
+                                <button class="btn btn-sm btn-outline-danger rounded-0 px-4">[DO NOT CLICK]</button>
                             </div>
                         </div>
                     </div>

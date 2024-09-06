@@ -6,6 +6,14 @@
 
 @section('title', 'Downloadable Forms')
 
+@section('style')
+    <style type="text/css">
+        .dl_forms_nav {
+            color: rgb(255, 255, 255, 1.0);
+        }
+    </style>
+@endsection
+
 @section('body')
 
     <div class="container-fluid mt-2">

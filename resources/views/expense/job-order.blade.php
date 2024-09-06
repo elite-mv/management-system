@@ -4,8 +4,15 @@
 
 @extends('layouts.expense-index')
 
-
 @section('title', 'Job Order')
+
+@section('style')
+    <style type="text/css">
+        .job_order_nav {
+            color: rgb(255, 255, 255, 1.0);
+        }
+    </style>
+@endsection
 
 @section('body')
 

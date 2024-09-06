@@ -283,7 +283,7 @@ async function viewCart() {
 
         let data = await result.text();
 
-        $('#request_cart').html(data);
+        $('#request_cart > tbody').html(data);
 
     } catch (error) {
         console.error(error.message);

@@ -2,6 +2,14 @@
 
 @section('title', 'President')
 
+@section('style')
+    <style type="text/css">
+        .president_nav {
+            color: rgb(255, 255, 255, 1.0);
+        }
+    </style>
+@endsection
+
 @section('body')
 
     @if($errors->any())

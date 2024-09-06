@@ -1,7 +1,14 @@
 @extends('layouts.expense-index')
 
-
 @section('title', 'Book Keeper')
+
+@section('style')
+    <style type="text/css">
+        .book_keeper_nav {
+            color: rgb(255, 255, 255, 1.0);
+        }
+    </style>
+@endsection
 
 @section('body')
     <div class="container p-3" style="position: relative;">
@@ -100,9 +107,12 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
-                            <div class="col-6 text-start">
+                            <div class="col-sm-12 col-md-6 text-start">
                                 <i class="fas fa-table me-1"></i>
                                 <b>Requests</b>
+                            </div>
+                            <div class="col-sm-12 col-md-6 text-end d-none" id="collapseLayout">
+                                <button class="btn btn-sm btn-outline-danger rounded-0 px-4" onclick="console.log(window.localStorage.getItem('checkedStorage'));">[DO NOT CLICK]</button>
                             </div>
                         </div>
                     </div>
@@ -187,27 +197,170 @@
         function addSelectionEvent() {
             requestInputSelections.forEach(selection => {
 
-                if (!selection.checked) {
+                if(!selection.checked){
                     checkedInputs.set(selection.value, selection.value);
-                } else {
+                }else{
                     checkedInputs.delete(selection.value);
                 }
 
-                selection.checked = requestAllInput.checked;
-
-                console.log(checkedInputs);
+                selection.checked =  requestAllInput.checked;
             })
         }
 
-        function selectionEvent(e) {
+        filterForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            getData();
+            filterModal.hide();
+        })
 
-            if (e.target.checked) {
+        inputs.forEach(input => {
+            input.addEventListener('change', () => {
+                getData();
+            })
+        });
+
+        window.addEventListener('load', () => {
+            getData();
+        })
+
+        function saveMapToLocalStorage(map, key) {
+            // Convert the Map to an array of [key, value] pairs
+            const mapArray = Array.from(map.entries());
+            // Serialize the array to a JSON string
+            const mapString = JSON.stringify(mapArray);
+            // Save the JSON string to localStorage
+            localStorage.setItem(key, mapString);
+        }
+
+        function loadMapFromLocalStorage(key) {
+            // Get the JSON string from localStorage
+            const mapString = localStorage.getItem(key);
+            // If there's no data, return an empty Map
+            if (!mapString) return new Map();
+            // Parse the JSON string to an array of [key, value] pairs
+            const mapArray = JSON.parse(mapString);
+            // Convert the array to a Map
+            return new Map(mapArray);
+        }
+
+        function combineMaps(newMap, key) {
+            // Load existing data
+            const existingMap = loadMapFromLocalStorage(key);
+
+            // Merge new data into existing data
+            for (const [key, value] of newMap.entries()) {
+                existingMap.set(key, value);
+            }
+
+            // Save the combined data back to localStorage
+            saveMapToLocalStorage(existingMap, key);
+        }
+
+        function selectionEvent(e){
+
+            if(e.target.checked){
                 checkedInputs.set(e.target.value, e.target.value);
-            } else {
+            }else{
                 checkedInputs.delete(e.target.value);
             }
 
-            console.log(checkedInputs);
+            if (window.localStorage.getItem('checkedStorage')) {
+                combineMaps(checkedInputs, 'checkedStorage');
+            } else {
+                saveMapToLocalStorage(checkedInputs, 'checkedStorage');
+            }
+            const checkedStorage = loadMapFromLocalStorage('checkedStorage');
+
+            if (checkedInputs instanceof Map ? checkedInputs.size === 0 : Object.keys(checkedInputs).length === 0) {
+                $('#collapseLayout').addClass('d-none');
+                window.localStorage.removeItem('checkedStorage')
+            } else {
+                $('#collapseLayout').removeClass('d-none');
+            }
+
+        }
+
+        function clearForm(){
+            filterForm.reset();
+            getData();
+        }
+
+        function getData(cb = null) {
+
+            let formData = new FormData(filterForm);
+
+            if(cb){
+                cb(formData);
+            }
+
+            const params = new URLSearchParams(formData);
+
+            fetch(`/expense/api/book-keeper?${params.toString()}`, {
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                }
+            })
+                .then(data => data.text())
+                .then(data => {
+
+                    requestData.innerHTML = data;
+
+                    requestInputSelections = document.querySelectorAll('.request-input-selection');
+
+                    requestAllInput = document.querySelector('#requestAllInput')
+
+                    requestAllInput.removeEventListener('change', addSelectionEvent)
+                    requestAllInput.addEventListener('change', addSelectionEvent)
+
+
+                    requestInputSelections.forEach(selection =>{
+
+                        checkedInputs = loadMapFromLocalStorage('checkedStorage');
+                        checkedInputs.forEach(([key, value]) => {
+                            const targetId = `requestInput${key}`;
+                            if (selection.id === targetId) {
+                                selection.checked = true;
+                                $('#collapseLayout').removeClass('d-none');
+                            }
+                        });
+
+                        selection.removeEventListener('change', selectionEvent)
+                        selection.addEventListener('change', selectionEvent)
+                        document.querySelector('#requestAllInput').addEventListener('change', selectionEvent)
+                    })
+
+                    for (let key of checkedInputs.keys()) {
+
+                        const target = document.querySelector(`#requestInput${key}`);
+
+                        if(target){
+                            target.checked = true;
+                        }
+                    }
+
+                    setupPageLinks();
+                }).catch(err => {
+                console.error(err)
+            })
+        }
+
+        function setupPageLinks(){
+
+            const links = document.querySelectorAll('.page-link');
+
+            links.forEach(link =>{
+                link.addEventListener('click',(e)=>{
+
+                    e.preventDefault();
+
+                    const url = new URL(e.target.href);
+
+                    getData(formData =>{
+                        formData.append('page', url.searchParams.get("page") ?? 1);
+                    });
+
+                })
+            })
         }
     </script>
 

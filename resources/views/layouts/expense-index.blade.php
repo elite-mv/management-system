@@ -13,15 +13,34 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
-    <link rel="stylesheet" href="/css/navigation.css">
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.4/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
     @yield('files')
     @yield('style')
 
     <style>
+
+        header > div {
+            :hover {
+                color: rgb(255, 255, 255, 1.0);
+            }
+
+            a {
+                text-decoration: none;
+                text-align: left;
+                color: rgb(255, 255, 255, 0.5);
+                display: flex;
+                justify-content: start;
+                align-items: center;
+                flex-direction: row;
+                gap: 10px;
+            }
+        }
 
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
@@ -35,7 +54,6 @@
         }
 
         * {
-
             /* color: red !important; */
             /* border:  solid red 1px !important */
         }
@@ -48,6 +66,59 @@
         .cursor-pointer {
             cursor: pointer !important;
         }
+
+        .wraper {
+            position: relative;
+            height: 75px;
+            width: 100%;
+            overflow: hidden;
+            mask-image: linear-gradient(
+                to right,
+                rgba(0, 0, 0, 0),
+                rgba(0, 0, 0, 1) 20%,
+                rgba(0, 0, 0, 1) 80%,
+                rgba(0, 0, 0, 0)
+            );
+        }
+
+        @keyframes scroll {
+            to {
+                left: -200px;
+            }
+        }
+
+        .item {
+            text-align: center;
+            height: 75px;
+            width: 200px;
+            overflow: hidden;
+            position: absolute;
+            left: max(calc(250px * 5), 100%);
+            animation-name: scroll;
+            animation-duration: 20s;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+        }
+
+        .item1 {
+            animation-delay: calc(20s / 5 * (5 - 1) * -1);
+        }
+
+        .item2 {
+            animation-delay: calc(20s / 5 * (5 - 2) * -1);
+        }
+
+        .item3 {
+            animation-delay: calc(20s / 5 * (5 - 3) * -1);
+        }
+
+        .item4 {
+            animation-delay: calc(20s / 5 * (5 - 4) * -1);
+        }
+
+        .item5 {
+            animation-delay: calc(20s / 5 * (5 - 5) * -1);
+        }
     </style>
 </head>
 <body>
@@ -55,34 +126,44 @@
 <section class="loader"></section>
 
 <main>
-    <div class="row mx-0">
-        <nav class="bg-dark d-none d-md-block col-2 px-0">
-            <header class="text-light collapse show" id="collapseLayouts">
-                <div class="w-100">
+    <div class="row m-0 p-0">
+        <div class="col-2 m-0 p-0 px-3 bg-dark bg-gradient" style="min-height: 100vh; max-height: 100%; overflow-y: auto;" id="collapseLayout1">
+            <header class="text-light text-center d-flex flex-column p-2 pt-3">
+                <div>
                     <a href="/expense/request">
-                        <img class="d-block mx-auto" src="images/logos/ELITE_ACES_LOGO.jpg" height="75px"
-                             alt="Management System">
+                        <div class="my-3 wraper">
+                            <div class="item item1"><img src="/././images/logos/GTI_LOGO.png" style="height: 75px; width: auto;"></div>
+                            <div class="item item2"><img src="/././images/logos/BALLISTIC_LOGO.png" style="height: 75px; width: auto;"></div>
+                            <div class="item item3"><img src="/././images/logos/GUNTECH_LOGO.png" style="height: 75px; width: auto;"></div>
+                            <div class="item item4"><img src="/././images/logos/SOTERIA_LOGO.webp" style="height: 75px; width: auto;"></div>
+                            <div class="item item5"><img src="/././images/logos/ELITE_ACES_LOGO.png" style="height: 75px; width: auto;"></div>
+                        </div>
+                        {{-- <img class="d-block mx-auto" src="/././images/logos/ELITE_ACES_LOGO.png" height="75px" alt="Management System"> --}}
                     </a>
-                    <h6 class="mt-3 text-center">MANAGEMENT SYSTEM</h6>
+                    <h6>MANAGEMENT SYSTEM</h6>
                 </div>
-
                 <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
-
                 <div class="my-3">
                     <a href="/expense/home" class="home_nav">
                         <i class="fas fa-home" style="height: 20px; width: 20px;"></i>
                         <small><b>Home</b></small>
                     </a>
                 </div>
-
                 <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
 
-                <small class="my-2" style="color: rgb(255, 255, 255, 0.5);"><b>MAKE REQUEST</b></small>
+                <small class="my-2 text-start" style="color: rgb(255, 255, 255, 0.5);"><b>MAKE REQUEST</b></small>
 
                 <div class="mb-3">
                     <a href="/expense/request" class="request_nav">
                         <i class="fas fa-shopping-basket" style="height: 20px; width: 20px;"></i>
-                        <small><b>Request</b></small>
+                        <small><b>New Request</b></small>
+                    </a>
+                </div>
+
+                <div class="mb-3">
+                    <a href="/expense/past_request" class="past_request_nav">
+                        <i class="fas fa-record-vinyl" style="height: 20px; width: 20px;"></i>
+                        <small><b>Past Request</b></small>
                     </a>
                 </div>
 
@@ -94,7 +175,7 @@
                 </div>
 
                 <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
-                <small class="my-2" style="color: rgb(255, 255, 255, 0.5);"><b>MANAGE REQUESTS</b></small>
+                <small class="my-2 text-start" style="color: rgb(255, 255, 255, 0.5);"><b>MANAGE REQUESTS</b></small>
 
                 <div class="mb-3">
                     <a href="/expense/book-keeper" class="book_keeper_nav">
@@ -128,22 +209,19 @@
                     </a>
                 </div>
                 <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
-                <small class="my-2" style="color: rgb(255, 255, 255, 0.5);"><b>EDIT OPTIONS</b></small>
-
+                <small class="my-2 text-start" style="color: rgb(255, 255, 255, 0.5);"><b>EDIT OPTIONS</b></small>
                 <div class="mb-3">
                     <a href="/expense/entity" class="entity_nav">
                         <i class="fas fa-code-branch" style="height: 20px; width: 20px;"></i>
                         <small><b>Entity</b></small>
                     </a>
                 </div>
-
                 <div class="mb-3">
                     <a href="/expense/job-order" class="job_order_nav">
                         <i class="fas fa-sort-amount-up-alt" style="height: 20px; width: 20px;"></i>
                         <small><b>Job Order</b></small>
                     </a>
                 </div>
-
                 <div class="mb-3">
                     <a href="uom.php" class="uom_nav">
                         <i class="fas fa-balance-scale" style="height: 20px; width: 20px;"></i>
@@ -151,8 +229,7 @@
                     </a>
                 </div>
                 <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
-                <small class="my-2" style="color: rgb(255, 255, 255, 0.5);"><b>MANAGE ACCOUNTS</b></small>
-
+                <small class="my-2 text-start" style="color: rgb(255, 255, 255, 0.5);"><b>MANAGE ACCOUNTS</b></small>
                 <div class="mb-3">
                     <a href="/expense/account" class="my_profile_nav">
                         <i class="fas fa-user" style="height: 20px; width: 20px;"></i>
@@ -165,34 +242,28 @@
                         <small><b>Accounts</b></small>
                     </a>
                 </div>
-
                 <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
-                <small class="my-2" style="color: rgb(255, 255, 255, 0.5);"><b>REPORTS</b></small>
-
+                <small class="my-2 text-start" style="color: rgb(255, 255, 255, 0.5);"><b>REPORTS</b></small>
                 <div class="mb-3">
                     <a href="/expense/logs" class="exp_nav">
                         <i class="fas fa-folder-open" style="height: 20px; width: 20px;"></i>
                         <small><b>Logs</b></small>
                     </a>
                 </div>
-
                 <div class="mb-3">
                     <a href="/expense/forms" class="dl_forms_nav">
                         <i class="fas fa-download" style="height: 20px; width: 20px;"></i>
                         <small><b>Downloadable Forms</b></small>
                     </a>
                 </div>
-
                 <div class="mb-3">
                     <a href="/expense/daily-request" class="daily_request_nav">
                         <i class="fas fa-calendar" style="height: 20px; width: 20px;"></i>
                         <small><b>Daily Request</b></small>
                     </a>
                 </div>
-
                 <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
-                <small class="my-2" style="color: rgb(255, 255, 255, 0.5);"><b>MESSAGES</b></small>
-
+                <small class="my-2 text-start" style="color: rgb(255, 255, 255, 0.5);"><b>MESSAGES</b></small>
                 <div class="mb-3">
                     <a href="/expense/chat" class="group_message_nav">
                         <i class="far fa-comments" style="height: 20px; width: 20px;"></i>
@@ -200,15 +271,15 @@
                     </a>
                 </div>
             </header>
-
-        </nav>
-        <section class="col-12 col-md-10 container-fluid px-0 mx-0" style="background-color: #EDEEF1;">
-            <div class="bg-white d-flex align-items-center px-3" style="height: 70px;">
-                <button class="btn btn-link text-dark me-auto collapsed" href="#" data-bs-toggle="collapse"
-                        data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+        </div>
+        {{-- background-color: #EDEEF1; --}}
+        <div class="col-10 m-0 p-0 d-flex flex-column" style="
+        background-image: repeating-linear-gradient(0deg, rgb(221,219,219) 0px, rgb(221,219,219) 1px,transparent 1px, transparent 51px),repeating-linear-gradient(90deg, rgb(221,219,219) 0px, rgb(221,219,219) 1px,transparent 1px, transparent 51px),linear-gradient(90deg, rgb(201,201,201),rgb(201,201,201));
+        min-height: 100vh;" id="collapseLayout2">
+            <div class="d-flex align-items-center px-3 bg-white bg-gradient" style="height: 70px;">
+                <button class="btn btn-link text-dark me-auto collapsed" id="collapseButton">
                     <i class="fas fa-bars"></i>
                 </button>
-
                 <form method="POST" action="/logout" class="logoutForm">
                     @csrf
                     <button type="submit">
@@ -217,9 +288,8 @@
                     </button>
                 </form>
             </div>
-
             @yield('body')
-        </section>
+        </div>
     </div>
 </main>
 
@@ -244,14 +314,9 @@
 
 @yield('script')
 <script>
-
-
-
-
     const logoutForm = document.querySelector('.logoutForm');
 
     logoutForm.addEventListener('submit', (e) => {
-
         e.preventDefault();
 
         Swal.fire({
@@ -275,7 +340,6 @@
     });
 
     function speek(message) {
-
         try {
             const utterance = new SpeechSynthesisUtterance(message);
             utterance.voice = speechSynthesis.getVoices()[4];
@@ -303,10 +367,27 @@
     $(window).on('load', function () {
         $(".loader").fadeOut('slow');
         reloadImageModal();
-
-
     });
 
+    $(document).ready(function() {
+        function handleResize() {
+
+            if (window.innerWidth <= 1024) {
+                $('#collapseLayout1').hide();
+                $('#collapseLayout2').removeClass('col-10').addClass('col-12');
+            } else {
+                $('#collapseLayout1').show();
+                $('#collapseLayout2').removeClass('col-12').addClass('col-10');
+            }
+        }
+        handleResize();
+        window.addEventListener('resize', handleResize);
+    });
+
+    $('#collapseButton').on('click', function() {
+        $('#collapseLayout1').toggle();
+        $('#collapseLayout2').toggleClass('col-10 col-12');
+    })
 </script>
 </body>
 </html>
