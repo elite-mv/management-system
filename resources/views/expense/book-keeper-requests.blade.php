@@ -41,11 +41,12 @@
                                 <div class="form-group row mb-2">
                                     <div class="col-6">
                                         <label>From</label>
-                                        <input value="{{$app->request->from}}" name="from" class="form-control" type="date">
+                                        <input value="{{$app->request->from}}" name="from" class="form-control"
+                                               type="date">
                                     </div>
                                     <div class="col-6">
                                         <label>To</label>
-                                        <input  value="{{$app->request->to}}" name="to" class="form-control" type="date">
+                                        <input value="{{$app->request->to}}" name="to" class="form-control" type="date">
                                     </div>
                                 </div>
                             </div>
@@ -64,7 +65,8 @@
                     <select name="paymentStatus" class="form-control inputs" id="status">
                         <option value="ALL">All</option>
                         @foreach(\App\Enums\RequestStatus::cases() as $status)
-                            <option @selected($app->request->paymentStatus == $status->value) value="{{$status->value}}">{{$status->value}}</option>
+                            <option
+                                @selected($app->request->paymentStatus == $status->value) value="{{$status->value}}">{{$status->value}}</option>
                         @endforeach
                     </select>
                 </div>
@@ -74,7 +76,8 @@
                     <select name="status" class="form-control inputs" id="status">
                         <option value="ALL">All</option>
                         @foreach(\App\Enums\RequestApprovalStatus::status() as $status)
-                            <option  @selected($app->request->status == $status->name)  value="{{$status->name}}">{{$status->name}}</option>
+                            <option
+                                @selected($app->request->status == $status->name)  value="{{$status->name}}">{{$status->name}}</option>
                         @endforeach
                     </select>
                 </div>
@@ -95,7 +98,8 @@
                     <select name="entity" class="form-control inputs">
                         <option value="ALL">ALL</option>
                         @foreach($companies as $company)
-                            <option @selected($app->request->entity == $company->id) value="{{$company->id}}">{{$company->name}}</option>
+                            <option
+                                @selected($app->request->entity == $company->id) value="{{$company->id}}">{{$company->name}}</option>
                         @endforeach
                     </select>
                 </div>
@@ -112,7 +116,8 @@
                                 <b>Requests</b>
                             </div>
                             <div class="col-sm-12 col-md-6 text-end d-none" id="collapseLayout">
-                                <button class="btn btn-sm btn-outline-danger rounded-0 px-4" onclick="console.log(window.localStorage.getItem('checkedStorage'));">[DO NOT CLICK]</button>
+                                <button class="btn btn-sm btn-outline-danger rounded-0 px-4">Download Check</button>
+                                <button class="btn btn-sm btn-outline-danger rounded-0 px-4">Download Form</button>
                             </div>
                         </div>
                     </div>
@@ -138,8 +143,8 @@
                             @forelse ($requests as $request)
                                 <tr>
                                     <td>
-                                        <input id="requestInput{{$request->id}}" type="checkbox"
-                                               class="form-check-input request-input-selection">
+                                        <input data-id='{{$request->id}}' id="requestInput{{$request->id}}"
+                                               type="checkbox" class="form-check-input request-input-selection">
                                     </td>
                                     <td>{{ $request->reference}}</td>
                                     <td>{{$request->created_at->diffForHumans()}}</td>
@@ -181,11 +186,14 @@
         const filterModal = new bootstrap.Modal('#filterModal');
         const checkedInputs = new Map();
 
+        const collapseLayout = document.querySelector('#collapseLayout');
         const requestData = document.querySelector('#requestData');
         const filterForm = document.querySelector('#filterForm');
         const inputs = document.querySelectorAll('.inputs');
 
-        let requestAllInput;
+        let requestAllInput = document.querySelector('#requestAllInput');
+        let requestAllItemInput = document.querySelectorAll('.request-input-selection');
+
         let requestInputSelections = [];
 
         inputs.forEach(input => {
@@ -194,174 +202,108 @@
             })
         });
 
-        function addSelectionEvent() {
-            requestInputSelections.forEach(selection => {
+        requestAllInput.addEventListener('input', () => {
+            requestAllItemInput.forEach(item => {
 
-                if(!selection.checked){
-                    checkedInputs.set(selection.value, selection.value);
-                }else{
-                    checkedInputs.delete(selection.value);
+                item.checked = requestAllInput.checked;
+
+                const id = item.dataset.id;
+
+                //load keys from local storage
+                let prevData = JSON.parse(window.localStorage.getItem('checkedInputs'));
+
+                if (prevData) {
+                    prevData.forEach(key => {
+                        checkedInputs.set(key, key)
+                    });
                 }
 
-                selection.checked =  requestAllInput.checked;
-            })
-        }
+                if (item.checked) {
+                    checkedInputs.set(id, id)
+                } else {
+                    checkedInputs.delete(id)
+                }
 
-        filterForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            getData();
-            filterModal.hide();
-        })
+                const data = [...checkedInputs.keys()];
 
-        inputs.forEach(input => {
-            input.addEventListener('change', () => {
-                getData();
+                const mapString = JSON.stringify(data);
+
+                localStorage.setItem('checkedInputs', mapString);
+
+            });
+
+            fireEvent();
+        });
+
+        requestAllItemInput.forEach(item => {
+
+            item.addEventListener('input', (e) => {
+
+                const checkbox = e.target;
+                const id = item.dataset.id;
+
+                //load keys from local storage
+                let prevData = JSON.parse(window.localStorage.getItem('checkedInputs'));
+
+                if (prevData) {
+                    prevData.forEach(key => {
+                        checkedInputs.set(key, key)
+                    });
+                }
+
+                if (checkbox.checked) {
+                    checkedInputs.set(id, id)
+                } else {
+                    checkedInputs.delete(id)
+                }
+
+                const data = [...checkedInputs.keys()];
+
+                const mapString = JSON.stringify(data);
+
+                localStorage.setItem('checkedInputs', mapString);
+
+                fireEvent();
             })
         });
 
+
         window.addEventListener('load', () => {
-            getData();
-        })
 
-        function saveMapToLocalStorage(map, key) {
-            // Convert the Map to an array of [key, value] pairs
-            const mapArray = Array.from(map.entries());
-            // Serialize the array to a JSON string
-            const mapString = JSON.stringify(mapArray);
-            // Save the JSON string to localStorage
-            localStorage.setItem(key, mapString);
-        }
+            let prevData = JSON.parse(window.localStorage.getItem('checkedInputs'));
 
-        function loadMapFromLocalStorage(key) {
-            // Get the JSON string from localStorage
-            const mapString = localStorage.getItem(key);
-            // If there's no data, return an empty Map
-            if (!mapString) return new Map();
-            // Parse the JSON string to an array of [key, value] pairs
-            const mapArray = JSON.parse(mapString);
-            // Convert the array to a Map
-            return new Map(mapArray);
-        }
+            if (prevData) {
+                prevData.forEach(key => {
 
-        function combineMaps(newMap, key) {
-            // Load existing data
-            const existingMap = loadMapFromLocalStorage(key);
+                    const checkbox = document.querySelector(`#requestInput${key}`);
 
-            // Merge new data into existing data
-            for (const [key, value] of newMap.entries()) {
-                existingMap.set(key, value);
-            }
-
-            // Save the combined data back to localStorage
-            saveMapToLocalStorage(existingMap, key);
-        }
-
-        function selectionEvent(e){
-
-            if(e.target.checked){
-                checkedInputs.set(e.target.value, e.target.value);
-            }else{
-                checkedInputs.delete(e.target.value);
-            }
-
-            if (window.localStorage.getItem('checkedStorage')) {
-                combineMaps(checkedInputs, 'checkedStorage');
-            } else {
-                saveMapToLocalStorage(checkedInputs, 'checkedStorage');
-            }
-            const checkedStorage = loadMapFromLocalStorage('checkedStorage');
-
-            if (checkedInputs instanceof Map ? checkedInputs.size === 0 : Object.keys(checkedInputs).length === 0) {
-                $('#collapseLayout').addClass('d-none');
-                window.localStorage.removeItem('checkedStorage')
-            } else {
-                $('#collapseLayout').removeClass('d-none');
-            }
-
-        }
-
-        function clearForm(){
-            filterForm.reset();
-            getData();
-        }
-
-        function getData(cb = null) {
-
-            let formData = new FormData(filterForm);
-
-            if(cb){
-                cb(formData);
-            }
-
-            const params = new URLSearchParams(formData);
-
-            fetch(`/expense/api/book-keeper?${params.toString()}`, {
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            })
-                .then(data => data.text())
-                .then(data => {
-
-                    requestData.innerHTML = data;
-
-                    requestInputSelections = document.querySelectorAll('.request-input-selection');
-
-                    requestAllInput = document.querySelector('#requestAllInput')
-
-                    requestAllInput.removeEventListener('change', addSelectionEvent)
-                    requestAllInput.addEventListener('change', addSelectionEvent)
-
-
-                    requestInputSelections.forEach(selection =>{
-
-                        checkedInputs = loadMapFromLocalStorage('checkedStorage');
-                        checkedInputs.forEach(([key, value]) => {
-                            const targetId = `requestInput${key}`;
-                            if (selection.id === targetId) {
-                                selection.checked = true;
-                                $('#collapseLayout').removeClass('d-none');
-                            }
-                        });
-
-                        selection.removeEventListener('change', selectionEvent)
-                        selection.addEventListener('change', selectionEvent)
-                        document.querySelector('#requestAllInput').addEventListener('change', selectionEvent)
-                    })
-
-                    for (let key of checkedInputs.keys()) {
-
-                        const target = document.querySelector(`#requestInput${key}`);
-
-                        if(target){
-                            target.checked = true;
-                        }
+                    // null check
+                    if(!checkbox){
+                        return
                     }
 
-                    setupPageLinks();
-                }).catch(err => {
-                console.error(err)
-            })
+                    checkbox.checked = true;
+
+                });
+            }
+
+            fireEvent();
+        });
+
+        function fireEvent(){
+
+            const data =  JSON.parse(localStorage.getItem('checkedInputs'));
+
+            console.log(data.length);
+
+            if(data && data.length){
+                collapseLayout.classList.remove('d-none');
+            }else{
+                collapseLayout.classList.add('d-none');
+            }
+
         }
 
-        function setupPageLinks(){
-
-            const links = document.querySelectorAll('.page-link');
-
-            links.forEach(link =>{
-                link.addEventListener('click',(e)=>{
-
-                    e.preventDefault();
-
-                    const url = new URL(e.target.href);
-
-                    getData(formData =>{
-                        formData.append('page', url.searchParams.get("page") ?? 1);
-                    });
-
-                })
-            })
-        }
     </script>
 
     <script type="text/javascript" src="/js/sortable.js"></script>

@@ -8,12 +8,22 @@
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+            integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+          integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
+          crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.4/xlsx.full.min.js"></script>
@@ -127,16 +137,22 @@
 
 <main>
     <div class="row m-0 p-0">
-        <div class="col-2 m-0 p-0 px-3 bg-dark bg-gradient" style="min-height: 100vh; max-height: 100%; overflow-y: auto;" id="collapseLayout1">
+        <div class="col-2 m-0 p-0 px-3 bg-dark bg-gradient"
+             style="min-height: 100vh; max-height: 100%; overflow-y: auto;" id="collapseLayout1">
             <header class="text-light text-center d-flex flex-column p-2 pt-3">
                 <div>
                     <a href="/expense/request">
                         <div class="my-3 wraper">
-                            <div class="item item1"><img src="/././images/logos/GTI_LOGO.png" style="height: 75px; width: auto;"></div>
-                            <div class="item item2"><img src="/././images/logos/BALLISTIC_LOGO.png" style="height: 75px; width: auto;"></div>
-                            <div class="item item3"><img src="/././images/logos/GUNTECH_LOGO.png" style="height: 75px; width: auto;"></div>
-                            <div class="item item4"><img src="/././images/logos/SOTERIA_LOGO.webp" style="height: 75px; width: auto;"></div>
-                            <div class="item item5"><img src="/././images/logos/ELITE_ACES_LOGO.png" style="height: 75px; width: auto;"></div>
+                            <div class="item item1"><img src="/././images/logos/GTI_LOGO.png"
+                                                         style="height: 75px; width: auto;"></div>
+                            <div class="item item2"><img src="/././images/logos/BALLISTIC_LOGO.png"
+                                                         style="height: 75px; width: auto;"></div>
+                            <div class="item item3"><img src="/././images/logos/GUNTECH_LOGO.png"
+                                                         style="height: 75px; width: auto;"></div>
+                            <div class="item item4"><img src="/././images/logos/SOTERIA_LOGO.webp"
+                                                         style="height: 75px; width: auto;"></div>
+                            <div class="item item5"><img src="/././images/logos/ELITE_ACES_LOGO.png"
+                                                         style="height: 75px; width: auto;"></div>
                         </div>
                         {{-- <img class="d-block mx-auto" src="/././images/logos/ELITE_ACES_LOGO.png" height="75px" alt="Management System"> --}}
                     </a>
@@ -369,7 +385,7 @@
         reloadImageModal();
     });
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         function handleResize() {
 
             if (window.innerWidth <= 1024) {
@@ -380,11 +396,12 @@
                 $('#collapseLayout2').removeClass('col-12').addClass('col-10');
             }
         }
+
         handleResize();
         window.addEventListener('resize', handleResize);
     });
 
-    $('#collapseButton').on('click', function() {
+    $('#collapseButton').on('click', function () {
         $('#collapseLayout1').toggle();
         $('#collapseLayout2').toggleClass('col-10 col-12');
     })
