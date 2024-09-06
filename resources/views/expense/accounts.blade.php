@@ -6,6 +6,14 @@
 
 @section('title', 'Account')
 
+@section('style')
+    <style type="text/css">
+        .accounts_nav {
+            color: rgb(255, 255, 255, 1.0);
+        }
+    </style>
+@endsection
+
 @section('body')
     <div class="container p-3" style="position: relative;">
         <div class="row">

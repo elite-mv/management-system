@@ -1,7 +1,14 @@
 @extends('layouts.expense-index')
 
-
 @section('title', 'Auditor')
+
+@section('style')
+    <style type="text/css">
+        .auditor_nav {
+            color: rgb(255, 255, 255, 1.0);
+        }
+    </style>
+@endsection
 
 @section('body')
     <div class="container p-3" style="position: relative;">

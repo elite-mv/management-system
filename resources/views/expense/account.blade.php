@@ -7,6 +7,14 @@
 @section('title', 'Account')
 
 @section('style')
+    <style type="text/css">
+        .my_profile_nav {
+            color: rgb(255, 255, 255, 1.0);
+        }
+    </style>
+@endsection
+
+@section('style')
 <style>
     .wraper {
         position: relative;
@@ -106,30 +114,32 @@
             <div class="col-sm-12 col-md-7 col-lg-7" id="profile_container">
                 <div class="w-100 bg-white p-3 border border-dark rounded border-2 mx-auto">
                     <p class="fw-bold">MY PROFILE</p>
-                    <form method="POST" action="/expense/account/update" id="accountForm">
-                        @csrf
+                    <form id="accountForm">
                         <div class="mb-3 small form-group">
                             <label CLASS="fw-bold text-danger form-label">USERNAME</label>
-                            <input class="p-2 form-control" type="text" value="{{auth()->user()->name}}"
-                                   name="name">
+                            <input class="p-2 form-control" type="text" value="{{auth()->user()->name}}" name="name">
                         </div>
                         <div class="mb-3 small form-group">
                             <label CLASS="fw-bold text-danger form-label">5 SECRET PIN</label>
-                            <input class="p-2 form-control" type="text" name="pin" minlength="5" maxlength="5">
+                            <input class="p-2 form-control" type="password" name="secret_pin" minlength="5" maxlength="5">
                         </div>
                         <div class="mb-3 small form-group">
                             <label CLASS="fw-bold text-danger form-label">Password</label>
-                            <input class="p-2 form-control" type="text" name="password" id="password">
+                            <input class="p-2 form-control" type="password" minlength="8" maxlength="16" name="password" id="password">
                         </div>
 
                         <div class="mb-3 small form-group d-none" id="confirmPasswordHolder">
                             <label CLASS="fw-bold text-danger form-label">Confirm Password</label>
-                            <input class="p-2 form-control" type="text" name="confirmPassword" id="confirmPassword">
+                            <input class="p-2 form-control" type="password" minlength="8" maxlength="16" name="confirmPassword" id="confirmPassword">
                         </div>
 
-                        <button type="submit" class="d-block mx-auto btn btn-outline-success w-75 rounded-pill">
+                        <button type="submit" class="d-block mx-auto btn btn-success w-50 rounded-pill">
                             UPDATE
                         </button>
+                        <input type="hidden" name="current_id" value="{{auth()->user()->id}}">
+                        <input type="hidden" name="current_name" value="{{auth()->user()->name}}">
+                        <input type="hidden" name="current_secret_pin" value="{{auth()->user()->pin}}">
+                        <input type="hidden" name="current_password" value="{{auth()->user()->password}}">
                     </form>
                 </div>
             </div>
@@ -150,15 +160,104 @@
 
             if (passwordField.value.length > 0) {
                 confirmPasswordHolder.classList.remove('d-none');
+                confirmPassword.setAttribute('required', 'required'); // Add 'required' attribute
             } else {
                 confirmPassword.value = null;
                 confirmPasswordHolder.classList.add('d-none');
+                confirmPassword.removeAttribute('required'); // Remove 'required' attribute
             }
+
         })
 
         accountForm.addEventListener('submit', (e) => {
 
             e.preventDefault();
+
+            const name = $('#accountForm').find('input[name="name"]').val();
+            const current_name = $('#accountForm').find('input[name="current_name"]').val();
+            const secret_pin = $('#accountForm').find('input[name="secret_pin"]').val();
+            const current_secret_pin = $('#accountForm').find('input[name="current_secret_pin"]').val();
+            const password = $('#accountForm').find('input[name="password"]').val();
+            const confirmPassword = $('#accountForm').find('input[name="confirmPassword"]').val();
+            const current_password = $('#accountForm').find('input[name="current_password"]').val();
+            const current_id = $('#accountForm').find('input[name="current_id"]').val();
+
+            if (name !== current_name) {
+                $.ajax({
+                    url: "/expense/account/update/name",
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    },
+                    method: "POST",
+                    data: {
+                        name: name,
+                        current_id: current_id
+                    },
+                    success: function (data) {
+                        
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error('Error:', textStatus, errorThrown);
+                    }
+                });
+            }
+
+            if (secret_pin) {
+                if (secret_pin !== current_secret_pin) {
+                    $.ajax({
+                        url: "/expense/account/update/secret_pin",
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                        },
+                        method: "POST",
+                        data: {
+                            secret_pin: secret_pin,
+                            current_id: current_id
+                        },
+                        success: function (data) {
+                            
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            console.error('Error:', textStatus, errorThrown);
+                        }
+                    });
+                } else {
+                    window.location.href = '/expense/account';
+                }
+            }
+
+            if (password) {
+                if (password !== current_password) {
+                    if (password === confirmPassword) {
+                        $.ajax({
+                            url: "/expense/account/update/password",
+                            headers: {
+                                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                            },
+                            method: "POST",
+                            data: {
+                                password: password,
+                                current_id: current_id
+                            },
+                            success: function (data) {
+                                
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                console.error('Error:', textStatus, errorThrown);
+                            }
+                        });
+                    } else {
+                        alert('The password and confirm password doesn`t match.');
+                        $('#accountForm').find('input[name="password"]').val('');
+                        $('#accountForm').find('input[name="confirmPassword"]').val('');
+                        $('#accountForm').find('input[name="password"]').focus();
+                    }
+                } else {
+                    window.location.href = '/expense/account';
+                }
+            }
+
+            window.location.href = '/expense/account';
 
         })
 
