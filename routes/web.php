@@ -91,6 +91,8 @@ Route::prefix('expense')->group(function () {
         Route::get('/home', [HomeController::class, 'index']);
         Route::get('/request', [RequestController::class, 'index']);
 
+        Route::get('/pdf/request/{requestID}', [PdfController::class, 'downloadPDF']);
+
         Route::middleware([CompanyData::class])->get('/forms', [DownloadableFormController::class, 'index']);
         Route::post('/forms/excel', [DownloadableFormController::class, 'generateExcel']);
 
@@ -206,7 +208,8 @@ Route::get('/tae', function (){
     return 'tae';
 });
 
+
 Route::get('/test-pdf', [PdfController::class, 'index']);
 Route::get('/test', [PdfController::class, 'index']);
 Route::get('/test/{expenseRequest}', [PdfController::class, 'test']);
-Route::get('/test2/{expenseRequest}', [PdfController::class, 'test2']);
+Route::get('/test2/{requestID}', [PdfController::class, 'test2']);

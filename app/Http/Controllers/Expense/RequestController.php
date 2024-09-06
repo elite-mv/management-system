@@ -22,6 +22,7 @@ use App\Models\Expense\RequestApproval;
 use App\Models\Expense\RequestItem;
 use App\Models\Expense\RequestLogs;
 use App\Models\Expense\Role;
+use App\Models\Expense\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
@@ -161,6 +162,8 @@ class RequestController extends Controller
     public function viewRequest(int $id)
     {
 
+        $viewForm = 'expense.printable-request-form';
+
         $expenseRequest = ModelsRequest::where('id', $id)
             ->with([
                 'items' => function ($q) {
@@ -227,6 +230,26 @@ class RequestController extends Controller
             abort(403);
         }
 
+        $role = Auth::user()->role;
+
+        switch ($role->name) {
+            case UserRole::BOOK_KEEPER->value:
+                if ($expenseRequest->bookKeeper->status != RequestApprovalStatus::PENDING) {
+                    $viewForm = 'expense.view-request-form';
+                }
+                break;
+            case UserRole::ACCOUNTANT->value:
+                if ($expenseRequest->accountat->status != RequestApprovalStatus::PENDING) {
+                    $viewForm = 'expense.view-request-form';
+                }
+                break;
+            case UserRole::AUDITOR->value:
+                if ($expenseRequest->auditor->status != RequestApprovalStatus::PENDING) {
+                    $viewForm = 'expense.view-request-form';
+                }
+                break;
+        }
+
         $measurements = Measurement::select(['id', 'name'])->get();
         $jobOrder = JobOrder::select(['id', 'name', 'reference'])->get();
 
@@ -236,7 +259,7 @@ class RequestController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('expense.printable-request-form', [
+        return view($viewForm, [
             'request' => $expenseRequest,
             'jobOrders' => $jobOrder,
             'measurements' => $measurements,
@@ -417,6 +440,10 @@ class RequestController extends Controller
     public function updateRequestStatus(Request $request, AddRequestLog $addRequestLog, ModelsRequest $expenseRequest)
     {
         try {
+
+            if(!Gate::allows(Auth::user())){
+                throw new \Exception('Unauthorized');
+            }
 
             DB::beginTransaction();
 

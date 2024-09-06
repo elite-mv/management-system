@@ -105,10 +105,11 @@
 
         <div>
             <div class="bg-light p-2">
-                <button class="btn btn-success" onclick="generatePDF()">
+                <a type="button" href="/expense/pdf/request/{{$request->id}}" class="btn btn-success">
                     <i class="fas fa-download"></i>
                     Download
-                </button>
+                </a>
+
                 <button onclick="viewHistory()" class="btn btn-secondary">
                     <i class="fas fa-scroll"></i>
                     View Logs
@@ -184,19 +185,8 @@
                             </div>
                         </div>
 
-                        <div style="font-size: 70px;"
-                             class="m-0 ms-2 px-5 border border-5 border-danger">
-                            <select id="requestStatus" class="w-100 h-100 border-0 outline-0 text-danger text-center">
-                                @foreach(\App\Enums\RequestStatus::cases() as $status)
-                                    @if($status == $request->status)
-                                        <option style="font-size: 20px" value="{{$status->name}}"
-                                                selected>{{$status->value}}</option>
-                                    @else
-                                        <option style="font-size: 20px"
-                                                value="{{$status->name}}">{{$status->value}}</option>
-                                    @endif
-                                @endforeach
-                            </select>
+                        <div style="font-size: 70px;" class="m-0 ms-2 px-5 border border-5 border-danger">
+                            <p class="text-danger">{{$request->status->name}}</p>
                         </div>
 
                         <div class="ms-auto">
@@ -463,11 +453,11 @@
 
                             </td>
                             <td colspan="4" class="text-center align-bottom fw-bold small" style="height: 24px">
-                                <input value="{{$request->received_by}}" id="receivedBy"
+                                <input readonly value="{{$request->received_by}}" id="receivedBy"
                                        class="border-0 outline-0 w-100 small fw-bold text-uppercase text-center">
                             </td>
                             <td colspan="6" class="text-center align-bottom fw-bold small" style="height: 24px">
-                                <input value="{{$request->audited_by}}" id="auditedBy"
+                                <input readonly value="{{$request->audited_by}}" id="auditedBy"
                                        class="border-0 outline-0 w-100 small fw-bold text-uppercase text-center">
                             </td>
                         </tr>
@@ -497,17 +487,19 @@
                         <tr>
                             <td colspan="1" class="text-center" style="width: 32px">
                                 @if($request->priority_level === App\Enums\RequestPriorityLevel::LOW)
-                                    <input class="priorityLevel" value="{{App\Enums\RequestPriorityLevel::LOW->name}}"
+                                    <input readonly class="priorityLevel"
+                                           value="{{App\Enums\RequestPriorityLevel::LOW->name}}"
                                            type="checkbox" name="LOW" checked>
                                 @else
-                                    <input class="priorityLevel" value="{{App\Enums\RequestPriorityLevel::LOW->name}}"
+                                    <input readonly class="priorityLevel"
+                                           value="{{App\Enums\RequestPriorityLevel::LOW->name}}"
                                            type="checkbox" name="LOW">
                                 @endif
                             </td>
                             <td colspan="2" class="small px-2">Low</td>
                             <td colspan="1" class="small px-2">5 days</td>
                             <td colspan="1" class="text-center" style="width: 32px">
-                                <input type="checkbox">
+                                <input readonly type="checkbox">
                             </td>
                             <td colspan="3" class="small px-2 selectable" style="width: 146px">
                                 @if($request->expenseTypes->get(0))
@@ -521,11 +513,11 @@
                             </td>
                             <td colspan="1" class="text-center" style="width: 32px">
                                 @if($request->delivery && $request->delivery->completed)
-                                    <input value="1" class="deliveryStatus" name="requestDeliveryStatus"
+                                    <input readonly value="1" class="deliveryStatus" name="requestDeliveryStatus"
                                            id="requestDeliveryComplete"
                                            type="checkbox" checked>
                                 @else
-                                    <input value="1" class="deliveryStatus" name="requestDeliveryStatus"
+                                    <input readonly value="1" class="deliveryStatus" name="requestDeliveryStatus"
                                            id="requestDeliveryComplete"
                                            type="checkbox">
                                 @endif
@@ -545,11 +537,11 @@
                         <tr>
                             <td colspan="1" class="text-center">
                                 @if($request->priority_level === App\Enums\RequestPriorityLevel::MEDIUM)
-                                    <input class="priorityLevel"
+                                    <input readonly class="priorityLevel"
                                            value="{{App\Enums\RequestPriorityLevel::MEDIUM->name}}"
                                            type="checkbox" name="MEDIUM" checked>
                                 @else
-                                    <input class="priorityLevel"
+                                    <input readonly class="priorityLevel"
                                            value="{{App\Enums\RequestPriorityLevel::MEDIUM->name}}"
                                            type="checkbox" name="MEDIUM">
                                 @endif
@@ -567,11 +559,11 @@
                             <td colspan="1" class="text-center fw-bold bg-blue small">BANK CODE</td>
                             <td colspan="1" class="text-center">
                                 @if($request->delivery && !$request->delivery->completed)
-                                    <input value="0" class="deliveryStatus" name="requestDeliveryStatus"
+                                    <input readonly value="0" class="deliveryStatus" name="requestDeliveryStatus"
                                            id="requestDeliveryIncomplete"
                                            type="checkbox" checked>
                                 @else
-                                    <input value="0" class="deliveryStatus" name="requestDeliveryStatus"
+                                    <input readonly value="0" class="deliveryStatus" name="requestDeliveryStatus"
                                            id="requestDeliveryIncomplete"
                                            type="checkbox">
                                 @endif
@@ -590,17 +582,19 @@
                         <tr>
                             <td colspan="1" class="text-center">
                                 @if($request->priority_level === App\Enums\RequestPriorityLevel::HIGH)
-                                    <input class="priorityLevel" value="{{App\Enums\RequestPriorityLevel::HIGH->name}}"
+                                    <input readonly class="priorityLevel"
+                                           value="{{App\Enums\RequestPriorityLevel::HIGH->name}}"
                                            type="checkbox" name="HIGH" checked>
                                 @else
-                                    <input class="priorityLevel" value="{{App\Enums\RequestPriorityLevel::HIGH->name}}"
+                                    <input readonly class="priorityLevel"
+                                           value="{{App\Enums\RequestPriorityLevel::HIGH->name}}"
                                            type="checkbox" name="HIGH">
                                 @endif
                             </td>
                             <td colspan="2" class="small px-2">High</td>
                             <td colspan="1" class="small px-2">1 day</td>
                             <td colspan="1" class="text-center">
-                                <input type="checkbox">
+                                <input readonly type="checkbox">
                             </td>
                             <td colspan="3" class="small px-2 selectable">
                                 @if($request->expenseTypes->get(2))
@@ -618,7 +612,7 @@
                         <tr>
                             <td colspan="4" class="small px-2 fw-bold bg-red text-center">Attachment</td>
                             <td colspan="1" class="text-center">
-                                <input type="checkbox">
+                                <input readonly type="checkbox">
                             </td>
                             <td colspan="3" class="small px-2 selectable">
                                 @if($request->expenseTypes->get(3))
@@ -628,9 +622,9 @@
                             <td colspan="1" class="bg-blue fw-bold text-center small">CHECK NUMBER</td>
                             <td colspan="1" class="text-center">
                                 @if($request->delivery && $request->delivery->supplier_verified)
-                                    <input value="1" class="deliverySupplier" type="checkbox" checked>
+                                    <input readonly value="1" class="deliverySupplier" type="checkbox" checked>
                                 @else
-                                    <input value="1" class="deliverySupplier" type="checkbox">
+                                    <input readonly value="1" class="deliverySupplier" type="checkbox">
                                 @endif
                             </td>
                             <td colspan="3" class="small px-2">Yes</td>
@@ -647,16 +641,18 @@
                         <tr>
                             <td colspan="1" class="text-center">
                                 @if($request->attachment == \App\Enums\AccountingAttachment::WITH)
-                                    <input value="{{\App\Enums\AccountingAttachment::WITH->name}}" class="attachment"
+                                    <input readonly value="{{\App\Enums\AccountingAttachment::WITH->name}}"
+                                           class="attachment"
                                            type="checkbox" checked>
                                 @else
-                                    <input value="{{\App\Enums\AccountingAttachment::WITH->name}}" class="attachment"
+                                    <input readonly value="{{\App\Enums\AccountingAttachment::WITH->name}}"
+                                           class="attachment"
                                            type="checkbox">
                                 @endif
                             </td>
                             <td colspan="3" class="small px-2">With</td>
                             <td colspan="1" class="text-center">
-                                <input type="checkbox">
+                                <input readonly type="checkbox">
                             </td>
                             <td colspan="3" class="small px-2 selectable">
                                 @if($request->expenseTypes->get(4))
@@ -670,9 +666,9 @@
                             </td>
                             <td colspan="1" class="text-center">
                                 @if($request->delivery && !$request->delivery->supplier_verified)
-                                    <input value="0" class="deliverySupplier" type="checkbox" checked>
+                                    <input readonly value="0" class="deliverySupplier" type="checkbox" checked>
                                 @else
-                                    <input value="0" class="deliverySupplier" type="checkbox">
+                                    <input readonly value="0" class="deliverySupplier" type="checkbox">
                                 @endif
                             </td>
                             <td colspan="3" class="small px-2">No</td>
@@ -689,16 +685,18 @@
                         <tr>
                             <td colspan="1" class="text-center">
                                 @if($request->attachment == \App\Enums\AccountingAttachment::WITHOUT)
-                                    <input value="{{\App\Enums\AccountingAttachment::WITHOUT->name}}" class="attachment"
+                                    <input readonly value="{{\App\Enums\AccountingAttachment::WITHOUT->name}}"
+                                           class="attachment"
                                            type="checkbox" checked>
                                 @else
-                                    <input value="{{\App\Enums\AccountingAttachment::WITHOUT->name}}" class="attachment"
+                                    <input readonly value="{{\App\Enums\AccountingAttachment::WITHOUT->name}}"
+                                           class="attachment"
                                            type="checkbox">
                                 @endif
                             </td>
                             <td colspan="3" class="small px-2">Without</td>
                             <td colspan="1" class="text-center">
-                                <input type="checkbox">
+                                <input readonly type="checkbox">
                             </td>
                             <td colspan="3" class="small px-2 selectable">
                                 @if($request->expenseTypes->get(5))
@@ -712,7 +710,7 @@
                         <tr>
                             <td colspan="4" class="small px-2 text-center bg-red fw-bold">Type</td>
                             <td colspan="1" class="text-center">
-                                <input type="checkbox">
+                                <input readonly type="checkbox">
                             </td>
                             <td colspan="3" class="small px-2 selectable">
                                 @if($request->expenseTypes->get(6))
@@ -721,10 +719,10 @@
                             </td>
                             <td colspan="4" class="text-center small px-2">
                                 @if($request->vat)
-                                    <input value="{{$request->vat->option_a}}" type="text" id="vatOption1"
+                                    <input readonly value="{{$request->vat->option_a}}" type="text" id="vatOption1"
                                            class="h-100 w-100 border-0 outline-0">
                                 @else
-                                    <input type="text" id="vatOption1" class="h-100 w-100 border-0 outline-0">
+                                    <input readonly type="text" id="vatOption1" class="h-100 w-100 border-0 outline-0">
                                 @endif
                             </td>
                             <td colspan="5" class="small px-2 selectable">
@@ -736,16 +734,18 @@
                         <tr>
                             <td colspan="1" class="text-center">
                                 @if($request->type == \App\Enums\AccountingType::OPEX)
-                                    <input value="{{App\Enums\AccountingType::OPEX->name}}" class="attachmentType"
+                                    <input readonly value="{{App\Enums\AccountingType::OPEX->name}}"
+                                           class="attachmentType"
                                            type="checkbox" checked>
                                 @else
-                                    <input value="{{App\Enums\AccountingType::OPEX->name}}" class="attachmentType"
+                                    <input readonly value="{{App\Enums\AccountingType::OPEX->name}}"
+                                           class="attachmentType"
                                            type="checkbox">
                                 @endif
                             </td>
                             <td colspan="3" class="small px-2">OPEX</td>
                             <td colspan="1" class="text-center">
-                                <input type="checkbox">
+                                <input readonly type="checkbox">
                             </td>
                             <td colspan="3" class="small px-2 selectable">
                                 @if($request->expenseTypes->get(7))
@@ -754,10 +754,10 @@
                             </td>
                             <td colspan="4" class="text-center small px-2">
                                 @if($request->vat)
-                                    <input value="{{$request->vat->option_b}}" type="text" id="vatOption2"
+                                    <input readonly value="{{$request->vat->option_b}}" type="text" id="vatOption2"
                                            class="h-100 w-100 border-0 outline-0">
                                 @else
-                                    <input type="text" id="vatOption2" class="h-100 w-100 border-0 outline-0">
+                                    <input readonly type="text" id="vatOption2" class="h-100 w-100 border-0 outline-0">
                                 @endif
                             </td>
                             <td colspan="5" class="small px-2">
@@ -769,16 +769,18 @@
                         <tr>
                             <td colspan="1" class="text-center">
                                 @if($request->type == \App\Enums\AccountingType::NON_OPEX)
-                                    <input value="{{App\Enums\AccountingType::NON_OPEX->name}}" class="attachmentType"
+                                    <input readonly value="{{App\Enums\AccountingType::NON_OPEX->name}}"
+                                           class="attachmentType"
                                            type="checkbox" checked>
                                 @else
-                                    <input value="{{App\Enums\AccountingType::NON_OPEX->name}}" class="attachmentType"
+                                    <input readonly value="{{App\Enums\AccountingType::NON_OPEX->name}}"
+                                           class="attachmentType"
                                            type="checkbox">
                                 @endif
                             </td>
                             <td colspan="3" class="small px-2">NON OPEX</td>
                             <td colspan="1" class="text-center">
-                                <input type="checkbox">
+                                <input readonly type="checkbox">
                             </td>
                             <td colspan="3" class="small px-2 selectable">
                             @if($request->expenseTypes->get(8))
@@ -787,10 +789,10 @@
                             <td colspan="2" class="small px-2 fw-bold">PO No.</td>
                             <td colspan="2" class="small px-2">
                                 @if($request->vat)
-                                    <input value="{{$request->vat->purchase_order}}" id="purchaseOrderInput"
+                                    <input readonly value="{{$request->vat->purchase_order}}" id="purchaseOrderInput"
                                            class="w-100 border-0 outline-0">
                                 @else
-                                    <input id="purchaseOrderInput" class="w-100 border-0 outline-0">
+                                    <input readonly id="purchaseOrderInput" class="w-100 border-0 outline-0">
                                 @endif
                             </td>
                             <td colspan="5" class="small px-2 fw-bold bg-blue">AUDITOR</td>
@@ -798,7 +800,7 @@
                         <tr>
                             <td colspan="4" class="small px-2 text-center bg-red fw-bold">Receipt</td>
                             <td colspan="1" class="text-center">
-                                <input type="checkbox">
+                                <input readonly type="checkbox">
                             </td>
                             <td colspan="3" class="small px-2 selectable">
                                 @if($request->expenseTypes->get(9))
@@ -808,10 +810,10 @@
                             <td colspan="2" class="small px-2 fw-bold">Invoice No</td>
                             <td colspan="2" class="small px-2">
                                 @if($request->vat)
-                                    <input value="{{$request->vat->invoice}}" id="invoiceNumberInput"
+                                    <input readonly value="{{$request->vat->invoice}}" id="invoiceNumberInput"
                                            class="w-100 border-0 outline-0">
                                 @else
-                                    <input id="invoiceNumberInput" class="w-100 border-0 outline-0">
+                                    <input readonly id="invoiceNumberInput" class="w-100 border-0 outline-0">
                                 @endif
                             </td>
                             <td colspan="5" class="small px-2 selectable">
@@ -823,16 +825,16 @@
                         <tr>
                             <td colspan="1" class="text-center">
                                 @if($request->receipt == \App\Enums\AccountingReceipt::OFFICIAL_RECEIPT_VAT)
-                                    <input value="{{\App\Enums\AccountingReceipt::OFFICIAL_RECEIPT_VAT->name}}"
+                                    <input readonly value="{{\App\Enums\AccountingReceipt::OFFICIAL_RECEIPT_VAT->name}}"
                                            class="attachmentReceipt" type="checkbox" checked>
                                 @else
-                                    <input value="{{\App\Enums\AccountingReceipt::OFFICIAL_RECEIPT_VAT->name}}"
+                                    <input readonly value="{{\App\Enums\AccountingReceipt::OFFICIAL_RECEIPT_VAT->name}}"
                                            class="attachmentReceipt" type="checkbox">
                                 @endif
                             </td>
                             <td colspan="3" class="small px-2">Official Receipt VAT</td>
                             <td colspan="1" class="text-center">
-                                <input type="checkbox">
+                                <input readonly type="checkbox">
                             </td>
                             <td colspan="3" class="small px-2 selectable">
                                 @if($request->expenseTypes->get(10))
@@ -842,10 +844,10 @@
                             <td colspan="2" class="fw-bold small px-2">Bill No.</td>
                             <td colspan="2" class="small px-2">
                                 @if($request->vat)
-                                    <input value="{{$request->vat->bill}}" id="billNumberInput"
+                                    <input readonly value="{{$request->vat->bill}}" id="billNumberInput"
                                            class="w-100 border-0 outline-0">
                                 @else
-                                    <input id="billNumberInput" class="w-100 border-0 outline-0">
+                                    <input readonly id="billNumberInput" class="w-100 border-0 outline-0">
                                 @endif
                             </td>
                             <td colspan="5" class="small px-2">
@@ -857,16 +859,16 @@
                         <tr>
                             <td colspan="1" class="text-center">
                                 @if($request->receipt == \App\Enums\AccountingReceipt::DELIVERY_RECEIPT)
-                                    <input value="{{\App\Enums\AccountingReceipt::DELIVERY_RECEIPT->name}}"
+                                    <input readonly value="{{\App\Enums\AccountingReceipt::DELIVERY_RECEIPT->name}}"
                                            class="attachmentReceipt" type="checkbox" checked>
                                 @else
-                                    <input value="{{\App\Enums\AccountingReceipt::DELIVERY_RECEIPT->name}}"
+                                    <input readonly value="{{\App\Enums\AccountingReceipt::DELIVERY_RECEIPT->name}}"
                                            class="attachmentReceipt" type="checkbox">
                                 @endif
                             </td>
                             <td colspan="3" class="small px-2">Delivery Receipt</td>
                             <td colspan="1" class="text-center">
-                                <input type="checkbox">
+                                <input readonly type="checkbox">
                             </td>
                             <td colspan="3" class="small px-2 selectable">
                                 @if($request->expenseTypes->get(11))
@@ -876,10 +878,10 @@
                             <td colspan="2" class="fw-bold small px-2">OR No</td>
                             <td colspan="2" class="small px-2">
                                 @if($request->vat)
-                                    <input value="{{$request->vat->official_receipt}}" id="orNumberInput"
+                                    <input readonly value="{{$request->vat->official_receipt}}" id="orNumberInput"
                                            class="w-100 border-0 outline-0">
                                 @else
-                                    <input id="orNumberInput" class="w-100 border-0 outline-0">
+                                    <input readonly id="orNumberInput" class="w-100 border-0 outline-0">
                                 @endif
                             </td>
                             <td colspan="4" rowspan="2" class="small px-2" style="width: 171px"></td>
@@ -890,23 +892,24 @@
                         <tr>
                             <td colspan="1" class="text-center">
                                 @if($request->receipt == \App\Enums\AccountingReceipt::NONE)
-                                    <input value="{{\App\Enums\AccountingReceipt::NONE->name}}"
+                                    <input readonly value="{{\App\Enums\AccountingReceipt::NONE->name}}"
                                            class="attachmentReceipt"
                                            type="checkbox" checked>
                                 @else
-                                    <input value="{{\App\Enums\AccountingReceipt::NONE->name}}"
+                                    <input readonly value="{{\App\Enums\AccountingReceipt::NONE->name}}"
                                            class="attachmentReceipt"
                                            type="checkbox">
                                 @endif
                             </td>
                             <td colspan="3" class="small px-2">None</td>
                             <td colspan="1" class="text-center">
-                                <input type="checkbox">
+                                <input readonly type="checkbox">
                             </td>
                             <td colspan="4" class="px-2">
                                 <div class="d-flex gap-1 align-items-center mb-1">
                                     <label class="small">Others:</label>
                                     <input
+                                        readonly
                                         class="small w-100 outline-0 border-1 border-top-0 border-start-0 border-end-0">
                                 </div>
                             </td>
@@ -1025,7 +1028,7 @@
                     </div>
                     <div class="modal-body">
                         @csrf
-                        <input id="editItemId" type="hidden" class="d-none">
+                        <input readonly id="editItemId" type="hidden" class="d-none">
 
                         <div class="col-12">
                             <div class="row">
@@ -1057,7 +1060,8 @@
 
                             <div class="row">
                                 <div class="col-2 m-0 p-0 small border-0">
-                                    <input id="editItemQuantity" type="text" class="p-2 h-100 w-100" name="quantity">
+                                    <input readonly id="editItemQuantity" type="text" class="p-2 h-100 w-100"
+                                           name="quantity">
                                 </div>
                                 <div class="col-2 m-0 p-0 small border-0">
                                     <select name="measurement" id="editItemUnitOfMeasurement" class="p-2 h-100 w-100">
@@ -1074,20 +1078,20 @@
                                     </select>
                                 </div>
                                 <div class="col-2 m-0 p-0 small border-0">
-                                    <input name="description" id="editItemDescription" type="text"
+                                    <input readonly name="description" id="editItemDescription" type="text"
                                            class="p-2 h-100 w-100">
                                 </div>
                                 <div class="col-2 small border-0 m-0 p-0">
-                                    <input name="cost" id="editItemCost" type="text" class="p-2 h-100 w-100">
+                                    <input readonly name="cost" id="editItemCost" type="text" class="p-2 h-100 w-100">
                                 </div>
                                 <div class="col-2 small border-0 m-0 p-0">
-                                    <input id="editItemTotal" type="text" class="p-2 h-100 w-100" name="total">
+                                    <input readonly id="editItemTotal" type="text" class="p-2 h-100 w-100" name="total">
                                 </div>
                             </div>
 
                             <div class="row mt-3 py-3 px-2 border border-dark">
                                 <div class="col-sm-12 col-md-6 col-lg-6">
-                                    <input data-id="0" id="fileUpload" type="file" accept="image/*" multiple=""
+                                    <input readonly data-id="0" id="fileUpload" type="file" accept="image/*" multiple=""
                                            name="files[]" class="px-4 py-2 border border-dark w-100"
                                            style="border: 1px dashed !important; border-radius: 6px;">
                                 </div>
@@ -1147,9 +1151,7 @@
 @section('script')
     <script>
 
-        const editItemModal = new bootstrap.Modal(document.getElementById('editItemModal'), {
-            keyboard: false
-        })
+        $(":checkbox").on("click", false);
 
         const commentForm = document.querySelector('#commentForm');
         const commentHolder = document.querySelector('#commentsHolder');
@@ -1222,33 +1224,10 @@
             setInterval(loadComments, 1000);
         })
 
-    </script>
-
-    <script>
-        document.getElementById('checkwriterForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-            var element = document.getElementById('printable_check');
-            html2pdf(element, {
-                margin: 0,
-                filename: 'CHECK_BDO.pdf',
-                image: {type: 'jpg', quality: 1.0},
-                html2canvas: {scale: 1},
-                jsPDF: {
-                    unit: 'in',
-                    format: [6.25, 2.75],
-                    orientation: 'landscape',
-                }
-            });
-        });
-    </script>
-
-    <script>
-
         const historyHolder = document.querySelector('#requestHistory');
 
         function viewHistory() {
             historyHolder.classList.toggle('d-none')
         }
-
     </script>
 @endsection

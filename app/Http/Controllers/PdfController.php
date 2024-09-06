@@ -13,6 +13,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Expense\Request as ExpenseRequest;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 class PdfController
 {
     public function index()
@@ -118,14 +119,49 @@ class PdfController
             'bank_names' => $bankNames,
             'bank_codes' => $bankCodes,
             'expense_category' => $expenseCategory,
-            'request' => $expenseRequest,
+//            'request' => $expenseRequest,
+            'requests' => \App\Models\Expense\Request::query()->take(2)->get(),
             'measurements' => $measurements,
             'jobOrders' => $jobOrder,
         ]);
 
     }
 
-    public function test2(ExpenseRequest $expenseRequest)
+    public function downloadPDF($requestID)
+    {
+        try {
+
+            $request = ExpenseRequest::findOrFail($requestID);
+
+            $measurements = Measurement::get();
+            $jobOrder = JobOrder::get();
+            $bankNames = BankName::get();
+            $bankCodes = BankCode::get();
+            $expenseCategory = ExpenseCategory::get();
+
+            $html = view('expense.pdf.expense-request-form', [
+                'bank_names' => $bankNames,
+                'bank_codes' => $bankCodes,
+                'expense_category' => $expenseCategory,
+                'request' => $request,
+                'measurements' => $measurements,
+                'jobOrders' => $jobOrder,
+            ])->render();
+
+            $snappdf = new \Beganovich\Snappdf\Snappdf();
+
+            $snappdf
+                ->setHtml($html)
+                ->save('pdf/' . $request->reference . '.pdf');
+
+            return response()->download('pdf/' . $request->reference . '.pdf');
+
+        } catch (\Exception $exception) {
+            return redirect()->back()->withErrors([$exception->getMessage()]);
+        }
+    }
+
+    public function test2($requestID)
     {
 
         try {
@@ -136,21 +172,20 @@ class PdfController
             $bankCodes = BankCode::get();
             $expenseCategory = ExpenseCategory::get();
 
-
             $snappdf = new \Beganovich\Snappdf\Snappdf();
 
             $field = [
                 'bank_names' => $bankNames,
                 'bank_codes' => $bankCodes,
                 'expense_category' => $expenseCategory,
-                'request' => $expenseRequest,
+                'requests' => \App\Models\Expense\Request::query()->take(1)->get(),
                 'measurements' => $measurements,
                 'jobOrders' => $jobOrder,
             ];
 
             $html = view('expense.pdf.expense-request-form', $field)->render();
 
-            $pdf = $snappdf
+            $snappdf
                 ->setHtml($html)
                 ->save('pdf/tangin.pdf');
 

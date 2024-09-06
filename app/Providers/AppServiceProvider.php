@@ -49,6 +49,23 @@ class AppServiceProvider extends ServiceProvider
             return $isAllowed;
         });
 
+        Gate::define('book-keeper', function (User $user) {
+            return $user->role->name == UserRole::BOOK_KEEPER->value;
+        });
+
+        Gate::define('accountant', function (User $user) {
+            return $user->role->name == UserRole::ACCOUNTANT->value;
+        });
+
+        Gate::define('auditor', function (User $user) {
+            return $user->role->name == UserRole::AUDITOR->value;
+        });
+
+        Gate::define('finance-president', function (User $user) {
+            return $user->role->name == UserRole::PRESIDENT->value || $user->role == UserRole::FINANCE->value;
+        });
+
+
         Blade::if('management', function () {
 
             switch (Auth::user()->role->name) {

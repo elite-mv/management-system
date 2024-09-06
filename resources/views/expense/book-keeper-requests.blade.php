@@ -34,19 +34,16 @@
                                 <div class="form-group row mb-2">
                                     <div class="col-6">
                                         <label>From</label>
-                                        <input name="from" class="form-control" type="date">
+                                        <input value="{{$app->request->from}}" name="from" class="form-control" type="date">
                                     </div>
                                     <div class="col-6">
                                         <label>To</label>
-                                        <input name="to" class="form-control" type="date">
+                                        <input  value="{{$app->request->to}}" name="to" class="form-control" type="date">
                                     </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" onclick="clearForm()" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Clear Filter
-                                </button>
                                 <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Filter</button>
                             </div>
                         </div>
@@ -212,12 +209,6 @@
 
             console.log(checkedInputs);
         }
-
-        function clearForm() {
-            filterForm.reset();
-            filterForm.submit();
-        }
-
     </script>
 
     <script type="text/javascript" src="/js/sortable.js"></script>
