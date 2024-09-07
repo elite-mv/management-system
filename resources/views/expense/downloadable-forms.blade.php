@@ -6,134 +6,217 @@
 
 @section('title', 'Downloadable Forms')
 
+@section('style')
+    <style type="text/css">
+        .dl_forms_nav {
+            color: rgb(255, 255, 255, 1.0);
+        }
+    </style>
+@endsection
+
 @section('body')
+<div class="p-3 px-md-0 m-0">
 
-    <div class="container-fluid mt-2">
+    <div class="row m-0">
+        <div class="col-sm-12 col-md-10 mx-auto">
 
-        <div class="bg-white rounded mb-2 p-2 rounded">
+            <div class="d-flex overflow-y-auto m-0 p-3" style="gap: 0 30px; border-radius: 7px;
+                background-color: rgba(255, 255, 255, 0.2);
+                box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                border-right: 1px solid rgba(255, 255, 255, 0.2);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+                <div class="w-100 p-4" style="background-color: rgba(255, 255, 255, 0.75);
+                box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                border-right: 1px solid rgba(255, 255, 255, 0.2);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+                    <form id="searchForm">
 
-            <form class="mb-2" id="searchForm">
-                <div>
-                    <input name="search" class="form-control" type="search">
+                        <div class="d-flex mb-2 gap-2 align-items-center">
+                            <div class="w-100 rounded-pill border d-flex align-items-start flex-direction-row gap-2 py-2 px-3" style="background-color: rgba(255, 255, 255, 0.4);
+                            box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
+                            border: 1px solid rgba(255, 255, 255, 0.5);
+                            border-right: 1px solid rgba(255, 255, 255, 0.2);
+                            border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+                                <div>
+                                    <button class="border-0 bg-transparent" style="border-radius: 50%;">
+                                        <i class="fas fa-search text-secondary"></i>
+                                    </button>
+                                </div>
+                                <div class="w-100 mx-1">
+                                    <small>
+                                        <input autocomplete="off" placeholder="Search ..." name="search" type="search" value="{{$app->request->search}}" class="rounded-0 border-0 w-100 bg-transparent">
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row align-items-center">
+
+                            <div class="col-6 col-md-4 form-group d-flex gap-2 align-items-center">
+                                <label class="form-label">Entity</label>
+                                <select name="company" class="form-select inputs" style="background-color: rgba(255, 255, 255, 0.4);
+                                box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
+                                border: 1px solid rgba(255, 255, 255, 0.5);
+                                border-right: 1px solid rgba(255, 255, 255, 0.2);
+                                border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+                                    <option value="ALL">ALL</option>
+                                    @foreach($companies as $company)
+                                        <option value="{{$company->id}}" @selected($app->request->company == $company->id)>{{$company->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-6 col-md-4 form-group d-flex gap-2 align-items-center">
+                                <label class="form-label mb-0" for="status">Fund Status</label>
+                                <select name="fund_status" class="form-select inputs" style="background-color: rgba(255, 255, 255, 0.4);
+                                box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
+                                border: 1px solid rgba(255, 255, 255, 0.5);
+                                border-right: 1px solid rgba(255, 255, 255, 0.2);
+                                border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+                                    <option value="ALL">All</option>
+                                    <option @selected($app->request->fund_status == 'OPEN') value="OPEN">OPEN</option>
+                                    <option @selected($app->request->fund_status == 'CLOSE')  value="CLOSE">CLOSE</option>
+                                </select>
+                            </div>
+
+                            <div class="col-6 col-md-4 form-group d-flex gap-2 align-items-center">
+                                <label class="form-label mb-0" for="status">Payment Status</label>
+                                <select name="status" class="form-select inputs" style="background-color: rgba(255, 255, 255, 0.4);
+                                box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
+                                border: 1px solid rgba(255, 255, 255, 0.5);
+                                border-right: 1px solid rgba(255, 255, 255, 0.2);
+                                border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+                                    <option value="ALL">All</option>
+                                    @foreach(\App\Enums\RequestStatus::cases() as $status)
+                                        <option value="{{$status->value}}" @selected($app->request->status == $status->value)>{{$status->value}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                        </div>
+
+                    </form>
                 </div>
+            </div>
 
-                <select name="company" class="form-control">
-                    <option value="ALL">ALL</option>
-                    @foreach($companies as $company)
-                        <option value="{{$company->id}}">{{$company->name}}</option>
-                    @endforeach
-                </select>
-
-                <select name="fund_status" class="form-control">
-                    <option value="ALL">ALL</option>
-                    <option @selected($app->request->fund_status == 'OPEN') value="OPEN">OPEN</option>
-                    <option @selected($app->request->fund_status == 'CLOSE')  value="CLOSE">CLOSE</option>
-                </select>
-
-                <select name="status" class="form-control">
-                    <option value="ALL">ALL</option>
-                    @foreach(\App\Enums\RequestStatus::cases() as $case)
-                        <option class="{{$case->name}}">{{$case->value}}</option>
-                    @endforeach
-                </select>
-            </form>
-
-            <div>
+            <div class="d-flex gap-2 my-2">
                 <form id="excelForm" method="POST" action="/expense/forms/excel">
                     @csrf
-                    <button type="submit" class="btn btn-success">Export to Excel</button>
+                    <button type="submit" class="btn btn-success rounded-0 px-3">Export to Excel</button>
                 </form>
                 <form id="pdfForm" method="POST" action="/expense/forms/pdf">
                     @csrf
-                    <button type="submit" class="btn btn-danger">Export to PDF</button>
+                    <button type="submit" class="btn btn-danger rounded-0 px-3">Export to PDF</button>
                 </form>
             </div>
-        </div>
 
-        <div class="container-fluid">
-            <div>Total Requested: {!! \App\Helper\Helper::formatPeso($total) !!}</div>
-            <div>Total Approved: {!! \App\Helper\Helper::formatPeso($approved) !!}</div>
-            <div>Total Balance: {!! \App\Helper\Helper::formatPeso($total - $approved) !!}</div>
-        </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-auto text-start">
+                                    <i class="fas fa-table me-1"></i>
+                                    <b>Requests</b>
+                                </div>
+                                <div class="col text-start">
+                                    <div class="d-flex justify-content-around">
+                                        <div class="fw-bold text-end">Total Requested: {!! \App\Helper\Helper::formatPeso($total) !!}</div>
+                                        <div class="fw-bold text-end">Total Approved: {!! \App\Helper\Helper::formatPeso($approved) !!}</div>
+                                        <div class="fw-bold text-end">Total Balance: {!! \App\Helper\Helper::formatPeso($total - $approved) !!}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body overflow-x-auto">
+                            <table class="table table-bordered table-responsive">
+                                <thead>
+                                <tr>
+                                    <th>REFERENCE</th>
+                                    <th>ENTITY</th>
+                                    <th>PAID TO</th>
+                                    <th>REQUESTED BY</th>
+                                    <th>BOOK KEEPER</th>
+                                    <th>ACCOUNTANT</th>
+                                    <th>FINANCE</th>
+                                    <th>AUDITOR</th>
+                                    <th>PAYMENT STATUS</th>
+                                    <th>REQUEST STATUS</th>
+                                    <th>AMOUNT REQUEST</th>
+                                    <th>APPROVED AMOUNT</th>
+                                    <th>BALANCE</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($requests as $request)
+                                    <tr>
+                                        <td class="text-nowrap">{{$request->reference}}</td>
+                                        <td>{{$request->company->name}}</td>
+                                        <td class="text-capitalize">{{$request->paid_to}}</td>
+                                        <td class="text-capitalize">{{$request->request_by}}</td>
+                                        <td>
+                                            @if($request->bookKeeper)
+                                                {{$request->bookKeeper->created_at}}
+                                            @else
+                                                --
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($request->accountant)
+                                                {{$request->accountant->created_at}}
+                                            @else
+                                                --
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($request->finance)
+                                                {{$request->finance->created_at}}
+                                            @else
+                                                --
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($request->auditor)
+                                                {{$request->auditor->created_at}}
+                                            @else
+                                                --
+                                            @endif
+                                        </td>
+                                        <td>
+                                            {{$request->status}}
+                                        </td>
+                                        <td>
+                                            @if($request->approvals_count == 4)
+                                                CLOSE
+                                            @else
+                                                OPEN
+                                            @endif
+                                        </td>
+                                        <td>{!! \App\Helper\Helper::formatPeso($request->items_sum_sub_total) !!}</td>
+                                        <td>{!! \App\Helper\Helper::formatPeso($request->items_sum_approve_total) !!}</td>
+                                        <td>{!! \App\Helper\Helper::formatPeso($request->items_sum_sub_total -  $request->items_sum_approve_total) !!}</td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <td colspan="13">
+                                        {{$requests->links()}}
+                                    </td>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th>REFERENCE</th>
-                <th>ENTITY</th>
-                <th>PAID TO</th>
-                <th>REQUESTED BY</th>
-                <th>BOOK KEEPER</th>
-                <th>ACCOUNTANT</th>
-                <th>FINANCE</th>
-                <th>AUDITOR</th>
-                <th>PAYMENT STATUS</th>
-                <th>REQUEST STATUS</th>
-                <th>AMOUNT REQUEST</th>
-                <th>APPROVED AMOUNT</th>
-                <th>BALANCE</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach($requests as $request)
-                <tr>
-                    <td class="text-nowrap">{{$request->reference}}</td>
-                    <td>{{$request->company->name}}</td>
-                    <td class="text-capitalize">{{$request->paid_to}}</td>
-                    <td class="text-capitalize">{{$request->request_by}}</td>
-                    <td>
-                        @if($request->bookKeeper)
-                            {{$request->bookKeeper->created_at}}
-                        @else
-                            --
-                        @endif
-                    </td>
-                    <td>
-                        @if($request->accountant)
-                            {{$request->accountant->created_at}}
-                        @else
-                            --
-                        @endif
-                    </td>
-                    <td>
-                        @if($request->finance)
-                            {{$request->finance->created_at}}
-                        @else
-                            --
-                        @endif
-                    </td>
-                    <td>
-                        @if($request->auditor)
-                            {{$request->auditor->created_at}}
-                        @else
-                            --
-                        @endif
-                    </td>
-                    <td>
-                        {{$request->status}}
-                    </td>
-                    <td>
-                        @if($request->approvals_count == 4)
-                            CLOSE
-                        @else
-                            OPEN
-                        @endif
-                    </td>
-                    <td>{!! \App\Helper\Helper::formatPeso($request->items_sum_sub_total) !!}</td>
-                    <td>{!! \App\Helper\Helper::formatPeso($request->items_sum_approve_total) !!}</td>
-                    <td>{!! \App\Helper\Helper::formatPeso($request->items_sum_sub_total -  $request->items_sum_approve_total) !!}</td>
-                </tr>
-            @endforeach
-            </tbody>
-            <tfoot>
-            <tr>
-                <td colspan="13">
-                    {{$requests->links()}}
-                </td>
-            </tr>
-            </tfoot>
-        </table>
+        </div>
     </div>
+
+</div>
 @endsection
 
 @section('script')
@@ -142,7 +225,7 @@
         const excelForm = document.querySelector('#excelForm');
         const pdfForm = document.querySelector('#pdfForm');
 
-        excelForm.addEventListener('submit', async (e) => {
+        searchForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const formData = new FormData(searchForm);
@@ -159,6 +242,17 @@
 
         })
 
+        $('#searchForm').find('select[name="company"]').on('change', function() {
+            $('#searchForm').submit();
+        })
+
+        $('#searchForm').find('select[name="fund_status"]').on('change', function() {
+            $('#searchForm').submit();
+        })
+
+        $('#searchForm').find('select[name="status"]').on('change', function() {
+            $('#searchForm').submit();
+        })
     </script>
 @endsection
 

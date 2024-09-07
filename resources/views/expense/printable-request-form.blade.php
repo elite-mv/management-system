@@ -95,8 +95,7 @@
 
 @section('body')
 
-
-{{--    {{count($errors) }}--}}
+    {{--    {{count($errors) }}--}}
 
     @if($errors->any())
         <div class="container-fluid mt-2">
@@ -110,67 +109,20 @@
 
         <div class="col">
             <div class="bg-light p-2">
-                <button class="btn btn-success" onclick="generatePDF()">
+                <a type="button" href="/expense/pdf/request/{{$request->id}}" class="btn btn-success">
                     <i class="fas fa-download"></i>
                     Download
-                </button>
+                </a>
+
                 <button onclick="viewHistory()" class="btn btn-secondary">
                     <i class="fas fa-scroll"></i>
                     View Logs
                 </button>
-                <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#checkwriterModal">
+                <button class="btn btn-secondary" id="check_writer">
                     <i class="fas fa-plus-circle me-2"></i>Check Writer
+                    <input type="hidden" id="hidden_paid_to" value=" {{$request->paid_to}}">
+                    <input type="hidden" id="hidden_amount" value="{{$request->approvedItems->sum('total_cost')}}">
                 </button>
-            </div>
-
-            <div class="modal fade text-dark" id="checkwriterModal" tabindex="-1" aria-labelledby="Check Writer"
-                 aria-hidden="true">
-                <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                        <form id="checkwriterForm">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5">Check Writer</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body d-flex align-items-center justify-content-around">
-                                <div style="width: 7.95in; height: 2.9in; position: relative;" class="my-auto"
-                                     id="printable_check">
-                                    <img src="https://html.scribdassets.com/5xqh18575sa7ssqi/images/1-f2cc24c5d0.jpg"
-                                         class="img-fluid h-100" alt="check-writer">
-
-                                    <div style="position: absolute; top: 0.23in; right: 0.35in; width: 2in;">
-                                        <input type="text"
-                                               class="form-control rounded-0 bg-transparent border-0 text-end fw-bold"
-                                               style="line-height: 8px;" name="date"
-                                               placeholder="0  0    0  0    0  0  0  0">
-                                    </div>
-                                    <div style="position: absolute; top: 0.6in; left: 0.95in; width: 4.43in;">
-                                        <input type="text"
-                                               class="form-control rounded-0 bg-transparent border-0 fw-bold"
-                                               style="line-height: 8px;" name="paid_to"
-                                               placeholder="*** JOHN CASTILLO ***">
-                                    </div>
-                                    <div style="position: absolute; top: 0.6in; left: 5.5in; width: 2in;">
-                                        <input type="text"
-                                               class="form-control rounded-0 bg-transparent border-0 fw-bold"
-                                               style="line-height: 8px;" name="amount_words"
-                                               placeholder="*** 1,000,000 ***">
-                                    </div>
-                                    <div style="position: absolute; top: 0.92in; left: 0.695in; width: 6.8in;">
-                                        <input type="text"
-                                               class="form-control rounded-0 bg-transparent border-0 fw-bold"
-                                               style="line-height: 8px;" name="amount_value"
-                                               placeholder="*** ONE MILLION ONLY ***">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-success rounded-pill w-50 mx-auto">Print</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
             </div>
 
             <div class="container-fluid mx-auto bg-white">
@@ -180,7 +132,8 @@
                         <div>
                             <div class="border border-dark"
                                  style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
-                                <img src="{{\Illuminate\Support\Facades\Storage::url($request->company->logo)}}" class="img-fluid" alt="LOGO"
+                                <img src="{{\Illuminate\Support\Facades\Storage::url($request->company->logo)}}"
+                                     class="img-fluid" alt="LOGO"
                                      style="height: 100px; width: auto;">
                             </div>
                             <div class="bg-red text-center text-white border border-dark"
@@ -191,17 +144,23 @@
 
                         <div style="font-size: 70px;"
                              class="m-0 ms-2 px-5 border border-5 border-danger">
-                            <select id="requestStatus" class="w-100 h-100 border-0 outline-0 text-danger text-center">
-                                @foreach(\App\Enums\RequestStatus::cases() as $status)
-                                    @if($status == $request->status)
-                                        <option style="font-size: 20px" value="{{$status->name}}"
-                                                selected>{{$status->value}}</option>
-                                    @else
-                                        <option style="font-size: 20px"
-                                                value="{{$status->name}}">{{$status->value}}</option>
-                                    @endif
-                                @endforeach
-                            </select>
+                            @can('finance-president',auth()->user())
+
+                                <select id="requestStatus"
+                                        class="w-100 h-100 border-0 outline-0 text-danger text-center">
+                                    @foreach(\App\Enums\RequestStatus::cases() as $status)
+                                        @if($status == $request->status)
+                                            <option style="font-size: 20px" value="{{$status->name}}"
+                                                    selected>{{$status->value}}</option>
+                                        @else
+                                            <option style="font-size: 20px"
+                                                    value="{{$status->name}}">{{$status->value}}</option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                            @else
+                                <p class="w-100 h-100 border-0 outline-0 text-danger text-center">{{ $request->status}}</p>
+                            @endif
                         </div>
 
                         <div class="ms-auto">
@@ -351,6 +310,7 @@
                                 class="px-2 small text-end">{!! \App\Helper\Helper::formatPeso($request->total) !!}</td>
                             <td colspan="5"
                                 class="px-2 small text-center fw-bold bg-gray text-uppercase">{!! \App\Helper\Helper::formatPeso($request->approvedItems->sum('total_cost')) !!}</td>
+
                         </tr>
                         <tr>
                             <td class="small text-center bg-dark text-white" colspan="18">PURCHASE REQUEST</td>
@@ -387,7 +347,27 @@
                                 </select>
                             </td>
                         </tr>
-
+                        <tr>
+                            <td colspan="4" class="px-2 small bg-gray">Paid to</td>
+                            <td colspan="5" class="px-2 small">
+                                @can('manage')
+                                    @if($request->paid_to)
+                                        <input id="paidToInput" value="{{$request->paid_to}}"
+                                               class="border-0 outline-0 w-100 small  text-capitalize">
+                                    @endif
+                                @else
+                                    <small>[HIDDEN]</small>
+                                @endcan
+                            </td>
+                            <td colspan="3" class="px-2 small bg-gray">Terms</td>
+                            <td colspan="6" class="px-2 small">
+                                @if($request->terms)
+                                    <input id="termsInput" value="{{$request->terms}}" class="border-0 outline-0 w-100 small text-capitalize">
+                                @else
+                                    <input id="termsInput" class="border-0 outline-0 w-100 small text-capitalize">
+                                @endif
+                            </td>
+                        </tr>
                         <tr>
                             <td colspan="4" class="small bg-yellow text-center fw-bold" style="width: 179px">QTY</td>
                             <td colspan="4" class="small bg-yellow text-center fw-bold" style="width: 179px">UOM</td>
@@ -570,19 +550,25 @@
                                 @if($request->priority)
                                     Priority
                                 @else
-                                    <form id="bookerKeeperForm" method="POST"
-                                          action="/expense/expense-request/book-keeper/approval/{{$request->id}}">
-                                        @csrf
-                                        <select id="bookerKeeperStatus" name="status" class="border-0 outline-0 w-100">
-                                            @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
-                                                @if($request->bookKeeper && $request->bookKeeper->status == $case)
-                                                    <option value="{{$case->name}}" selected>{{$case->name}}</option>
-                                                @else
-                                                    <option value="{{$case->name}}">{{$case->name}}</option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                    </form>
+                                    @can('book-keeper',auth()->user())
+                                        <form id="bookerKeeperForm" method="POST"
+                                              action="/expense/expense-request/book-keeper/approval/{{$request->id}}">
+                                            @csrf
+                                            <select id="bookerKeeperStatus" name="status"
+                                                    class="border-0 outline-0 w-100">
+                                                @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
+                                                    @if($request->bookKeeper && $request->bookKeeper->status == $case)
+                                                        <option value="{{$case->name}}"
+                                                                selected>{{$case->name}}</option>
+                                                    @else
+                                                        <option value="{{$case->name}}">{{$case->name}}</option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                        </form>
+                                    @else
+                                        {{ $request->bookKeeper->status->name}}
+                                    @endcan()
                                 @endif
                             </td>
                         </tr>
@@ -705,19 +691,27 @@
                                 @if($request->priority)
                                     Priority
                                 @else
-                                    <form id="accountantForm" method="POST"
-                                          action="/expense/expense-request/accountant/approval/{{$request->id}}">
-                                        @csrf
-                                        <select id="accountantStatus" name="status" class="border-0 outline-0 w-100">
-                                            @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
-                                                @if($request->accountant && $request->accountant->status == $case)
-                                                    <option value="{{$case->name}}" selected>{{$case->name}}</option>
-                                                @else
-                                                    <option value="{{$case->name}}">{{$case->name}}</option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                    </form>
+                                    @can('accountant',auth()->user())
+                                        <form id="accountantForm" method="POST"
+                                              action="/expense/expense-request/accountant/approval/{{$request->id}}">
+                                            @csrf
+                                            <select id="accountantStatus" name="status"
+                                                    class="border-0 outline-0 w-100">
+                                                @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
+                                                    @if($request->accountant && $request->accountant->status == $case)
+                                                        <option value="{{$case->name}}"
+                                                                selected>{{$case->name}}</option>
+                                                    @else
+                                                        <option value="{{$case->name}}">{{$case->name}}</option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                        </form>
+                                    @else
+                                        @if($request->accountant)
+                                            {{ $request->accountant->status->name}}
+                                        @endif
+                                    @endcan
                                 @endif
                             </td>
                         </tr>
@@ -826,19 +820,25 @@
                                 @endif
                             </td>
                             <td colspan="5" class="small px-2 selectable">
-                                <form id="financeForm" method="POST"
-                                      action="/expense/expense-request/finance/approval/{{$request->id}}">
-                                    @csrf
-                                    <select id="financeStatus" name="status" class="border-0 outline-0 w-100">
-                                        @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
-                                            @if($request->finance && $request->finance->status == $case)
-                                                <option value="{{$case->name}}" selected>{{$case->name}}</option>
-                                            @else
-                                                <option value="{{$case->name}}">{{$case->name}}</option>
-                                            @endif
-                                        @endforeach
-                                    </select>
-                                </form>
+                                @can('finance-president',auth()->user())
+                                    <form id="financeForm" method="POST"
+                                          action="/expense/expense-request/finance/approval/{{$request->id}}">
+                                        @csrf
+                                        <select id="financeStatus" name="status" class="border-0 outline-0 w-100">
+                                            @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
+                                                @if($request->finance && $request->finance->status == $case)
+                                                    <option value="{{$case->name}}" selected>{{$case->name}}</option>
+                                                @else
+                                                    <option value="{{$case->name}}">{{$case->name}}</option>
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                    </form>
+                                @else
+                                    @if($request->auditor)
+                                        {{$request->finance->status->name}}
+                                    @endif
+                                @endcan
                             </td>
                         </tr>
                         <tr>
@@ -941,19 +941,28 @@
                                 @endif
                             </td>
                             <td colspan="5" class="small px-2 selectable">
-                                <form id="auditorForm" method="POST"
-                                      action="/expense/expense-request/auditor/approval/{{$request->id}}">
-                                    @csrf
-                                    <select id="auditorStatus" name="status" class="border-0 outline-0 w-100">
-                                        @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
-                                            @if($request->auditor && $request->auditor->status == $case)
-                                                <option value="{{$case->name}}" selected>{{$case->name}}</option>
-                                            @else
-                                                <option value="{{$case->name}}">{{$case->name}}</option>
-                                            @endif
-                                        @endforeach
-                                    </select>
-                                </form>
+                                @can('auditor',auth()->user())
+                                    <form id="auditorForm" method="POST"
+                                          action="/expense/expense-request/auditor/approval/{{$request->id}}">
+                                        @csrf
+                                        <select id="auditorStatus" name="status" class="border-0 outline-0 w-100">
+                                            @foreach(\App\Enums\RequestApprovalStatus::status() as $case)
+                                                @if($request->auditor && $request->auditor->status == $case)
+                                                    <option value="{{$case->name}}" selected>{{$case->name}}</option>
+                                                @else
+                                                    <option value="{{$case->name}}">{{$case->name}}</option>
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                    </form>
+                                @else
+
+                                    @if($request->auditor)
+                                        {{ $request->auditor->status->name}}
+                                    @endif
+
+                                @endcan
+
                             </td>
                         </tr>
                         <tr>
@@ -1358,230 +1367,316 @@
         const fundedStatus = document.querySelector('#fundedStatus');
         const declinedStatus = document.querySelector('#declinedStatus');
 
+        const paidToInput = document.querySelector('#paidToInput');
+        const termsInput = document.querySelector('#termsInput');
+
         const commentForm = document.querySelector('#commentForm');
         const commentHolder = document.querySelector('#commentsHolder');
         let initialLoad = true;
 
-        receivedBy.addEventListener('change', async () => {
+        if (receivedBy) {
+            receivedBy.addEventListener('change', async () => {
 
-            try {
+                try {
 
-                const formData = new FormData();
+                    const formData = new FormData();
 
-                formData.append('received_by', receivedBy.value);
+                    formData.append('received_by', receivedBy.value);
 
-                const response = await fetch('/expense/expense-request/received-by/{{$request->id}}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    const response = await fetch('/expense/expense-request/received-by/{{$request->id}}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Received by updated failed!');
                     }
-                });
 
-                if (!response.ok) {
-                    throw new Error('Received by updated failed!');
+                    showSuccessMessage('Received by updated');
+
+                } catch (error) {
+                    receivedBy.value = null;
+                    showErrorMessage(error.message);
                 }
+            });
+        }
 
-                showSuccessMessage('Received by updated');
+        if (auditedBy) {
+            auditedBy.addEventListener('change', async () => {
+                try {
 
-            } catch (error) {
-                receivedBy.value = null;
-                showErrorMessage(error.message);
-            }
-        });
+                    const formData = new FormData();
 
-        auditedBy.addEventListener('change', async () => {
-            try {
+                    formData.append('audited_by', auditedBy.value);
 
-                const formData = new FormData();
+                    const response = await fetch('/expense/expense-request/audited-by/{{$request->id}}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
 
-                formData.append('audited_by', auditedBy.value);
-
-                const response = await fetch('/expense/expense-request/audited-by/{{$request->id}}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    if (!response.ok) {
+                        throw new Error('Audited by updated failed!');
                     }
-                });
 
-                if (!response.ok) {
-                    throw new Error('Audited by updated failed!');
+                    showSuccessMessage('Audited by updated');
+
+                } catch (error) {
+                    auditedBy.value = null;
+                    showErrorMessage(error.message);
                 }
+            });
+        }
 
-                showSuccessMessage('Audited by updated');
+        if (purchaseOrderInput) {
+            purchaseOrderInput.addEventListener('change', async () => {
 
-            } catch (error) {
-                auditedBy.value = null;
-                showErrorMessage(error.message);
-            }
-        });
+                try {
 
-        purchaseOrderInput.addEventListener('change', async () => {
+                    const formData = new FormData();
 
-            try {
+                    formData.append('purchaseOrder', purchaseOrderInput.value);
 
-                const formData = new FormData();
+                    const response = await fetch('/expense/expense-request/expense/vat/purchase-order/{{$request->id}}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                        }
+                    })
 
-                formData.append('purchaseOrder', purchaseOrderInput.value);
-
-                const response = await fetch('/expense/expense-request/expense/vat/purchase-order/{{$request->id}}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    if (!response.ok) {
+                        throw new Error('Purchase Order update failed!')
                     }
-                })
 
-                if (!response.ok) {
-                    throw new Error('Purchase Order update failed!')
+                    showSuccessMessage('Purchase Order updated!')
+                } catch (error) {
+                    purchaseOrderInput.value = null;
+                    showErrorMessage(error.message)
                 }
+            })
+        }
 
-                showSuccessMessage('Purchase Order updated!')
-            } catch (error) {
-                purchaseOrderInput.value = null;
-                showErrorMessage(error.message)
-            }
-        })
+        if (invoiceNumberInput) {
+            invoiceNumberInput.addEventListener('change', async () => {
 
-        invoiceNumberInput.addEventListener('change', async () => {
+                try {
 
-            try {
+                    let formData = new FormData();
 
-                let formData = new FormData();
+                    formData.append('invoice', invoiceNumberInput.value);
 
-                formData.append('invoice', invoiceNumberInput.value);
+                    const response = await fetch('/expense/expense-request/expense/vat/invoice/{{$request->id}}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
 
-                const response = await fetch('/expense/expense-request/expense/vat/invoice/{{$request->id}}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    if (!response.ok) {
+                        throw new Error('Invoice number update failed!');
                     }
-                });
 
-                if (!response.ok) {
-                    throw new Error('Invoice number update failed!');
+                    showSuccessMessage('Invoice number updated!')
+
+                } catch (error) {
+                    invoiceNumberInput.value = null
+                    showErrorMessage(error.message)
                 }
+            })
+        }
 
-                showSuccessMessage('Invoice number updated!')
+        if (billNumberInput) {
+            billNumberInput.addEventListener('change', async () => {
 
-            } catch (error) {
-                invoiceNumberInput.value = null
-                showErrorMessage(error.message)
-            }
-        })
+                try {
 
-        billNumberInput.addEventListener('change', async () => {
+                    const formData = new FormData();
 
-            try {
+                    formData.append('bill', billNumberInput.value);
 
-                const formData = new FormData();
+                    const response = await fetch('/expense/expense-request/expense/vat/bill/{{$request->id}}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
 
-                formData.append('bill', billNumberInput.value);
-
-                const response = await fetch('/expense/expense-request/expense/vat/bill/{{$request->id}}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    if (!response.ok) {
+                        throw new Error('Bill number updated failed!')
                     }
-                });
 
-                if (!response.ok) {
-                    throw new Error('Bill number updated failed!')
+                    showSuccessMessage('Bill number updated!');
+                } catch (error) {
+                    billNumberInput.value = null
+                    showErrorMessage(error.message)
                 }
+            })
+        }
 
-                showSuccessMessage('Bill number updated!');
-            } catch (error) {
-                billNumberInput.value = null
-                showErrorMessage(error.message)
-            }
-        })
+        if (paidToInput) {
+            paidToInput.addEventListener('change', async () => {
 
-        orNumberInput.addEventListener('change', async () => {
+                try {
 
-            try {
+                    const formData = new FormData();
 
-                const formData = new FormData();
+                    formData.append('paid_to', paidToInput.value);
 
-                formData.append('receipt', orNumberInput.value);
+                    const response = await fetch('/expense/expense-request/paid-to/{{$request->id}}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
 
-                const response = await fetch('/expense/expense-request/expense/vat/official-receipt/{{$request->id}}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    if (!response.ok) {
+                        throw new Error('Something went wrong!')
                     }
-                })
 
-                if (!response.ok) {
-                    throw new Error('Official receipt number update failed')
+                    showSuccessMessage('Paid to updated!');
+                } catch (error) {
+                    paidToInput.value = null
+                    showErrorMessage(error.message)
                 }
+            })
+        }
 
-                showSuccessMessage('Official receipt number updated!');
+        if (termsInput) {
+            termsInput.addEventListener('change', async () => {
 
-            } catch (error) {
-                orNumberInput.check = null;
-                showErrorMessage(error.message);
-            }
-        })
+                try {
 
-        vatOptionA.addEventListener('change', async () => {
+                    const formData = new FormData();
 
-            try {
+                    formData.append('terms', termsInput.value);
 
-                const formData = new FormData();
+                    const response = await fetch('/expense/expense-request/terms/{{$request->id}}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
 
-                formData.append('option', vatOptionA.value);
 
-                const response = await fetch('/expense/expense-request/expense/vat/option-a/{{$request->id}}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    const data = await  response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.message)
                     }
-                });
 
-                if (!response.ok) {
-                    throw new Error('Vat input amount update failed!');
+
+                    // if (!response.ok) {
+                    //     throw new Error('Terms updated failed!')
+                    // }
+
+                    showSuccessMessage('Terms to updated!');
+                } catch (error) {
+                    termsInput.value = null
+                    showErrorMessage(error.message)
                 }
+            })
+        }
 
-                showSuccessMessage('Vat input amount updated!');
 
-            } catch (error) {
-                showErrorMessage(error.message)
-                vatOptionA.value = null;
-            }
-        })
+        if (orNumberInput) {
+            orNumberInput.addEventListener('change', async () => {
 
-        vatOptionB.addEventListener('change', async () => {
+                try {
 
-            try {
+                    const formData = new FormData();
 
-                const formData = new FormData();
+                    formData.append('receipt', orNumberInput.value);
 
-                formData.append('option', vatOptionB.value);
+                    const response = await fetch('/expense/expense-request/expense/vat/official-receipt/{{$request->id}}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                        }
+                    })
 
-                const response = await fetch('/expense/expense-request/expense/vat/option-b/{{$request->id}}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    if (!response.ok) {
+                        throw new Error('Official receipt number update failed')
                     }
-                });
 
-                if (!response.ok) {
-                    throw new Error('Vat input amount update failed!');
+                    showSuccessMessage('Official receipt number updated!');
+
+                } catch (error) {
+                    orNumberInput.check = null;
+                    showErrorMessage(error.message);
                 }
+            })
+        }
 
-                showSuccessMessage('Vat input amount updated!');
+        if (vatOptionA) {
+            vatOptionA.addEventListener('change', async () => {
 
-            } catch (error) {
-                showErrorMessage(error.message)
-                vatOptionB.value = null;
-            }
-        })
+                try {
+
+                    const formData = new FormData();
+
+                    formData.append('option', vatOptionA.value);
+
+                    const response = await fetch('/expense/expense-request/expense/vat/option-a/{{$request->id}}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Vat input amount update failed!');
+                    }
+
+                    showSuccessMessage('Vat input amount updated!');
+
+                } catch (error) {
+                    showErrorMessage(error.message)
+                    vatOptionA.value = null;
+                }
+            })
+        }
+
+        if (vatOptionB) {
+            vatOptionB.addEventListener('change', async () => {
+
+                try {
+
+                    const formData = new FormData();
+
+                    formData.append('option', vatOptionB.value);
+
+                    const response = await fetch('/expense/expense-request/expense/vat/option-b/{{$request->id}}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Vat input amount update failed!');
+                    }
+
+                    showSuccessMessage('Vat input amount updated!');
+
+                } catch (error) {
+                    showErrorMessage(error.message)
+                    vatOptionB.value = null;
+                }
+            })
+        }
 
         if (bookerKeeperStatus) {
             bookerKeeperStatus.addEventListener('change', () => {
@@ -1595,33 +1690,78 @@
             })
         }
 
-        financeStatus.addEventListener('change', () => {
-            financeForm.submit();
-        })
+        if (financeStatus) {
+            financeStatus.addEventListener('change', () => {
+                financeForm.submit();
+            })
+        }
 
-        auditorStatus.addEventListener('change', () => {
-            auditorForm.submit();
-        })
+        if (auditorStatus) {
+            auditorStatus.addEventListener('change', () => {
+                auditorForm.submit();
+            })
+        }
 
-        expenseCategoryInput.forEach((category, index) => {
+        if (expenseCategoryInput) {
+            expenseCategoryInput.forEach((category, index) => {
 
-            if (category.value) {
-                selectedExpensesCategory[index] = category.value;
-            }
+                if (category.value) {
+                    selectedExpensesCategory[index] = category.value;
+                }
 
-            category.addEventListener('input', async () => {
+                category.addEventListener('input', async () => {
 
+                    try {
+
+                        selectedExpensesCategory[index] = category.value;
+
+                        const formData = new FormData();
+
+                        selectedExpensesCategory.forEach(category => {
+                            formData.append('category[]', category);
+                        })
+
+                        const response = await fetch('/expense/api/expense-request/expense-type/{{$request->id}}', {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                            }
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Update expense type failed!');
+                        }
+
+                        showSuccessMessage('Expense type updated!');
+
+                    } catch (error) {
+                        category.value = 1;
+                        showErrorMessage(error.message);
+                    }
+                });
+            })
+        }
+        if (bankNameSelection) {
+            bankNameSelection.addEventListener('change', updateBankDetails);
+        }
+
+        if (bankCodeSelection) {
+            bankCodeSelection.addEventListener('change', updateBankDetails);
+        }
+
+        if (checkNumberInput) {
+            checkNumberInput.addEventListener('change', updateBankDetails);
+        }
+
+        if (requestPaymentMethodInput) {
+            requestPaymentMethodInput.addEventListener('change', async () => {
                 try {
 
-                    selectedExpensesCategory[index] = category.value;
-
                     const formData = new FormData();
+                    formData.append('mode', requestPaymentMethodInput.value);
 
-                    selectedExpensesCategory.forEach(category => {
-                        formData.append('category[]', category);
-                    })
-
-                    const response = await fetch('/expense/api/expense-request/expense-type/{{$request->id}}', {
+                    const response = await fetch('/expense/api/expense-request/payment-method/{{$request->id}}', {
                         method: 'POST',
                         body: formData,
                         headers: {
@@ -1629,50 +1769,20 @@
                         }
                     });
 
+                    const data = await response.json();
+
                     if (!response.ok) {
-                        throw new Error('Update expense type failed!');
+                        throw new Error('Unable to update payment method!');
                     }
 
-                    showSuccessMessage('Expense type updated!');
+                    await generateVoucher();
 
                 } catch (error) {
-                    category.value = 1;
-                    showErrorMessage(error.message);
+                    requestPaymentMethodInput.value = 0;
+                    showErrorMessage(error.message)
                 }
-            });
-        })
-
-        bankNameSelection.addEventListener('change', updateBankDetails);
-        bankCodeSelection.addEventListener('change', updateBankDetails);
-        checkNumberInput.addEventListener('change', updateBankDetails);
-
-        requestPaymentMethodInput.addEventListener('change', async () => {
-            try {
-
-                const formData = new FormData();
-                formData.append('mode', requestPaymentMethodInput.value);
-
-                const response = await fetch('/expense/api/expense-request/payment-method/{{$request->id}}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error('Unable to update payment method!');
-                }
-
-                await generateVoucher();
-
-            } catch (error) {
-                requestPaymentMethodInput.value = 0;
-                showErrorMessage(error.message)
-            }
-        })
+            })
+        }
 
         commentForm.addEventListener('submit', async (e) => {
 
@@ -1748,6 +1858,10 @@
 
             const g1 = document.querySelectorAll(`.${groupId}`);
 
+            if (!g1) {
+                return;
+            }
+
             let gcheck = null;
 
             g1.forEach(item => {
@@ -1783,40 +1897,41 @@
 
         groupCheck('deliverySupplier', verifyDelivery, removeDelivery);
         groupCheck('deliveryStatus', setDeliveryStatus, deleteDeliveryStatus);
-
         groupCheck('attachment', updateAttachment, removeAttachment);
         groupCheck('attachmentType', updateType, removeType);
         groupCheck('attachmentReceipt', updateReceipt, removeReceipt);
         groupCheck('priorityLevel', updatePriorityLevel, removePriorityLevel);
         groupCheck('fundStatus', updateFundStatus, removeFundStatus);
 
-        requestStatus.addEventListener('change', async () => {
+        if (requestStatus) {
+            requestStatus.addEventListener('change', async () => {
 
-            try {
+                try {
 
-                const formData = new FormData();
+                    const formData = new FormData();
 
-                formData.append('status', requestStatus.value);
+                    formData.append('status', requestStatus.value);
 
-                const result = await fetch(`/expense/api/request/status/{{$request->id}}`, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    const result = await fetch(`/expense/api/request/status/{{$request->id}}`, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+
+                    if (!result.ok) {
+                        throw new Error('Something went wrong');
                     }
-                });
 
-                if (!result.ok) {
-                    throw new Error('Something went wrong');
+                    showSuccessMessage('Status updated!');
+
+                } catch (error) {
+                    requestStatus.value = null;
+                    showErrorMessage('Status updated failed!');
                 }
-
-                showSuccessMessage('Status updated!');
-
-            } catch (error) {
-                requestStatus.value = null;
-                showErrorMessage('Status updated failed!');
-            }
-        })
+            })
+        }
 
         async function viewItem(id) {
 
@@ -1824,7 +1939,7 @@
 
                 const result = await fetch(`/expense/api/request-item/${id}`);
 
-                const data =  await result.json();
+                const data = await result.json();
 
                 if (!result.ok) {
                     throw new Error(data.message);
@@ -2341,65 +2456,67 @@
             html2pdf().set(expenseRequestPrintableOption).from(expenseRequestPrintable).save();
         }
 
-        fileUpload.addEventListener('change', async () => {
+        if (fileUpload) {
+            fileUpload.addEventListener('change', async () => {
 
-            let formData = new FormData();
+                let formData = new FormData();
 
-            const files = fileUpload.files;
-            const itemId = fileUpload.dataset.id;
+                const files = fileUpload.files;
+                const itemId = fileUpload.dataset.id;
 
-            Array.from(files).forEach(file => {
-                formData.append('files[]', file);
-            });
+                Array.from(files).forEach(file => {
+                    formData.append('files[]', file);
+                });
 
-            try {
+                try {
 
-                let result = await fetch(`/expense/api/request-item/file/${itemId}`, {
-                    method: "POST",
-                    body: formData,
-                    headers: {
-                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    let result = await fetch(`/expense/api/request-item/file/${itemId}`, {
+                        method: "POST",
+                        body: formData,
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                        }
+                    })
+
+                    if (!result.ok) {
+
+                        let data = await result.json();
+
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: 'An error occurred while uploading attachment',
+                        });
+
+                        return;
                     }
-                })
 
-                if (!result.ok) {
+                    let files = await result.json();
 
-                    let data = await result.json();
+                    files.images.forEach(attachment => {
 
+                        let imageSrc = (attachment.split('/'))[1];
+
+                        const thumbnail = $('<img>').attr('src', '/storage/' + imageSrc).addClass('uploaded-img');
+
+                        $('#uploads').append(thumbnail);
+
+                    });
+
+                    viewer.update();
+
+                } catch (error) {
                     Swal.fire({
                         icon: "error",
                         title: "Oops...",
-                        text: 'An error occurred while uploading attachment',
-                    });
+                        text: error.message,
+                    })
 
-                    return;
+                } finally {
+                    fileUpload.value = null;
                 }
-
-                let files = await result.json();
-
-                files.images.forEach(attachment => {
-
-                    let imageSrc = (attachment.split('/'))[1];
-
-                    const thumbnail = $('<img>').attr('src', '/storage/' + imageSrc).addClass('uploaded-img');
-
-                    $('#uploads').append(thumbnail);
-
-                });
-
-                viewer.update();
-
-            } catch (error) {
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: error.message,
-                })
-
-            } finally {
-                fileUpload.value = null;
-            }
-        })
+            })
+        }
 
         function showSuccessMessage(message) {
             toastSuccessBody.innerHTML = message;
@@ -2414,20 +2531,41 @@
     </script>
 
     <script>
-        document.getElementById('checkwriterForm').addEventListener('submit', function (event) {
+        document.getElementById('check_writer').addEventListener('click', function (event) {
             event.preventDefault();
-            var element = document.getElementById('printable_check');
-            html2pdf(element, {
-                margin: 0,
-                filename: 'CHECK_BDO.pdf',
-                image: {type: 'jpg', quality: 1.0},
-                html2canvas: {scale: 1},
-                jsPDF: {
-                    unit: 'in',
-                    format: [6.25, 2.75],
-                    orientation: 'landscape',
-                }
-            });
+            const date = new Date();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const year = date.getFullYear().toString();
+            const formattedDate = `${month.split('').join('   ')}     ${day.split('').join('   ')}     ${year.split('').join('   ')}`;
+
+            var number = parseFloat($('#hidden_amount').val());
+            var formattedNumber = number.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }) + '***';
+
+            const formattedPaidTo = '***' + $('#hidden_paid_to').val() + '***';
+
+            const fileUrl = '/excel/Check Writer-2024.xlsx';
+            fetch(fileUrl)
+                .then(response => response.arrayBuffer())
+                .then(async (data) => {
+                    const workbook = new ExcelJS.Workbook();
+                    await workbook.xlsx.load(data);
+                    const worksheet = workbook.worksheets[0];
+
+                    worksheet.getCell('C3').value = formattedPaidTo;
+                    worksheet.getCell('C4').value = formattedNumber;
+                    worksheet.getCell('C5').value = 'SAMPLE AMOUNT TO WORDS';
+                    worksheet.getCell('C6').value = formattedDate;
+
+                    const buffer = await workbook.xlsx.writeBuffer();
+                    const blob = new Blob([buffer], {type: 'application/octet-stream'});
+
+                    saveAs(blob, 'Check Writer-2024.xlsx');
+                })
+                .catch(error => console.error('Error fetching or processing the file:', error));
         });
     </script>
 

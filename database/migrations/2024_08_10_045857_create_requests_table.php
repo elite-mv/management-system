@@ -31,12 +31,12 @@ return new class extends Migration
             ]);
 
             $table->enum('payment_method',[
-                PaymentMethod::NONE->name,
-                PaymentMethod::CASH->name,
-                PaymentMethod::CHECK->name,
-                PaymentMethod::CREDIT_CARD->name,
-                PaymentMethod::GCASH->name,
-                PaymentMethod::ONLINE_TRANSFER->name,
+                PaymentMethod::NONE->value,
+                PaymentMethod::CASH->value,
+                PaymentMethod::CHECK->value,
+                PaymentMethod::CREDIT_CARD->value,
+                PaymentMethod::GCASH->value,
+                PaymentMethod::ONLINE_TRANSFER->value,
             ]);
 
             $table->boolean('priority');

@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\DB;
+use function Webmozart\Assert\Tests\StaticAnalysis\boolean;
 
 class Request extends Model
 {
@@ -42,6 +43,7 @@ class Request extends Model
         'received_by',
         'audited_by',
         'status',
+        'terms',
     ];
 
     protected $appends = ['total', 'reference', 'fund', 'fund_item'];
@@ -56,6 +58,7 @@ class Request extends Model
             'receipt' => AccountingReceipt::class,
             'status' => RequestStatus::class,
             'fund_status' => RequestFundStatus::class,
+            'priority' => 'boolean',
         ];
     }
 

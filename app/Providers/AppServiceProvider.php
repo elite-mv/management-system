@@ -49,6 +49,47 @@ class AppServiceProvider extends ServiceProvider
             return $isAllowed;
         });
 
+        Gate::define('book-keeper', function (User $user) {
+            return $user->role->name == UserRole::BOOK_KEEPER->value;
+        });
+
+        Gate::define('accountant', function (User $user) {
+            return $user->role->name == UserRole::ACCOUNTANT->value;
+        });
+
+        Gate::define('auditor', function (User $user) {
+            return $user->role->name == UserRole::AUDITOR->value;
+        });
+
+        Gate::define('finance-president', function (User $user) {
+            return $user->role->name == UserRole::PRESIDENT->value || $user->role == UserRole::FINANCE->value;
+        });
+
+        Gate::define('finance', function (User $user) {
+            $user->role == UserRole::FINANCE->value;
+        });
+
+        Gate::define('president', function (User $user) {
+            return $user->role->name == UserRole::PRESIDENT->value;
+        });
+
+        Gate::define('managing-role', function (User $user) {
+            return $user->role->name == UserRole::PRESIDENT->value || $user->role == UserRole::FINANCE->value || $user->role->name == UserRole::BOOK_KEEPER->value || $user->role->name == UserRole::ACCOUNTANT->value || $user->role->name == UserRole::AUDITOR->value;
+        });
+        Gate::define('manage', function () {
+
+            switch (Auth::user()->role->name) {
+                case UserRole::ACCOUNTANT->value:
+                case UserRole::AUDITOR->value:
+                case UserRole::BOOK_KEEPER->value:
+                case UserRole::FINANCE->value:
+                case UserRole::PRESIDENT->value:
+                    return true;
+                default:
+                    return false;
+            }
+        });
+
         Blade::if('management', function () {
 
             switch (Auth::user()->role->name) {

@@ -6,7 +6,7 @@
 
 main {
 	display: flex;
-	flex-direction: coloumn;
+	flex-direction: column;
 }
 
 header, section {

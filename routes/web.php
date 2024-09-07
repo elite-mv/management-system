@@ -23,6 +23,7 @@ use App\Http\Controllers\Expense\RequestExpenseController;
 use App\Http\Controllers\Expense\RequestItemController;
 use App\Http\Controllers\Expense\RequestLogsController;
 use App\Http\Controllers\Expense\RequestVoucher;
+use App\Http\Controllers\Expense\PastRequestController;
 use App\Http\Controllers\Expense\UnitOfMeasureController;
 use App\Http\Controllers\Expense\VatController;
 use App\Http\Controllers\Income\CustomerController;
@@ -51,7 +52,6 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware([CheckUserPin::class])->post('/logout', [AuthController::class, 'logout']);
 
 });
-
 
 Route::prefix('income')->middleware([CompanyMiddleware::class])->group(function () {
 
@@ -90,6 +90,8 @@ Route::prefix('expense')->group(function () {
 
         Route::get('/home', [HomeController::class, 'index']);
         Route::get('/request', [RequestController::class, 'index']);
+
+        Route::get('/pdf/request/{requestID}', [PdfController::class, 'downloadPDF']);
 
         Route::middleware([CompanyData::class])->get('/forms', [DownloadableFormController::class, 'index']);
         Route::post('/forms/excel', [DownloadableFormController::class, 'generateExcel']);
@@ -145,6 +147,9 @@ Route::prefix('expense')->group(function () {
             });
 
 
+            Route::post('/terms/{requestID}', [RequestController::class, 'updateTerms']);
+            Route::post('/paid-to/{requestID}', [RequestController::class, 'updatePaidTo']);
+
             Route::get('/comments/{requestID}', [RequestCommentController::class, 'viewComments'])->name('comments');
             Route::post('/comment/{requestID}', [RequestCommentController::class, 'addComment']);
 
@@ -188,7 +193,11 @@ Route::prefix('expense')->group(function () {
         Route::post('/expense-request/audited-by/{requestID}', [RequestController::class, 'auditedBy']);
 
         Route::get('/account', [AccountController::class, 'index']);
-        Route::patch('/account/update', [AccountController::class, 'update_account']);
+        Route::post('/account/update/name', [AccountController::class, 'update_name']);
+        Route::post('/account/update/secret_pin', [AccountController::class, 'update_secret_pin']);
+        Route::post('/account/update/password', [AccountController::class, 'update_password']);
+
+        Route::middleware([ExpenseCategoryData::class, BankData::class, BankCodesData::class])->get('/past_request', [PastRequestController::class, 'index']);
 
         Route::get('/accounts', [AccountController::class, 'accounts']);
 
@@ -203,10 +212,13 @@ Route::prefix('expense')->group(function () {
 });
 
 Route::get('/tae', function (){
-    return 'tae';
+    return view('check');
 });
 
-Route::get('/test-pdf', [PdfController::class, 'index']);
+Route::get('/check', [PdfController::class, 'check']);
+Route::get('/excel-test', [PdfController::class, 'index']);
+
+Route::post('/test-pdf', [PdfController::class, 'downloadMultiplePDF']);
 Route::get('/test', [PdfController::class, 'index']);
 Route::get('/test/{expenseRequest}', [PdfController::class, 'test']);
-Route::get('/test2/{expenseRequest}', [PdfController::class, 'test2']);
+Route::get('/test2/{requestID}', [PdfController::class, 'test2']);

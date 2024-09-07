@@ -35,7 +35,7 @@ class RequestFactory extends Factory
             'prepared_by' => 1,
             'priority_level' => RequestPriorityLevel::MEDIUM->name,
             'priority' => 0,
-            'payment_method' => PaymentMethod::CHECK->name,
+            'payment_method' => PaymentMethod::CHECK->value,
             'attachment' => AccountingAttachment::WITH->name,
             'type' => AccountingType::OPEX->name,
             'receipt' => AccountingReceipt::DELIVERY_RECEIPT->name,

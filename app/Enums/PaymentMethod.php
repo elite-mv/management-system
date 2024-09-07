@@ -2,14 +2,14 @@
 
 namespace App\Enums;
 
-enum PaymentMethod
+enum PaymentMethod: string
 {
-    case CASH;
-    case ONLINE_TRANSFER;
-    case GCASH;
-    case CREDIT_CARD;
-    case CHECK;
-    case NONE;
+    case CASH = 'cash';
+    case ONLINE_TRANSFER = 'online transfer';
+    case GCASH = 'gcash';
+    case CREDIT_CARD = 'credit card';
+    case CHECK = 'check';
+    case NONE = '';
 
     public static function modes(): array
     {
@@ -22,7 +22,7 @@ enum PaymentMethod
     {
 
         foreach (PaymentMethod::cases() as $case) {
-            if ($case->name == $target) {
+            if ($case->name == $target || $case->value == $target) {
                 return $case;
             }
         }

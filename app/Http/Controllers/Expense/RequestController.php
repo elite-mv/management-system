@@ -22,6 +22,7 @@ use App\Models\Expense\RequestApproval;
 use App\Models\Expense\RequestItem;
 use App\Models\Expense\RequestLogs;
 use App\Models\Expense\Role;
+use App\Models\Expense\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
@@ -89,18 +90,19 @@ class RequestController extends Controller
                 $item->save();
             }
 
-            $roles = [
-                UserRole::BOOK_KEEPER->value,
-                UserRole::ACCOUNTANT->value,
-                UserRole::FINANCE->value,
-                UserRole::AUDITOR->value,
-            ];
+            if ($expenseRequest->priority) {
 
-            foreach ($roles as $roleName) {
                 RequestApproval::create([
                     'request_id' => $expenseRequest->id,
-                    'status' => RequestApprovalStatus::PENDING,
-                    'role_id' => Role::where('name', $roleName)->pluck('id')->first(),
+                    'status' => RequestApprovalStatus::PENDING->name,
+                    'role_id' => Role::where('name', UserRole::FINANCE->value)->pluck('id')->first(),
+                ]);
+
+            } else {
+                RequestApproval::create([
+                    'request_id' => $expenseRequest->id,
+                    'status' => RequestApprovalStatus::PENDING->name,
+                    'role_id' => Role::where('name', UserRole::BOOK_KEEPER->value)->pluck('id')->first(),
                 ]);
             }
 
@@ -160,6 +162,8 @@ class RequestController extends Controller
 
     public function viewRequest(int $id)
     {
+
+        $viewForm = 'expense.printable-request-form';
 
         $expenseRequest = ModelsRequest::where('id', $id)
             ->with([
@@ -227,6 +231,26 @@ class RequestController extends Controller
             abort(403);
         }
 
+        $role = Auth::user()->role;
+
+        switch ($role->name) {
+            case UserRole::BOOK_KEEPER->value:
+                if ($expenseRequest->bookKeeper->status != RequestApprovalStatus::PENDING) {
+                    $viewForm = 'expense.view-request-form';
+                }
+                break;
+            case UserRole::ACCOUNTANT->value:
+                if ($expenseRequest->accountat->status != RequestApprovalStatus::PENDING) {
+                    $viewForm = 'expense.view-request-form';
+                }
+                break;
+            case UserRole::AUDITOR->value:
+                if ($expenseRequest->auditor->status != RequestApprovalStatus::PENDING) {
+                    $viewForm = 'expense.view-request-form';
+                }
+                break;
+        }
+
         $measurements = Measurement::select(['id', 'name'])->get();
         $jobOrder = JobOrder::select(['id', 'name', 'reference'])->get();
 
@@ -236,7 +260,7 @@ class RequestController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('expense.printable-request-form', [
+        return view($viewForm, [
             'request' => $expenseRequest,
             'jobOrders' => $jobOrder,
             'measurements' => $measurements,
@@ -418,6 +442,10 @@ class RequestController extends Controller
     {
         try {
 
+            if (!Gate::allows(Auth::user())) {
+                throw new \Exception('Unauthorized');
+            }
+
             DB::beginTransaction();
 
             $status = RequestStatus::valueOf($request->input('status'));
@@ -552,6 +580,80 @@ class RequestController extends Controller
             return response()->json([
                 'message' => $e->getMessage(),
                 'status' => '500',
+            ],
+                500
+            );
+        }
+    }
+
+    public function updatePaidTo(Request $request, $requestID)
+    {
+
+        try {
+
+            $validated = $request->validate([
+                'paid_to' => 'required|string',
+            ]);
+
+            DB::beginTransaction();
+
+            $paidTo = $validated['paid_to'];
+
+            $requestModel = ModelsRequest::findOrFail($requestID);
+
+            $requestModel->paid_to = $paidTo;
+
+            $requestModel->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'ok',
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'message' => $e->getMessage(),
+            ],
+                500
+            );
+        }
+    }
+
+    public function updateTerms(Request $request, $requestID)
+    {
+
+        try {
+
+            $validated = $request->validate([
+                'terms' => 'required|string',
+            ]);
+
+            DB::beginTransaction();
+
+            $terms = $validated['terms'];
+
+            $requestModel = ModelsRequest::findOrFail($requestID);
+
+            $requestModel->terms = $terms;
+
+            $requestModel->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'ok',
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'message' => $e->getMessage(),
             ],
                 500
             );

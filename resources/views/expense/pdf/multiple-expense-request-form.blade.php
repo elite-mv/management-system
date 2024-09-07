@@ -64,12 +64,14 @@
     </style>
 </head>
 <body>
+@foreach($requests as $request)
 <div class="mx-auto" style="max-width: 780px; overflow: hidden">
     <div class="d-flex mb-4 gap-2">
         <div>
             <div class="border border-dark"
                  style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
-                <img  src="{{url('storage/ntjC5mlLYT3NfefTtQzV2p927ozkpQGmYntULdd0.png')}}" class="img-fluid" alt="LOGO"
+                <img src="{{\Illuminate\Support\Facades\Storage::url($request->company->logo)}}" class="img-fluid"
+                     alt="LOGO"
                      style="height: 100px; width: auto;">
             </div>
             <div class="bg-red text-center text-white border border-dark"
@@ -79,7 +81,7 @@
         </div>
 
         <div style="font-size: 70px;" class="m-0 mr-auto px-5 border border-5 border-danger">
-            <div  class="w-100 h-100 border-0 outline-0 text-danger text-center" style="font-size: 60px">
+            <div class="w-100 h-100 border-0 outline-0 text-danger text-center" style="font-size: 60px">
                 @if($request->status)
                     {{$request->status->value}}
                 @endif
@@ -138,13 +140,13 @@
                  style="border-style: solid solid none solid !important;">
                 <b>REQUEST FORM NUMBER</b>
             </div>
-            <div class="border border-dark"  style="height: 100px; display: flex; align-items: center; justify-content: center;">
+            <div class="border border-dark"
+                 style="height: 100px; display: flex; align-items: center; justify-content: center;">
                 <h1 class="fw-bold">{{ $request->pad_id}}</h1>
             </div>
         </div>
 
     </div>
-
     <table class="table table-bordered border-dark w-100">
         <tbody>
         <tr>
@@ -197,7 +199,8 @@
         @foreach ($request->items as $item)
             <tr>
                 <td colspan="2" class="small px-2 bg-transparent text-transparent">{{$item->quantity}}</td>
-                <td colspan="3" class="small px-2 bg-transparent" style="max-width: 10ch">{{$item->measurement->name}}</td>
+                <td colspan="3" class="small px-2 bg-transparent"
+                    style="max-width: 10ch">{{$item->measurement->name}}</td>
                 <td colspan="2" class="small px-2 bg-transparent">{{$item->jobOrder->name}}</td>
                 <td colspan="2" class="small bg-transparent text-overflow">
                     <p class="m-0 p-0 text-truncate" style="max-width: 20ch">{{$item->description}}</p>
@@ -253,7 +256,7 @@
                 <td colspan="1" class="small px-2 bg-transparent text-nowrap">{{$item->jobOrder->name}}</td>
                 <td colspan="3" role="button" class="small px-2 pointer" data-bs-toggle="modal"
                     data-bs-target="#exampleModal">
-                        <p class="m-0 p-0 text-truncate" style="max-width: 30ch">{{$item->description}}</p>
+                    <p class="m-0 p-0 text-truncate" style="max-width: 30ch">{{$item->description}}</p>
                 </td>
                 <td colspan="3"
                     class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->cost) !!}</td>
@@ -320,9 +323,9 @@
             </td>
         </tr>
         <tr>
-            <td colspan="8" class="bg-yellow text-center small" >RELEASED BY :</td>
-            <td colspan="4" class="bg-red text-center small" >RECEIVED BY :</td>
-            <td colspan="6" class="bg-green text-center small" >AUDITED BY :</td>
+            <td colspan="8" class="bg-yellow text-center small">RELEASED BY :</td>
+            <td colspan="4" class="bg-red text-center small">RECEIVED BY :</td>
+            <td colspan="6" class="bg-green text-center small">AUDITED BY :</td>
         </tr>
         <tr style="height: 80px">
             <td colspan="8" class="text-center align-bottom fw-bold small" style="height: 24px">
@@ -352,14 +355,14 @@
             <td colspan="9" class="text-center fw-bold py-2">AUDITOR DEPARTMENT</td>
         </tr>
         <tr>
-            <td colspan="4" class="text-center fw-bold bg-red small" >Priority level</td>
+            <td colspan="4" class="text-center fw-bold bg-red small">Priority level</td>
             <td colspan="4" class="text-center fw-bold bg-blue small">Type</td>
             <td colspan="1" class="text-center fw-bold bg-blue small">BANK NAME</td>
             <td colspan="4" class="fw-bold small px-2">ITEMS DELIVERY</td>
-            <td colspan="5" class="px-2 fw-bold small bg-blue" >BOOK KEEPER</td>
+            <td colspan="5" class="px-2 fw-bold small bg-blue">BOOK KEEPER</td>
         </tr>
         <tr>
-            <td colspan="1" class="text-center"  style="width: 10px">
+            <td colspan="1" class="text-center" style="width: 10px">
                 @if($request->priority_level === App\Enums\RequestPriorityLevel::LOW)
                     <input class="priorityLevel" value="{{App\Enums\RequestPriorityLevel::LOW->name}}"
                            type="checkbox" name="LOW" checked>
@@ -369,7 +372,7 @@
                 @endif
             </td>
             <td colspan="2" class="small px-2">Low</td>
-            <td colspan="1" class="small px-2 text-nowrap" >5 days</td>
+            <td colspan="1" class="small px-2 text-nowrap">5 days</td>
             <td colspan="1" class="text-center">
                 <input type="checkbox">
             </td>
@@ -379,7 +382,7 @@
                 @endif
             </td>
             <td colspan="1">
-                @if($request->bankDetails)
+                @if($request->bankDetails && $request->bankDetails->bank)
                     {{$request->bankDetails->bank->name}}
                 @endif
             </td>
@@ -469,7 +472,7 @@
                 @endif
             </td>
             <td colspan="1">
-                @if($request->bankDetails)
+                @if($request->bankDetails && $request->bankDetails->code)
                     {{$request->bankDetails->code->code}}
                 @endif
             </td>
@@ -761,6 +764,13 @@
         </tr>
         </tbody>
     </table>
+
+    @if(!$loop->last)
+        <div style="page-break-before: always" class="page-break"></div>
+    @endif
+
 </div>
+@endforeach
+
 </body>
 </html>

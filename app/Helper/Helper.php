@@ -139,4 +139,9 @@ class Helper
 
     }
 
+    public static function formatCurrency($amount): string
+    {
+        return number_format($amount, 2);
+    }
+
 }
