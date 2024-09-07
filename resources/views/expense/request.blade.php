@@ -128,7 +128,7 @@
                             border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
 
                             <div class="d-flex flex-column justify-content-start overflow-x-auto p-4">
-                                <table class="table table-bordered table-responsive table-hover" id="request_cart">
+                                <table class="table table-bordered table-responsive table-hover">
                                     <thead class="table-dark">
                                         <tr>
                                             <th scope="col" class="text-center">QTY</th>
@@ -139,7 +139,9 @@
                                             <th scope="col" class="text-center">TOTAL</th>
                                         </tr>
                                     </thead>
-                                    <tbody></tbody>
+                                    <tbody id="request_cart">
+
+                                    </tbody>
                                 </table>
                             </div>
 

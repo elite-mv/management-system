@@ -1,6 +1,6 @@
 @extends('layouts.expense-index')
 
-@section('title', 'Book Keeper')
+@section('title', 'Accountant')
 
 @section('style')
     <style type="text/css">
@@ -55,7 +55,7 @@
                                 </button>
 
                                 <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                                    aria-hidden="true">
+                                     aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -66,17 +66,17 @@
                                                 <div class="form-group row mb-2">
                                                     <div class="col-6">
                                                         <label>From</label>
-                                                        <input name="from" class="form-control" type="date">
+                                                        <input value="{{$app->request->from}}" name="from" class="form-control"
+                                                               type="date">
                                                     </div>
                                                     <div class="col-6">
                                                         <label>To</label>
-                                                        <input name="to" class="form-control" type="date">
+                                                        <input value="{{$app->request->to}}" name="to" class="form-control" type="date">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                <button type="button" onclick="clearForm()" class="btn btn-secondary" data-bs-dismiss="modal">Clear Filter</button>
                                                 <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Filter</button>
                                             </div>
                                         </div>
@@ -94,7 +94,8 @@
                                     border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
                                         <option value="ALL">All</option>
                                         @foreach(\App\Enums\RequestStatus::cases() as $status)
-                                            <option value="{{$status->value}}">{{$status->value}}</option>
+                                            <option
+                                                @selected($app->request->paymentStatus == $status->value) value="{{$status->value}}">{{$status->value}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -108,7 +109,8 @@
                                     border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
                                         <option value="ALL">All</option>
                                         @foreach(\App\Enums\RequestApprovalStatus::status() as $status)
-                                            <option value="{{$status->name}}">{{$status->name}}</option>
+                                            <option
+                                                @selected($app->request->status == $status->name)  value="{{$status->name}}">{{$status->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -120,13 +122,11 @@
                                     border: 1px solid rgba(255, 255, 255, 0.5);
                                     border-right: 1px solid rgba(255, 255, 255, 0.2);
                                     border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
-                                        <option value="5">5</option>
-                                        <option value="10">10</option>
-                                        <option value="15">15</option>
-                                        <option value="20">20</option>
-                                        <option value="25">30</option>
-                                        <option value="25">50</option>
-                                        <option value="25">100</option>
+                                        <option @selected($app->request->entries == 20) value="20">20</option>
+                                        <option @selected($app->request->entries == 30) value="30">30</option>
+                                        <option @selected($app->request->entries == 40) value="40">40</option>
+                                        <option @selected($app->request->entries == 50) value="50">50</option>
+                                        <option @selected($app->request->entries == 100) value="100">100</option>
                                     </select>
                                 </div>
 
@@ -139,7 +139,8 @@
                                     border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
                                         <option value="ALL">ALL</option>
                                         @foreach($companies as $company)
-                                            <option value="{{$company->id}}">{{$company->name}}</option>
+                                            <option
+                                                @selected($app->request->entity == $company->id) value="{{$company->id}}">{{$company->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -154,13 +155,19 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <div class="row">
+                                <div class="row" style="height: 30px">
                                     <div class="col-sm-12 col-md-6 text-start">
                                         <i class="fas fa-table me-1"></i>
                                         <b>Requests</b>
                                     </div>
                                     <div class="col-sm-12 col-md-6 text-end d-none" id="collapseLayout">
-                                        <button class="btn btn-sm btn-outline-danger rounded-0 px-4" onclick="console.log(window.localStorage.getItem('checkedStorage'));">[DO NOT CLICK]</button>
+                                        <form method="POST" action="/test-pdf" id="downloadExpenseForm">
+                                            @csrf
+                                            <input id="downloadExpenseInput" type="hidden" name="id[]">
+                                            <button class="btn btn-sm btn-outline-danger rounded-0 px-4" type="submit">Download
+                                                Check
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -186,8 +193,8 @@
                                     @forelse ($requests as $request)
                                         <tr>
                                             <td>
-                                                <input id="requestInput{{$request->id}}" type="checkbox"
-                                                       class="form-check-input request-input-selection">
+                                                <input data-id='{{$request->id}}' id="requestInput{{$request->id}}"
+                                                       type="checkbox" class="form-check-input request-input-selection">
                                             </td>
                                             <td>{{ $request->reference}}</td>
                                             <td>{{$request->created_at->diffForHumans()}}</td>
@@ -216,205 +223,14 @@
                                     {{ $requests->links()}}
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
-
             </div>
-        </div>
+            @endsection
 
-    </div>
-@endsection
-
-@section('script')
-
-    <script>
-
-        const filterModal = new bootstrap.Modal('#filterModal');
-        const checkedInputs = new Map();
-
-        const requestData = document.querySelector('#requestData');
-        const filterForm = document.querySelector('#filterForm');
-        const inputs = document.querySelectorAll('.inputs');
-
-        let requestAllInput;
-        let requestInputSelections = [];
-
-        inputs.forEach(input => {
-            input.addEventListener('change', () => {
-                filterForm.submit();
-            })
-        });
-
-        function addSelectionEvent() {
-            requestInputSelections.forEach(selection => {
-
-                if(!selection.checked){
-                    checkedInputs.set(selection.value, selection.value);
-                }else{
-                    checkedInputs.delete(selection.value);
-                }
-
-                selection.checked =  requestAllInput.checked;
-            })
-        }
-
-        filterForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            getData();
-            filterModal.hide();
-        })
-
-        inputs.forEach(input => {
-            input.addEventListener('change', () => {
-                getData();
-            })
-        });
-
-        window.addEventListener('load', () => {
-            getData();
-        })
-
-        function saveMapToLocalStorage(map, key) {
-            // Convert the Map to an array of [key, value] pairs
-            const mapArray = Array.from(map.entries());
-            // Serialize the array to a JSON string
-            const mapString = JSON.stringify(mapArray);
-            // Save the JSON string to localStorage
-            localStorage.setItem(key, mapString);
-        }
-
-        function loadMapFromLocalStorage(key) {
-            // Get the JSON string from localStorage
-            const mapString = localStorage.getItem(key);
-            // If there's no data, return an empty Map
-            if (!mapString) return new Map();
-            // Parse the JSON string to an array of [key, value] pairs
-            const mapArray = JSON.parse(mapString);
-            // Convert the array to a Map
-            return new Map(mapArray);
-        }
-
-        function combineMaps(newMap, key) {
-            // Load existing data
-            const existingMap = loadMapFromLocalStorage(key);
-
-            // Merge new data into existing data
-            for (const [key, value] of newMap.entries()) {
-                existingMap.set(key, value);
-            }
-
-            // Save the combined data back to localStorage
-            saveMapToLocalStorage(existingMap, key);
-        }
-
-        function selectionEvent(e){
-
-            if(e.target.checked){
-                checkedInputs.set(e.target.value, e.target.value);
-            }else{
-                checkedInputs.delete(e.target.value);
-            }
-
-            if (window.localStorage.getItem('checkedStorage')) {
-                combineMaps(checkedInputs, 'checkedStorage');
-            } else {
-                saveMapToLocalStorage(checkedInputs, 'checkedStorage');
-            }
-            const checkedStorage = loadMapFromLocalStorage('checkedStorage');
-
-            if (checkedInputs instanceof Map ? checkedInputs.size === 0 : Object.keys(checkedInputs).length === 0) {
-                $('#collapseLayout').addClass('d-none');
-                window.localStorage.removeItem('checkedStorage')
-            } else {
-                $('#collapseLayout').removeClass('d-none');
-            }
-
-        }
-
-        function clearForm(){
-            filterForm.reset();
-            getData();
-        }
-
-        function getData(cb = null) {
-
-            let formData = new FormData(filterForm);
-
-            if(cb){
-                cb(formData);
-            }
-
-            const params = new URLSearchParams(formData);
-
-            fetch(`/expense/api/book-keeper?${params.toString()}`, {
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            })
-                .then(data => data.text())
-                .then(data => {
-
-                    requestData.innerHTML = data;
-
-                    requestInputSelections = document.querySelectorAll('.request-input-selection');
-
-                    requestAllInput = document.querySelector('#requestAllInput')
-
-                    requestAllInput.removeEventListener('change', addSelectionEvent)
-                    requestAllInput.addEventListener('change', addSelectionEvent)
-
-
-                    requestInputSelections.forEach(selection =>{
-
-                        checkedInputs = loadMapFromLocalStorage('checkedStorage');
-                        checkedInputs.forEach(([key, value]) => {
-                            const targetId = `requestInput${key}`;
-                            if (selection.id === targetId) {
-                                selection.checked = true;
-                                $('#collapseLayout').removeClass('d-none');
-                            }
-                        });
-
-                        selection.removeEventListener('change', selectionEvent)
-                        selection.addEventListener('change', selectionEvent)
-                        document.querySelector('#requestAllInput').addEventListener('change', selectionEvent)
-                    })
-
-                    for (let key of checkedInputs.keys()) {
-
-                        const target = document.querySelector(`#requestInput${key}`);
-
-                        if(target){
-                            target.checked = true;
-                        }
-                    }
-
-                    setupPageLinks();
-                }).catch(err => {
-                console.error(err)
-            })
-        }
-
-        function setupPageLinks(){
-
-            const links = document.querySelectorAll('.page-link');
-
-            links.forEach(link =>{
-                link.addEventListener('click',(e)=>{
-
-                    e.preventDefault();
-
-                    const url = new URL(e.target.href);
-
-                    getData(formData =>{
-                        formData.append('page', url.searchParams.get("page") ?? 1);
-                    });
-
-                })
-            })
-        }
-    </script>
-
-    <script type="text/javascript" src="/js/sortable.js"></script>
+            @section('script')
+                <script type="text/javascript" src="/js/expense/request-table.js"></script>
+                <script type="text/javascript" src="/js/sortable.js"></script>
 @endsection

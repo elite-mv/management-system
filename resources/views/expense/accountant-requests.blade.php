@@ -101,7 +101,7 @@
                                 </div>
 
                                 <div class="col-6 col-md-3 form-group d-flex gap-2 align-items-center">
-                                    <label class="form-label mb-0" for="status">Book Keeper</label>
+                                    <label class="form-label mb-0" for="status">Accountant</label>
                                     <select name="status" class="form-select inputs" id="status" style="background-color: rgba(255, 255, 255, 0.4);
                                     box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
                                     border: 1px solid rgba(255, 255, 255, 0.5);

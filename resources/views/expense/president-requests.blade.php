@@ -1,6 +1,6 @@
 @extends('layouts.expense-index')
 
-@section('title', 'President')
+@section('title', 'Accountant')
 
 @section('style')
     <style type="text/css">
@@ -11,21 +11,12 @@
 @endsection
 
 @section('body')
-
-    @if($errors->any())
-        <div class="container-fluid">
-            <div class="alert alert-danger" role="alert">
-                {{$errors->first()}}
-            </div>
-        </div>
-    @endif
-
-    <div class="p-3 px-md-0 m-0" style="position: relative;">
+    <div class="p-3 px-md-0 m-0">
 
         <div class="row m-0">
             <div class="col-sm-12 col-md-10 mx-auto">
 
-                <div class="d-flex overflow-y-auto m-0 p-3" style="gap: 0 30px; border-radius: 7px;
+                <div class="d-flex overflow-y-auto m-0 p-3 mb-3" style="gap: 0 30px; border-radius: 7px;
                     background-color: rgba(255, 255, 255, 0.2);
                     box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
                     border: 1px solid rgba(255, 255, 255, 0.5);
@@ -38,43 +29,7 @@
                     border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
                         <form id="filterForm">
 
-                            <div class="d-flex gap-4 align-items-center">
-
-                                <div class="col-6 col-md-2 form-group d-flex gap-2 align-items-center">
-                                    <label class="form-label mb-0" for="status">Filter</label>
-                                    <select name="status" class="form-select inputs" id="status" style="background-color: rgba(255, 255, 255, 0.4);
-                                        box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
-                                        border: 1px solid rgba(255, 255, 255, 0.5);
-                                        border-right: 1px solid rgba(255, 255, 255, 0.2);
-                                        border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
-                                        <option value="ALL">All</option>
-                                        <option value="PENDING">Pending</option>
-                                        <option value="TO_RETURN">To Return</option>
-                                        <option value="HOLD">Hold</option>
-                                        <option value="TO_PROCESS">To Process</option>
-                                        <option value="PROCESSING">Processing</option>
-                                        <option value="FOR_FUNDING">For Funding</option>
-                                        <option value="RELEASED">Released</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-6 col-md-2 form-group d-flex gap-2 align-items-center">
-                                    <label class="form-label">Entries</label>
-                                    <select name="entries" class="form-select inputs" style="background-color: rgba(255, 255, 255, 0.4);
-                                        box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
-                                        border: 1px solid rgba(255, 255, 255, 0.5);
-                                        border-right: 1px solid rgba(255, 255, 255, 0.2);
-                                        border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
-                                        <option value="5">5</option>
-                                        <option value="10">10</option>
-                                        <option value="15">15</option>
-                                        <option value="20">20</option>
-                                        <option value="25">30</option>
-                                        <option value="25">50</option>
-                                        <option value="25">100</option>
-                                    </select>
-                                </div>
-
+                            <div class="d-flex mb-2 gap-2 align-items-center">
                                 <div class="w-100 rounded-pill border d-flex align-items-start flex-direction-row gap-2 py-2 px-3" style="background-color: rgba(255, 255, 255, 0.4);
                                 box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
                                 border: 1px solid rgba(255, 255, 255, 0.5);
@@ -100,7 +55,7 @@
                                 </button>
 
                                 <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                                    aria-hidden="true">
+                                     aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -111,17 +66,17 @@
                                                 <div class="form-group row mb-2">
                                                     <div class="col-6">
                                                         <label>From</label>
-                                                        <input name="from" class="form-control" type="date">
+                                                        <input value="{{$app->request->from}}" name="from" class="form-control"
+                                                               type="date">
                                                     </div>
                                                     <div class="col-6">
                                                         <label>To</label>
-                                                        <input name="to" class="form-control" type="date">
+                                                        <input value="{{$app->request->to}}" name="to" class="form-control" type="date">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                <button type="button" onclick="clearForm()" class="btn btn-secondary" data-bs-dismiss="modal">Clear Filter</button>
                                                 <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Filter</button>
                                             </div>
                                         </div>
@@ -129,102 +84,153 @@
                                 </div>
                             </div>
 
+                            <div class="row align-items-center">
+                                <div class="col-6 col-md-3 form-group d-flex gap-2 align-items-center">
+                                    <label class="form-label mb-0" for="status">Payment Status</label>
+                                    <select name="paymentStatus" class="form-select inputs" id="status" style="background-color: rgba(255, 255, 255, 0.4);
+                                    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
+                                    border: 1px solid rgba(255, 255, 255, 0.5);
+                                    border-right: 1px solid rgba(255, 255, 255, 0.2);
+                                    border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+                                        <option value="ALL">All</option>
+                                        @foreach(\App\Enums\RequestStatus::cases() as $status)
+                                            <option
+                                                @selected($app->request->paymentStatus == $status->value) value="{{$status->value}}">{{$status->value}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-6 col-md-3 form-group d-flex gap-2 align-items-center">
+                                    <label class="form-label mb-0" for="status">President</label>
+                                    <select name="status" class="form-select inputs" id="status" style="background-color: rgba(255, 255, 255, 0.4);
+                                    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
+                                    border: 1px solid rgba(255, 255, 255, 0.5);
+                                    border-right: 1px solid rgba(255, 255, 255, 0.2);
+                                    border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+                                        <option value="ALL">All</option>
+                                        @foreach(\App\Enums\RequestApprovalStatus::status() as $status)
+                                            <option
+                                                @selected($app->request->status == $status->name)  value="{{$status->name}}">{{$status->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-6 col-md-3 form-group d-flex gap-2 align-items-center">
+                                    <label class="form-label">Entries</label>
+                                    <select name="entries" class="form-select inputs" style="background-color: rgba(255, 255, 255, 0.4);
+                                    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
+                                    border: 1px solid rgba(255, 255, 255, 0.5);
+                                    border-right: 1px solid rgba(255, 255, 255, 0.2);
+                                    border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+                                        <option @selected($app->request->entries == 20) value="20">20</option>
+                                        <option @selected($app->request->entries == 30) value="30">30</option>
+                                        <option @selected($app->request->entries == 40) value="40">40</option>
+                                        <option @selected($app->request->entries == 50) value="50">50</option>
+                                        <option @selected($app->request->entries == 100) value="100">100</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-6 col-md-3 form-group d-flex gap-2 align-items-center">
+                                    <label class="form-label">Entity</label>
+                                    <select name="entity" class="form-select inputs" style="background-color: rgba(255, 255, 255, 0.4);
+                                    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
+                                    border: 1px solid rgba(255, 255, 255, 0.5);
+                                    border-right: 1px solid rgba(255, 255, 255, 0.2);
+                                    border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+                                        <option value="ALL">ALL</option>
+                                        @foreach($companies as $company)
+                                            <option
+                                                @selected($app->request->entity == $company->id) value="{{$company->id}}">{{$company->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                            </div>
+
                         </form>
                     </div>
                 </div>
-
-                <form>
-                    <div class="d-flex gap-2 my-2">
-                        <button class="btn btn-primary rounded-0 px-3">Approve</button>
-                        <button class="btn btn-danger rounded-0 px-3">Reject</button>
-                        <button class="btn btn-secondary rounded-0 px-3">Donwload Check</button>
-                    </div>
-                </form>
 
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <div class="row">
-                                    <div class="col-12 text-start">
+                                <div class="row" style="height: 30px">
+                                    <div class="col-sm-12 col-md-6 text-start">
                                         <i class="fas fa-table me-1"></i>
                                         <b>Requests</b>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6 text-end d-none" id="collapseLayout">
+                                        <form method="POST" action="/test-pdf" id="downloadExpenseForm">
+                                            @csrf
+                                            <input id="downloadExpenseInput" type="hidden" name="id[]">
+                                            <button class="btn btn-sm btn-outline-danger rounded-0 px-4" type="submit">Download
+                                                Check
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
                             <div class="card-body overflow-x-auto">
-                                <table class="table sortable">
+                                <table class="table sortable" id="sortableTable">
                                     <thead>
                                     <tr>
-                                        <td>
-                                            <input id="requestInput" type="checkbox" class="form-check-input request-input-selection">
-                                        </td>
+                                        <th class="sorttable_nosort">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" id="requestAllInput">
+                                            </div>
+                                        </th>
                                         <th>REFERENCE</th>
                                         <th>DURATION</th>
                                         <th>ENTITY</th>
                                         <th>REQUESTED BY</th>
                                         <th>STATUS</th>
-                                        <th>BANK NAME</th>
-                                        <th>BANK CODE</th>
-                                        <th>CHECK NUMBER</th>
                                         <th>TOTAL</th>
                                         <th>ACTION</th>
                                     </tr>
                                     </thead>
-                                    <tbody id="requestData"></tbody>
+                                    <tbody id="requestData">
+                                    @forelse ($requests as $request)
+                                        <tr>
+                                            <td>
+                                                <input data-id='{{$request->id}}' id="requestInput{{$request->id}}"
+                                                       type="checkbox" class="form-check-input request-input-selection">
+                                            </td>
+                                            <td>{{ $request->reference}}</td>
+                                            <td>{{$request->created_at->diffForHumans()}}</td>
+                                            <td class="text-uppercase">{{ $request->company->name}}</td>
+                                            <td class="text-capitalize">{{ $request->request_by}}</td>
+                                            <td class="text-uppercase">{{ $request->status}}</td>
+                                            <td>{!! \App\Helper\Helper::formatPeso( $request->items->first()->total_cost ) !!}</td>
+                                            <td>
+                                                <a target="_blank" role="button" href="/expense/request/{{$request->id}}"
+                                                   class="btn btn-primary">View</a>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td class="text-center" colspan='8'>
+                                                <p class="text-secondary">
+                                                    EMPTY TABLE
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+
+                                    </tbody>
                                 </table>
+                                <div class="container-fluid">
+                                    {{ $requests->links()}}
+                                </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
-
             </div>
-        </div>
+            @endsection
 
-    </div>
-@endsection
-
-@section('script')
-
-    <script>
-
-        const requestData = document.querySelector('#requestData');
-        const filterForm = document.querySelector('#filterForm');
-        const inputs = document.querySelectorAll('.inputs');
-
-        filterForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            getData();
-        })
-
-
-        inputs.forEach(input => {
-            input.addEventListener('change', () => {
-                getData();
-            })
-        });
-
-        window.addEventListener('load', () => {
-            getData()
-        })
-
-        function getData() {
-            let formData = new FormData(filterForm);
-            const params = new URLSearchParams(formData);
-
-            fetch(`/expense/api/president?${params.toString()}`, {
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            })
-                .then(data => data.text())
-                .then(data => {
-                    requestData.innerHTML = data;
-                }).catch(err => {
-                console.log('Something went wrong')
-            })
-        }
-    </script>
-
-    <script type="text/javascript" src="/js/sortable.js"></script>
+            @section('script')
+                <script type="text/javascript" src="/js/expense/request-table.js"></script>
+                <script type="text/javascript" src="/js/sortable.js"></script>
 @endsection

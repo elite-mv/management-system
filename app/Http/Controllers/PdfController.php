@@ -21,6 +21,8 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class PdfController
 {
+    const MAX_EXCEL_REQUEST = 10;
+
     public function index()
     {
 
@@ -109,6 +111,7 @@ class PdfController
 //
 //        return 'ok';
 
+
         $requests = ExpenseRequest::with(['bankDetails', 'preparedBy', 'company'])
             ->withCount(['approvals' => function ($query) {
                 $query->whereHas('role', function ($qb) {
@@ -130,6 +133,7 @@ class PdfController
                     ->groupBy('request_id');
             }], 'approve_total')
             ->withSum([], 'approve_total')
+            ->take(3)
             ->get();
 
         $html = view('expense.excel.downloadable-request-excel', ['requests' => $requests])->render();
@@ -139,11 +143,7 @@ class PdfController
 
         $sheet = $spreadsheet->getActiveSheet();
 
-        foreach ($sheet->getColumnIterator() as $column) {
-            $sheet->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
-        }
-
-        $existingSpreadsheet = IOFactory::load('excel/check-writer.xlsx');
+        $existingSpreadsheet = IOFactory::load('excel/check-writer-template.xlsx');
 
         // Create a new sheet in the existing spreadsheet
         $newSheet = $existingSpreadsheet->getSheetByName('Request Data');
@@ -156,6 +156,33 @@ class PdfController
         foreach ($data as $rowIndex => $row) {
             foreach ($row as $columnIndex => $value) {
                 $newSheet->setCellValue([$columnIndex + 1, $rowIndex + 1], $value); // Set values in the new sheet
+            }
+        }
+
+        $retrievedCountRequest = count($requests);
+
+        if ($retrievedCountRequest < self::MAX_EXCEL_REQUEST) {
+            for ($i = 0; $i < self::MAX_EXCEL_REQUEST; $i++) {
+
+                if ($retrievedCountRequest > $i) {
+                    continue;
+                }
+
+                $sheetIndex = $existingSpreadsheet->getIndex($existingSpreadsheet->getSheetByName($i + 1));
+
+                if ($sheetIndex) {
+                    $existingSpreadsheet->removeSheetByIndex($sheetIndex);
+                }
+
+            }
+        }
+
+        foreach ($requests as $index => $request) {
+
+            $shit = $existingSpreadsheet->getSheetByName($index + 1);
+
+            if (isset($shit)) {
+                $shit->setTitle($request->reference);
             }
         }
 

@@ -198,7 +198,7 @@
                     <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
                     <small class="my-2 text-start" style="color: rgb(255, 255, 255, 0.5);"><b>MANAGE REQUESTS</b></small>
                 @endcan
-                
+
                 @can('book-keeper',auth()->user())
                     <div class="mb-3">
                         <a href="/expense/book-keeper" class="book_keeper_nav">
@@ -260,13 +260,13 @@
                         </a>
                     </div>
                     <div class="mb-3">
-                        <a href="uom.php" class="uom_nav">
+                        <a href="/expense/unit-of-measure" class="uom_nav">
                             <i class="fas fa-balance-scale" style="height: 20px; width: 20px;"></i>
                             <small class="text-start"><b>Units Of Measurement</b></small>
                         </a>
                     </div>
                 @endcan
-                
+
                 <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
                 <small class="my-2 text-start" style="color: rgb(255, 255, 255, 0.5);"><b>MANAGE ACCOUNTS</b></small>
                 <div class="mb-3">
@@ -313,7 +313,7 @@
                         </a>
                     </div>
                 @endcan
-                
+
                 <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
                 <small class="my-2 text-start" style="color: rgb(255, 255, 255, 0.5);"><b>MESSAGES</b></small>
                 <div class="mb-3">
