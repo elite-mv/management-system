@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\RequestApprovalStatus;
+use App\Enums\RequestItemStatus;
+use App\Enums\UserRole;
 use App\Models\Expense\BankCode;
 use App\Models\Expense\BankName;
 use App\Models\Expense\ExpenseCategory;
@@ -11,6 +14,7 @@ use Illuminate\Http\Request;
 use Codedge\Fpdf\Fpdf\Fpdf;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Expense\Request as ExpenseRequest;
+use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -75,36 +79,74 @@ class PdfController
 //        exit; // Prevent Laravel from trying to render the page
 
 
-        $spreadsheet = new Spreadsheet();
-        $activeWorksheet = $spreadsheet->getActiveSheet();
-
-// Define the data to be set in the spreadsheet
-        $data = [
-            ['Name', 'Fruit', 'Color'],
-            ['Alice', 'Apple', 'Red'],
-            ['Bob', 'Banana', 'Yellow'],
-            ['Charlie', 'Cherry', 'Red'],
-            ['David', 'Date', 'Brown'],
-            ['Eve', 'Elderberry', 'Purple'],
-        ];
+//        $spreadsheet = new Spreadsheet();
+//        $activeWorksheet = $spreadsheet->getActiveSheet();
+//
+//// Define the data to be set in the spreadsheet
+//        $data = [
+//            ['Rerence', 'Fruian', 'Color'],
+//            ['Alice', 'Apple', 'Red'],
+//            ['Bob', 'Banana', 'Yellow'],
+//            ['Charlie', 'Cherry', 'Red'],
+//            ['David', 'Date', 'Brown'],
+//            ['Eve', 'Elderberry', 'Purple'],
+//        ];
 
 // Loop through the data and set values in the spreadsheet
-        foreach ($data as $rowIndex => $row) {
-            foreach ($row as $columnIndex => $value) {
-                // Convert column index to letter (A, B, C, ...)
-                $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex + 1);
-                // Set the cell value
-                $activeWorksheet->setCellValue($columnLetter . ($rowIndex + 1), $value);
-            }
+//        foreach ($data as $rowIndex => $row) {
+//            foreach ($row as $columnIndex => $value) {
+//                // Convert column index to letter (A, B, C, ...)
+//                $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex + 1);
+//                // Set the cell value
+//                $activeWorksheet->setCellValue($columnLetter . ($rowIndex + 1), $value);
+//            }
+//        }
+//
+//// Save the spreadsheet to an Excel file
+//        $writer = new Xlsx($spreadsheet);
+//        $writer->save('data_grid.xlsx');
+//
+//        return 'ok';
+
+        $requests = ExpenseRequest::with(['bankDetails', 'preparedBy', 'company'])
+            ->withCount(['approvals' => function ($query) {
+                $query->whereHas('role', function ($qb) {
+
+                    $approvedRoles = [
+                        UserRole::BOOK_KEEPER->value,
+                        UserRole::ACCOUNTANT->value,
+                        UserRole::FINANCE->value,
+                        UserRole::AUDITOR->value,
+                    ];
+
+                    $qb->whereIn('name', $approvedRoles)
+                        ->where('status', RequestApprovalStatus::APPROVED);
+                });
+            }])
+            ->withSum(['items' => function ($query) {
+                $query->select(DB::raw('SUM(quantity * cost)'))
+                    ->whereIn('status', [RequestItemStatus::APPROVED->name, RequestItemStatus::PRIORITY->name])
+                    ->groupBy('request_id');
+            }], 'approve_total')
+            ->withSum([], 'approve_total')
+            ->get();
+
+        $html = view('expense.excel.downloadable-request-excel', ['requests' => $requests])->render();
+
+        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Html();
+        $spreadsheet = $reader->loadFromString($html);
+
+        $sheet = $spreadsheet->getActiveSheet();
+
+        foreach ($sheet->getColumnIterator() as $column) {
+            $sheet->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
         }
 
-// Save the spreadsheet to an Excel file
-        $writer = new Xlsx($spreadsheet);
-        $writer->save('data_grid.xlsx');
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xls');
+        $writer->save('excel/write.xls');
 
-        return 'ok';
+        return response()->download('excel/write.xls');
     }
-
 
     public function test(ExpenseRequest $expenseRequest)
     {
@@ -124,6 +166,7 @@ class PdfController
             'measurements' => $measurements,
             'jobOrders' => $jobOrder,
         ]);
+
 
     }
 
@@ -161,6 +204,57 @@ class PdfController
         }
     }
 
+    public function downloadMultiplePDF(Request $request)
+    {
+        try {
+
+            $ids = explode(',', $request->input('id')[0]);
+
+            $requests = ExpenseRequest::whereIn('id', $ids)->get();
+
+            $references = ExpenseRequest::select(['reference', 'id'])
+                ->whereIn('id', $ids)
+                ->get();
+
+            $fileName = '';
+
+            foreach ($references as $index => $reference) {
+                $fileName .= $reference->reference;
+
+                if ($index < count($references) - 1) {
+                    $fileName .= '-';
+                }
+            }
+
+            $measurements = Measurement::get();
+            $jobOrder = JobOrder::get();
+            $bankNames = BankName::get();
+            $bankCodes = BankCode::get();
+            $expenseCategory = ExpenseCategory::get();
+
+            $html = view('expense.pdf.multiple-expense-request-form', [
+                'bank_names' => $bankNames,
+                'bank_codes' => $bankCodes,
+                'expense_category' => $expenseCategory,
+                'requests' => $requests,
+                'measurements' => $measurements,
+                'jobOrders' => $jobOrder,
+            ])->render();
+
+            $snappdf = new \Beganovich\Snappdf\Snappdf();
+
+            $snappdf
+                ->setHtml($html)
+                ->save('pdf/' . $fileName . '.pdf');
+
+            return response()->download('pdf/' . $fileName . '.pdf');
+
+        } catch (\Exception $exception) {
+            return redirect()->back()->withErrors([$exception->getMessage()]);
+        }
+    }
+
+
     public function test2($requestID)
     {
 
@@ -190,6 +284,28 @@ class PdfController
                 ->save('pdf/tangin.pdf');
 
             return response()->file('pdf/tangin.pdf');
+
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+
+    }
+
+    public function check()
+    {
+
+        try {
+
+
+            $snappdf = new \Beganovich\Snappdf\Snappdf();
+
+            $html = view('check')->render();
+
+            $snappdf
+                ->setHtml($html)
+                ->save('pdf/check.pdf');
+
+            return response()->file('pdf/check.pdf');
 
         } catch (\Exception $e) {
             return $e->getMessage();

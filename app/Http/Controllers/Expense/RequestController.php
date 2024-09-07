@@ -90,18 +90,19 @@ class RequestController extends Controller
                 $item->save();
             }
 
-            $roles = [
-                UserRole::BOOK_KEEPER->value,
-                UserRole::ACCOUNTANT->value,
-                UserRole::FINANCE->value,
-                UserRole::AUDITOR->value,
-            ];
+            if ($expenseRequest->priority) {
 
-            foreach ($roles as $roleName) {
                 RequestApproval::create([
                     'request_id' => $expenseRequest->id,
-                    'status' => RequestApprovalStatus::PENDING,
-                    'role_id' => Role::where('name', $roleName)->pluck('id')->first(),
+                    'status' => RequestApprovalStatus::PENDING->name,
+                    'role_id' => Role::where('name', UserRole::FINANCE->value)->pluck('id')->first(),
+                ]);
+
+            } else {
+                RequestApproval::create([
+                    'request_id' => $expenseRequest->id,
+                    'status' => RequestApprovalStatus::PENDING->name,
+                    'role_id' => Role::where('name', UserRole::BOOK_KEEPER->value)->pluck('id')->first(),
                 ]);
             }
 
@@ -441,7 +442,7 @@ class RequestController extends Controller
     {
         try {
 
-            if(!Gate::allows(Auth::user())){
+            if (!Gate::allows(Auth::user())) {
                 throw new \Exception('Unauthorized');
             }
 
@@ -579,6 +580,80 @@ class RequestController extends Controller
             return response()->json([
                 'message' => $e->getMessage(),
                 'status' => '500',
+            ],
+                500
+            );
+        }
+    }
+
+    public function updatePaidTo(Request $request, $requestID)
+    {
+
+        try {
+
+            $validated = $request->validate([
+                'paid_to' => 'required|string',
+            ]);
+
+            DB::beginTransaction();
+
+            $paidTo = $validated['paid_to'];
+
+            $requestModel = ModelsRequest::findOrFail($requestID);
+
+            $requestModel->paid_to = $paidTo;
+
+            $requestModel->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'ok',
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'message' => $e->getMessage(),
+            ],
+                500
+            );
+        }
+    }
+
+    public function updateTerms(Request $request, $requestID)
+    {
+
+        try {
+
+            $validated = $request->validate([
+                'terms' => 'required|string',
+            ]);
+
+            DB::beginTransaction();
+
+            $terms = $validated['terms'];
+
+            $requestModel = ModelsRequest::findOrFail($requestID);
+
+            $requestModel->terms = $terms;
+
+            $requestModel->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'ok',
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'message' => $e->getMessage(),
             ],
                 500
             );

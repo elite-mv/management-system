@@ -65,6 +65,19 @@ class AppServiceProvider extends ServiceProvider
             return $user->role->name == UserRole::PRESIDENT->value || $user->role == UserRole::FINANCE->value;
         });
 
+        Gate::define('manage', function () {
+
+            switch (Auth::user()->role->name) {
+                case UserRole::ACCOUNTANT->value:
+                case UserRole::AUDITOR->value:
+                case UserRole::BOOK_KEEPER->value:
+                case UserRole::FINANCE->value:
+                case UserRole::PRESIDENT->value:
+                    return true;
+                default:
+                    return false;
+            }
+        });
 
         Blade::if('management', function () {
 

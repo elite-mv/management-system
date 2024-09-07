@@ -1,6 +1,3 @@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-
 <table class="table table-bordered">
     <thead>
     <tr>
@@ -22,7 +19,7 @@
             <td>{{$request->company->name}}</td>
             <td class="text-capitalize">{{$request->paid_to}}</td>
             <td class="text-capitalize">{{$request->request_by}}</td>
-            <td>{!! \App\Helper\Helper::formatPeso($request->items_sum_approve_total) !!}</td>
+            <td>{!! \App\Helper\Helper::formatCurrency($request->items_sum_approve_total) !!}</td>
             <td>{!! \App\Helper\Helper::amountToWords($request->items_sum_approve_total) !!}</td>
             <td>
                 @if($request->bankDetails)

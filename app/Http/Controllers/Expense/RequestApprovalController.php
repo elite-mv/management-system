@@ -9,6 +9,7 @@ use App\Enums\RequestFundStatus;
 use App\Enums\RequestItemStatus;
 use App\Enums\RequestStatus;
 use App\Enums\UserRole;
+use App\Models\Expense\RequestApproval;
 use App\Models\Expense\RequestItem;
 use App\Models\Expense\Role;
 use Illuminate\Http\Request;
@@ -32,19 +33,26 @@ class RequestApprovalController
     {
         try {
 
-//            $data = true;
-//
-//            if ($data) {
-//                throw new \Exception('tae');
-//            }
-
             $roleID = Role::where('name', UserRole::BOOK_KEEPER->value)
                 ->pluck('id')
                 ->first();
 
+
             $status = RequestApprovalStatus::valueOf($request->input('status'));
 
-            $this->updateRequest($status, $roleID, $expenseRequestID);
+            $passToAccountant = function () use ($expenseRequestID, $status) {
+
+                if ($status == RequestApprovalStatus::APPROVED) {
+
+                    RequestApproval::create([
+                        'request_id' => $expenseRequestID,
+                        'status' => RequestApprovalStatus::PENDING->name,
+                        'role_id' => Role::where('name', UserRole::ACCOUNTANT->value)->pluck('id')->first(),
+                    ]);
+                }
+            };
+
+            $this->updateRequest($status, $roleID, $expenseRequestID, $passToAccountant);
 
             return redirect()->back();
 
@@ -70,15 +78,21 @@ class RequestApprovalController
                     return;
                 }
 
-                RequestItem::where('request_id',$expenseRequestID)
-                    ->whereIn('status',[RequestItemStatus::PENDING->name])
+                RequestItem::where('request_id', $expenseRequestID)
+                    ->whereIn('status', [RequestItemStatus::PENDING->name])
                     ->update(['status' => RequestItemStatus::APPROVED->name]);
+
+                RequestApproval::create([
+                    'request_id' => $expenseRequestID,
+                    'status' => RequestApprovalStatus::PENDING->name,
+                    'role_id' => Role::where('name', UserRole::FINANCE->value)->pluck('id')->first(),
+                ]);
 
                 $this->addRequestLog->handle($expenseRequestID, 'The system automatically approve all pending items upon accountant approval');
             };
 
 
-            $this->updateRequest($status, $roleID, $expenseRequestID,$approveItems);
+            $this->updateRequest($status, $roleID, $expenseRequestID, $approveItems);
 
             return redirect()->back();
 
@@ -107,6 +121,12 @@ class RequestApprovalController
                 $request = \App\Models\Expense\Request::findOrFail($expenseRequestID);
                 $request->status = \App\Enums\RequestStatus::RELEASED->value;
                 $request->save();
+
+                RequestApproval::create([
+                    'request_id' => $expenseRequestID,
+                    'status' => RequestApprovalStatus::PENDING->name,
+                    'role_id' => Role::where('name', UserRole::AUDITOR->value)->pluck('id')->first(),
+                ]);
 
                 $this->addRequestLog->handle($expenseRequestID, 'The system automatically released the expense upon finance/president approval');
             };

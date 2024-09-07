@@ -53,7 +53,6 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
-
 Route::prefix('income')->middleware([CompanyMiddleware::class])->group(function () {
 
     Route::get('/', [IncomeController::class, 'index']);
@@ -148,6 +147,9 @@ Route::prefix('expense')->group(function () {
             });
 
 
+            Route::post('/terms/{requestID}', [RequestController::class, 'updateTerms']);
+            Route::post('/paid-to/{requestID}', [RequestController::class, 'updatePaidTo']);
+
             Route::get('/comments/{requestID}', [RequestCommentController::class, 'viewComments'])->name('comments');
             Route::post('/comment/{requestID}', [RequestCommentController::class, 'addComment']);
 
@@ -210,11 +212,14 @@ Route::prefix('expense')->group(function () {
 });
 
 Route::get('/tae', function (){
-    return 'tae';
+    return view('check');
 });
 
+Route::get('/check', [PdfController::class, 'check']);
+Route::get('/excel-test', [PdfController::class, 'index']);
 
-Route::get('/test-pdf', [PdfController::class, 'index']);
+
+Route::post('/test-pdf', [PdfController::class, 'downloadMultiplePDF']);
 Route::get('/test', [PdfController::class, 'index']);
 Route::get('/test/{expenseRequest}', [PdfController::class, 'test']);
 Route::get('/test2/{requestID}', [PdfController::class, 'test2']);

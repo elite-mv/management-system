@@ -347,7 +347,27 @@
                                 </select>
                             </td>
                         </tr>
-
+                        <tr>
+                            <td colspan="4" class="px-2 small bg-gray">Paid to</td>
+                            <td colspan="5" class="px-2 small">
+                                @can('manage')
+                                    @if($request->paid_to)
+                                        <input id="paidToInput" value="{{$request->paid_to}}"
+                                               class="border-0 outline-0 w-100 small  text-capitalize">
+                                    @endif
+                                @else
+                                    <small>[HIDDEN]</small>
+                                @endcan
+                            </td>
+                            <td colspan="3" class="px-2 small bg-gray">Terms</td>
+                            <td colspan="6" class="px-2 small">
+                                @if($request->terms)
+                                    <input id="termsInput" value="{{$request->terms}}" class="border-0 outline-0 w-100 small text-capitalize">
+                                @else
+                                    <input id="termsInput" class="border-0 outline-0 w-100 small text-capitalize">
+                                @endif
+                            </td>
+                        </tr>
                         <tr>
                             <td colspan="4" class="small bg-yellow text-center fw-bold" style="width: 179px">QTY</td>
                             <td colspan="4" class="small bg-yellow text-center fw-bold" style="width: 179px">UOM</td>
@@ -688,7 +708,9 @@
                                             </select>
                                         </form>
                                     @else
-                                        {{ $request->accountant->status->name}}
+                                        @if($request->accountant)
+                                            {{ $request->accountant->status->name}}
+                                        @endif
                                     @endcan
                                 @endif
                             </td>
@@ -813,7 +835,9 @@
                                         </select>
                                     </form>
                                 @else
-                                    {{$request->finance->status->name}}
+                                    @if($request->auditor)
+                                        {{$request->finance->status->name}}
+                                    @endif
                                 @endcan
                             </td>
                         </tr>
@@ -932,8 +956,13 @@
                                         </select>
                                     </form>
                                 @else
-                                    {{ $request->auditor->status->name}}
+
+                                    @if($request->auditor)
+                                        {{ $request->auditor->status->name}}
+                                    @endif
+
                                 @endcan
+
                             </td>
                         </tr>
                         <tr>
@@ -1338,6 +1367,9 @@
         const fundedStatus = document.querySelector('#fundedStatus');
         const declinedStatus = document.querySelector('#declinedStatus');
 
+        const paidToInput = document.querySelector('#paidToInput');
+        const termsInput = document.querySelector('#termsInput');
+
         const commentForm = document.querySelector('#commentForm');
         const commentHolder = document.querySelector('#commentsHolder');
         let initialLoad = true;
@@ -1488,6 +1520,73 @@
                 }
             })
         }
+
+        if (paidToInput) {
+            paidToInput.addEventListener('change', async () => {
+
+                try {
+
+                    const formData = new FormData();
+
+                    formData.append('paid_to', paidToInput.value);
+
+                    const response = await fetch('/expense/expense-request/paid-to/{{$request->id}}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Something went wrong!')
+                    }
+
+                    showSuccessMessage('Paid to updated!');
+                } catch (error) {
+                    paidToInput.value = null
+                    showErrorMessage(error.message)
+                }
+            })
+        }
+
+        if (termsInput) {
+            termsInput.addEventListener('change', async () => {
+
+                try {
+
+                    const formData = new FormData();
+
+                    formData.append('terms', termsInput.value);
+
+                    const response = await fetch('/expense/expense-request/terms/{{$request->id}}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+
+
+                    const data = await  response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.message)
+                    }
+
+
+                    // if (!response.ok) {
+                    //     throw new Error('Terms updated failed!')
+                    // }
+
+                    showSuccessMessage('Terms to updated!');
+                } catch (error) {
+                    termsInput.value = null
+                    showErrorMessage(error.message)
+                }
+            })
+        }
+
 
         if (orNumberInput) {
             orNumberInput.addEventListener('change', async () => {
@@ -1759,7 +1858,7 @@
 
             const g1 = document.querySelectorAll(`.${groupId}`);
 
-            if(!g1){
+            if (!g1) {
                 return;
             }
 
@@ -1804,7 +1903,7 @@
         groupCheck('priorityLevel', updatePriorityLevel, removePriorityLevel);
         groupCheck('fundStatus', updateFundStatus, removeFundStatus);
 
-        if(requestStatus){
+        if (requestStatus) {
             requestStatus.addEventListener('change', async () => {
 
                 try {
@@ -2357,7 +2456,7 @@
             html2pdf().set(expenseRequestPrintableOption).from(expenseRequestPrintable).save();
         }
 
-        if(fileUpload){
+        if (fileUpload) {
             fileUpload.addEventListener('change', async () => {
 
                 let formData = new FormData();
@@ -2462,7 +2561,7 @@
                     worksheet.getCell('C6').value = formattedDate;
 
                     const buffer = await workbook.xlsx.writeBuffer();
-                    const blob = new Blob([buffer], { type: 'application/octet-stream' });
+                    const blob = new Blob([buffer], {type: 'application/octet-stream'});
 
                     saveAs(blob, 'Check Writer-2024.xlsx');
                 })
