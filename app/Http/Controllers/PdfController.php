@@ -15,6 +15,7 @@ use Codedge\Fpdf\Fpdf\Fpdf;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Expense\Request as ExpenseRequest;
 use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -142,10 +143,37 @@ class PdfController
             $sheet->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
         }
 
-        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xls');
-        $writer->save('excel/write.xls');
+        $existingSpreadsheet = IOFactory::load('excel/check-writer.xlsx');
 
-        return response()->download('excel/write.xls');
+        // Create a new sheet in the existing spreadsheet
+        $newSheet = $existingSpreadsheet->getSheetByName('Request Data');
+
+// Copy data from the new spreadsheet to the new sheet in the existing spreadsheet
+        $spreadsheet->getActiveSheet()->toArray(null, true, true, true); // Convert the new sheet to an array
+        $data = $spreadsheet->getActiveSheet()->toArray(); // Get data from the new spreadsheet
+
+// Append the data to the new sheet
+        foreach ($data as $rowIndex => $row) {
+            foreach ($row as $columnIndex => $value) {
+                $newSheet->setCellValue([$columnIndex + 1, $rowIndex + 1], $value); // Set values in the new sheet
+            }
+        }
+
+// Save the updated existing spreadsheet
+        $writer = IOFactory::createWriter($existingSpreadsheet, 'Xlsx');
+        $writer->save('excel/check-writer.xlsx'); // Save the file
+
+//        $active = \PhpOffice\PhpSpreadsheet\IOFactory::load('excel/check-writer.xls');
+//        $active->addSheet($spreadsheet);
+
+
+//        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xls');
+
+
+//        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xls');
+//        $writer->save('excel/write.xls');
+
+        return response()->download('excel/check-writer.xlsx');
     }
 
     public function test(ExpenseRequest $expenseRequest)
