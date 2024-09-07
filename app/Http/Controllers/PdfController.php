@@ -26,181 +26,93 @@ class PdfController
     public function index()
     {
 
-////        $pdf = new FPDF('L', 'in', array(8, 3));
-//        $pdf = new FPDF('L', 'in', 'A4');
-////        $pdf = new FPDF('L', 'in', [,4.13]);
-//
-//        $pdf->AddPage();
-//        $pdf->SetFont('Arial', 'B', 9);
-//
-////        $pdf->Cell(0, 10, 'Pay to the order of: John Doe', 0, 1);
-////        $pdf->Cell(0, 10, 'Amount: $100.00', 0, 1);
-////        $pdf->Cell(0, 10, 'Date: ' . date('Y-m-d'), 0, 1);
-////        $pdf->Cell(0, 10, 'Signature: __________________', 0, 1);
-////
-////        //
-//        $text = '***Mhel Voi Bernabe***';
-//
-////        $pdf->SetFillColor(0, 0, 0);
-////        $pdf->rect(3.6,2.7,8,3,);
-//
-////        $pdf->Set = 10;
-////
-//        $pdf->SetXY(4.8, 3.44);
-//        $pdf->Cell(4.2, 0.25, $text);
-////        $pdf->rect(4.8,3.45,4.2,0.3,);
-//
-////        $pdf->AddPage();
-////        $pdf->SetFont('Arial', 'B', 8);
-//////
-////        $text = '***JOHN CASTILLO***';
-////
-//////        $pdf->SetFillColor(0, 0, 0);
-//////        $pdf->rect(0,0,8,3,);
-////
-////        $pdf->SetXY(0.5,0.8);
-////        $pdf->Cell(4.5, 0.3, $text);
-//
-//
-////        $pdf->rect(0.5,0.5,4.5,0.3,);
-//
-//
-//        $pdf->Output(); // This will output the PDF to the browser
-//
-//
-//        //
-////        $mid_y = $pdf->GetPageWidth() / 2;
-////        $mid_x = $pdf->GetPageHeight() / 2;
-////
-////        $text = '***JOHN CASTILLO***';
-////
-////        $width = $pdf->GetStringWidth($text);
-////
-////        $pdf->SetXY(1,$mid_x - 1);
-////        $pdf->Cell(4.5, 0.3, $text);
-//
-//        exit; // Prevent Laravel from trying to render the page
+        try {
 
 
-//        $spreadsheet = new Spreadsheet();
-//        $activeWorksheet = $spreadsheet->getActiveSheet();
-//
-//// Define the data to be set in the spreadsheet
-//        $data = [
-//            ['Rerence', 'Fruian', 'Color'],
-//            ['Alice', 'Apple', 'Red'],
-//            ['Bob', 'Banana', 'Yellow'],
-//            ['Charlie', 'Cherry', 'Red'],
-//            ['David', 'Date', 'Brown'],
-//            ['Eve', 'Elderberry', 'Purple'],
-//        ];
+            $requests = ExpenseRequest::with(['bankDetails', 'preparedBy', 'company'])
+                ->withCount(['approvals' => function ($query) {
+                    $query->whereHas('role', function ($qb) {
 
-// Loop through the data and set values in the spreadsheet
-//        foreach ($data as $rowIndex => $row) {
-//            foreach ($row as $columnIndex => $value) {
-//                // Convert column index to letter (A, B, C, ...)
-//                $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex + 1);
-//                // Set the cell value
-//                $activeWorksheet->setCellValue($columnLetter . ($rowIndex + 1), $value);
-//            }
-//        }
-//
-//// Save the spreadsheet to an Excel file
-//        $writer = new Xlsx($spreadsheet);
-//        $writer->save('data_grid.xlsx');
-//
-//        return 'ok';
+                        $approvedRoles = [
+                            UserRole::BOOK_KEEPER->value,
+                            UserRole::ACCOUNTANT->value,
+                            UserRole::FINANCE->value,
+                            UserRole::AUDITOR->value,
+                        ];
 
+                        $qb->whereIn('name', $approvedRoles)
+                            ->where('status', RequestApprovalStatus::APPROVED);
+                    });
+                }])
+                ->withSum(['items' => function ($query) {
+                    $query->select(DB::raw('SUM(quantity * cost)'))
+                        ->whereIn('status', [RequestItemStatus::APPROVED->name, RequestItemStatus::PRIORITY->name])
+                        ->groupBy('request_id');
+                }], 'approve_total')
+                ->withSum([], 'approve_total')
+                ->take(3)
+                ->get();
 
-        $requests = ExpenseRequest::with(['bankDetails', 'preparedBy', 'company'])
-            ->withCount(['approvals' => function ($query) {
-                $query->whereHas('role', function ($qb) {
+            $html = view('expense.excel.downloadable-request-excel', ['requests' => $requests])->render();
 
-                    $approvedRoles = [
-                        UserRole::BOOK_KEEPER->value,
-                        UserRole::ACCOUNTANT->value,
-                        UserRole::FINANCE->value,
-                        UserRole::AUDITOR->value,
-                    ];
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Html();
+            $spreadsheet = $reader->loadFromString($html);
 
-                    $qb->whereIn('name', $approvedRoles)
-                        ->where('status', RequestApprovalStatus::APPROVED);
-                });
-            }])
-            ->withSum(['items' => function ($query) {
-                $query->select(DB::raw('SUM(quantity * cost)'))
-                    ->whereIn('status', [RequestItemStatus::APPROVED->name, RequestItemStatus::PRIORITY->name])
-                    ->groupBy('request_id');
-            }], 'approve_total')
-            ->withSum([], 'approve_total')
-            ->take(3)
-            ->get();
+            $sheet = $spreadsheet->getActiveSheet();
 
-        $html = view('expense.excel.downloadable-request-excel', ['requests' => $requests])->render();
+            $existingSpreadsheet = IOFactory::load('excel/check-writer-template.xlsx');
 
-        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Html();
-        $spreadsheet = $reader->loadFromString($html);
-
-        $sheet = $spreadsheet->getActiveSheet();
-
-        $existingSpreadsheet = IOFactory::load('excel/check-writer-template.xlsx');
-
-        // Create a new sheet in the existing spreadsheet
-        $newSheet = $existingSpreadsheet->getSheetByName('Request Data');
+            // Create a new sheet in the existing spreadsheet
+            $newSheet = $existingSpreadsheet->getSheetByName('Request Data');
 
 // Copy data from the new spreadsheet to the new sheet in the existing spreadsheet
-        $spreadsheet->getActiveSheet()->toArray(null, true, true, true); // Convert the new sheet to an array
-        $data = $spreadsheet->getActiveSheet()->toArray(); // Get data from the new spreadsheet
+            $spreadsheet->getActiveSheet()->toArray(null, true, true, true); // Convert the new sheet to an array
+            $data = $spreadsheet->getActiveSheet()->toArray(); // Get data from the new spreadsheet
 
 // Append the data to the new sheet
-        foreach ($data as $rowIndex => $row) {
-            foreach ($row as $columnIndex => $value) {
-                $newSheet->setCellValue([$columnIndex + 1, $rowIndex + 1], $value); // Set values in the new sheet
-            }
-        }
-
-        $retrievedCountRequest = count($requests);
-
-        if ($retrievedCountRequest < self::MAX_EXCEL_REQUEST) {
-            for ($i = 0; $i < self::MAX_EXCEL_REQUEST; $i++) {
-
-                if ($retrievedCountRequest > $i) {
-                    continue;
+            foreach ($data as $rowIndex => $row) {
+                foreach ($row as $columnIndex => $value) {
+                    $newSheet->setCellValue([$columnIndex + 1, $rowIndex + 1], $value); // Set values in the new sheet
                 }
+            }
 
-                $sheetIndex = $existingSpreadsheet->getIndex($existingSpreadsheet->getSheetByName($i + 1));
+            $retrievedCountRequest = count($requests);
 
-                if ($sheetIndex) {
-                    $existingSpreadsheet->removeSheetByIndex($sheetIndex);
+            if ($retrievedCountRequest < self::MAX_EXCEL_REQUEST) {
+                for ($i = 0; $i < self::MAX_EXCEL_REQUEST; $i++) {
+
+                    if ($retrievedCountRequest > $i) {
+                        continue;
+                    }
+
+                    $sheetIndex = $existingSpreadsheet->getIndex($existingSpreadsheet->getSheetByName($i + 1));
+
+                    if ($sheetIndex) {
+                        $existingSpreadsheet->removeSheetByIndex($sheetIndex);
+                    }
+
                 }
-
             }
+
+            foreach ($requests as $index => $request) {
+
+                $shit = $existingSpreadsheet->getSheetByName($index + 1);
+
+                if (isset($shit)) {
+                    $shit->setTitle($request->reference);
+                }
+            }
+
+            $writer = IOFactory::createWriter($existingSpreadsheet, 'Xlsx');
+            $writer->save('excel/check-writer.xlsx'); // Save the file
+
+
+            return response()->download('excel/check-writer.xlsx');
+
+        } catch (\Exception $exception) {
+            return $exception->getMessage();
         }
 
-        foreach ($requests as $index => $request) {
-
-            $shit = $existingSpreadsheet->getSheetByName($index + 1);
-
-            if (isset($shit)) {
-                $shit->setTitle($request->reference);
-            }
-        }
-
-// Save the updated existing spreadsheet
-        $writer = IOFactory::createWriter($existingSpreadsheet, 'Xlsx');
-        $writer->save('excel/check-writer.xlsx'); // Save the file
-
-//        $active = \PhpOffice\PhpSpreadsheet\IOFactory::load('excel/check-writer.xls');
-//        $active->addSheet($spreadsheet);
-
-
-//        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xls');
-
-
-//        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xls');
-//        $writer->save('excel/write.xls');
-
-        return response()->download('excel/check-writer.xlsx');
     }
 
     public function test(ExpenseRequest $expenseRequest)
