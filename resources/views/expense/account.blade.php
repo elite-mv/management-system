@@ -80,9 +80,9 @@
                      style="border-radius: 10px; height: 600px; max-height: 100svh; max-height: 100vh; max-width: 100%; width: 375px;">
                     <b>RCA GROUP OF COMPANIES</b>
                     <div class="my-3 wraper">
-                         @foreach($companies as $index => $company)
+                        @foreach($companies as $index => $company)
                             <div class="item item{{$index}}">
-                                <img src="{{Storage::url($company->logo)}}" style="height: 50px; width: auto;">
+                                <img src="/././{{Storage::url($company->logo)}}" style="height: 50px; width: auto;">
                             </div>
                         @endforeach
                     </div>

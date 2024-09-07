@@ -21,17 +21,31 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
-                            <div class="col-12 text-start d-flex  align-items-center gap-2">
-                                <div class="d-flex align-items-center">
-                                    <i class="fas fa-table me-1"></i>
-                                    <p class="mb-0 fw-bold">Accounts</p>
-                                </div>
-                                <form>
-                                    <input value="{{$app->request->search}}" class="form-control"
-                                           placeholder="Search..." type="search" name="search">
-                                </form>
+                            <div class="col-2 d-flex align-items-center">
+                                <i class="fas fa-table me-1"></i>
+                                <p class="mb-0 fw-bold">Accounts</p>
                             </div>
 
+                            <div class="col-10 ms-auto">
+                                <form>
+                                    <div class="w-100 rounded-pill border d-flex align-items-start flex-direction-row gap-2 py-2 px-3" style="background-color: rgba(255, 255, 255, 0.4);
+                                        box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
+                                        border: 1px solid rgba(255, 255, 255, 0.5);
+                                        border-right: 1px solid rgba(255, 255, 255, 0.2);
+                                        border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+                                        <div>
+                                            <button class="border-0 bg-transparent" style="border-radius: 50%;">
+                                                <i class="fas fa-search text-secondary"></i>
+                                            </button>
+                                        </div>
+                                        <div class="w-100 mx-1">
+                                            <small>
+                                                <input autocomplete="off" placeholder="Search ..." name="search" type="search" value="{{$app->request->search}}" class="rounded-0 border-0 w-100 bg-transparent">
+                                            </small>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body overflow-x-auto">

@@ -82,7 +82,6 @@
                         </div>
 
                         <form method="POST" action="/login" id="signin_form" class="text-start">
-
                             @csrf
                             <div class="input_label">
                                 <input type="email" name="email" class="px-3 w-100 h-100" required>
@@ -99,6 +98,14 @@
                                    onclick="toggle_password(this);"></i>
                                 <span id="password_span">Password</span>
                             </div>
+
+                            <div class="form-check mt-1">
+                                <input class="form-check-input" type="checkbox" id="flexCheckDefault" name="remember_me">
+                                <label class="form-check-label text-white" for="flexCheckDefault">
+                                    Remember Me
+                                </label>
+                            </div>
+                            
                             <small id="wrong-password"
                                    class="text-danger bg-white border border-danger rounded-pill px-3 py-1"
                                    style="font-size: 10px; visibility: hidden;">You've entered a wrong password!</small>
@@ -127,10 +134,10 @@
         $(window).on('load', function() {
             $('#signin_form').find('input[name="email"]').focus();
 
-            document.addEventListener('keydown', function(event) {
-                const audio = new Audio('src/sound/type_any_key.mp3');
-                audio.play();
-            });
+            // document.addEventListener('keydown', function(event) {
+            //     const audio = new Audio('src/sound/type_any_key.mp3');
+            //     audio.play();
+            // });
         })
 
         $('#signin_form').find('input[name="email"]').on('input', function() {
