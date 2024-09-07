@@ -35,6 +35,10 @@
 
     <style>
 
+        input[name="search"]:focus{
+            outline: none;
+        }
+
         header > div {
             :hover {
                 color: rgb(255, 255, 255, 1.0);
@@ -190,60 +194,79 @@
                     </a>
                 </div>
 
-                <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
-                <small class="my-2 text-start" style="color: rgb(255, 255, 255, 0.5);"><b>MANAGE REQUESTS</b></small>
+                @can('managing-role',auth()->user())
+                    <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
+                    <small class="my-2 text-start" style="color: rgb(255, 255, 255, 0.5);"><b>MANAGE REQUESTS</b></small>
+                @endcan
+                
+                @can('book-keeper',auth()->user())
+                    <div class="mb-3">
+                        <a href="/expense/book-keeper" class="book_keeper_nav">
+                            <i class="fas fa-book" style="height: 20px; width: 20px;"></i>
+                            <small><b>Book Keeper</b></small>
+                        </a>
+                    </div>
+                @endcan
 
-                <div class="mb-3">
-                    <a href="/expense/book-keeper" class="book_keeper_nav">
-                        <i class="fas fa-book" style="height: 20px; width: 20px;"></i>
-                        <small><b>Book Keeper</b></small>
-                    </a>
-                </div>
+                @can('accountant',auth()->user())
+                    <div class="mb-3">
+                        <a href="/expense/accountant" class="accountant_nav">
+                            <i class="fas fa-file-invoice-dollar" style="height: 20px; width: 20px;"></i>
+                            <small><b>Accountant</b></small>
+                        </a>
+                    </div>
+                @endcan
 
-                <div class="mb-3">
-                    <a href="/expense/accountant" class="accountant_nav">
-                        <i class="fas fa-file-invoice-dollar" style="height: 20px; width: 20px;"></i>
-                        <small><b>Accountant</b></small>
-                    </a>
-                </div>
-                <div class="mb-3">
-                    <a href="/expense/finance" class="finance_nav">
-                        <i class="fas fa-landmark" style="height: 20px; width: 20px;"></i>
-                        <small><b>Finance</b></small>
-                    </a>
-                </div>
-                <div class="mb-3">
-                    <a href="/expense/president" class="president_nav">
-                        <i class="fas fa-crown" style="height: 20px; width: 20px;"></i>
-                        <small><b>President</b></small>
-                    </a>
-                </div>
-                <div class="mb-3">
-                    <a href="/expense/auditor" class="auditor_nav">
-                        <i class="fas fa-calculator" style="height: 20px; width: 20px;"></i>
-                        <small><b>Auditor</b></small>
-                    </a>
-                </div>
-                <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
-                <small class="my-2 text-start" style="color: rgb(255, 255, 255, 0.5);"><b>EDIT OPTIONS</b></small>
-                <div class="mb-3">
-                    <a href="/expense/entity" class="entity_nav">
-                        <i class="fas fa-code-branch" style="height: 20px; width: 20px;"></i>
-                        <small><b>Entity</b></small>
-                    </a>
-                </div>
-                <div class="mb-3">
-                    <a href="/expense/job-order" class="job_order_nav">
-                        <i class="fas fa-sort-amount-up-alt" style="height: 20px; width: 20px;"></i>
-                        <small><b>Job Order</b></small>
-                    </a>
-                </div>
-                <div class="mb-3">
-                    <a href="uom.php" class="uom_nav">
-                        <i class="fas fa-balance-scale" style="height: 20px; width: 20px;"></i>
-                        <small class="text-start"><b>Units Of Measurement</b></small>
-                    </a>
-                </div>
+                @can('finance',auth()->user())
+                    <div class="mb-3">
+                        <a href="/expense/finance" class="finance_nav">
+                            <i class="fas fa-landmark" style="height: 20px; width: 20px;"></i>
+                            <small><b>Finance</b></small>
+                        </a>
+                    </div>
+                @endcan
+
+                @can('president',auth()->user())
+                    <div class="mb-3">
+                        <a href="/expense/president" class="president_nav">
+                            <i class="fas fa-crown" style="height: 20px; width: 20px;"></i>
+                            <small><b>President</b></small>
+                        </a>
+                    </div>
+                @endcan
+
+                @can('auditor',auth()->user())
+                    <div class="mb-3">
+                        <a href="/expense/auditor" class="auditor_nav">
+                            <i class="fas fa-calculator" style="height: 20px; width: 20px;"></i>
+                            <small><b>Auditor</b></small>
+                        </a>
+                    </div>
+                @endcan
+
+                @can('managing-role',auth()->user())
+                    <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
+                    <small class="my-2 text-start" style="color: rgb(255, 255, 255, 0.5);"><b>EDIT OPTIONS</b></small>
+                    <div class="mb-3">
+                        <a href="/expense/entity" class="entity_nav">
+                            <i class="fas fa-code-branch" style="height: 20px; width: 20px;"></i>
+                            <small><b>Entity</b></small>
+                        </a>
+                    </div>
+                    <div class="mb-3">
+                        <a href="/expense/job-order" class="job_order_nav">
+                            <i class="fas fa-sort-amount-up-alt" style="height: 20px; width: 20px;"></i>
+                            <small><b>Job Order</b></small>
+                        </a>
+                    </div>
+                    <div class="mb-3">
+                        <a href="uom.php" class="uom_nav">
+                            <i class="fas fa-balance-scale" style="height: 20px; width: 20px;"></i>
+                            <small class="text-start"><b>Units Of Measurement</b></small>
+                        </a>
+                    </div>
+                @endcan
+                
                 <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
                 <small class="my-2 text-start" style="color: rgb(255, 255, 255, 0.5);"><b>MANAGE ACCOUNTS</b></small>
                 <div class="mb-3">
@@ -252,32 +275,45 @@
                         <small><b>My Profile</b></small>
                     </a>
                 </div>
-                <div class="mb-3">
-                    <a href="/expense/accounts" class="accounts_nav">
-                        <i class="fas fa-users" style="height: 20px; width: 20px;"></i>
-                        <small><b>Accounts</b></small>
-                    </a>
-                </div>
-                <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
-                <small class="my-2 text-start" style="color: rgb(255, 255, 255, 0.5);"><b>REPORTS</b></small>
-                <div class="mb-3">
-                    <a href="/expense/logs" class="exp_nav">
-                        <i class="fas fa-folder-open" style="height: 20px; width: 20px;"></i>
-                        <small><b>Logs</b></small>
-                    </a>
-                </div>
-                <div class="mb-3">
-                    <a href="/expense/forms" class="dl_forms_nav">
-                        <i class="fas fa-download" style="height: 20px; width: 20px;"></i>
-                        <small><b>Downloadable Forms</b></small>
-                    </a>
-                </div>
-                <div class="mb-3">
-                    <a href="/expense/daily-request" class="daily_request_nav">
-                        <i class="fas fa-calendar" style="height: 20px; width: 20px;"></i>
-                        <small><b>Daily Request</b></small>
-                    </a>
-                </div>
+
+                @can('finance-president',auth()->user())
+                    <div class="mb-3">
+                        <a href="/expense/accounts" class="accounts_nav">
+                            <i class="fas fa-users" style="height: 20px; width: 20px;"></i>
+                            <small><b>Accounts</b></small>
+                        </a>
+                    </div>
+                @endcan
+
+                @can('managing-role',auth()->user())
+                    <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
+                    <small class="my-2 text-start" style="color: rgb(255, 255, 255, 0.5);"><b>REPORTS</b></small>
+                @endcan
+
+                @can('finance-president',auth()->user())
+                    <div class="mb-3">
+                        <a href="/expense/logs" class="exp_nav">
+                            <i class="fas fa-folder-open" style="height: 20px; width: 20px;"></i>
+                            <small><b>Logs</b></small>
+                        </a>
+                    </div>
+                @endcan
+
+                @can('managing-role',auth()->user())
+                    <div class="mb-3">
+                        <a href="/expense/forms" class="dl_forms_nav">
+                            <i class="fas fa-download" style="height: 20px; width: 20px;"></i>
+                            <small><b>Downloadable Forms</b></small>
+                        </a>
+                    </div>
+                    <div class="mb-3">
+                        <a href="/expense/daily-request" class="daily_request_nav">
+                            <i class="fas fa-calendar" style="height: 20px; width: 20px;"></i>
+                            <small><b>Daily Request</b></small>
+                        </a>
+                    </div>
+                @endcan
+                
                 <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
                 <small class="my-2 text-start" style="color: rgb(255, 255, 255, 0.5);"><b>MESSAGES</b></small>
                 <div class="mb-3">
@@ -288,7 +324,6 @@
                 </div>
             </header>
         </div>
-        {{-- background-color: #EDEEF1; --}}
         <div class="col-10 m-0 p-0 d-flex flex-column" style="
         background-image: repeating-linear-gradient(0deg, rgb(221,219,219) 0px, rgb(221,219,219) 1px,transparent 1px, transparent 51px),repeating-linear-gradient(90deg, rgb(221,219,219) 0px, rgb(221,219,219) 1px,transparent 1px, transparent 51px),linear-gradient(90deg, rgb(201,201,201),rgb(201,201,201));
         min-height: 100vh;" id="collapseLayout2">
@@ -298,7 +333,7 @@
                 </button>
                 <form method="POST" action="/logout" class="logoutForm">
                     @csrf
-                    <button type="submit">
+                    <button class="btn btn-sm btn-outline-danger rounded-0" type="submit">
                         <i class="fas fa-sign-out-alt" style="margin-right: 5px;"></i>
                         <small>LOGOUT</small>
                     </button>

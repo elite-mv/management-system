@@ -4,6 +4,13 @@
 
 @extends('layouts.expense-index')
 
+@section('style')
+    <style type="text/css">
+        .home_nav {
+            color: rgb(255, 255, 255, 1.0);
+        }
+    </style>
+@endsection
 
 @section('title', 'Home')
 
@@ -11,12 +18,17 @@
     <div class="container-fluid">
         <div class="row" style="display: flex; justify-content: right; gap: 0 15px;">
 
-            <div class="col-12 p-3 text-center m-1 mb-3" style="border-radius: 15px !important;">
-                <div class="p-4 bg-white"
-                     style="display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 5px 0; margin-top: 15px; border: 1px solid #000; border-radius: 15px; position: relative;">
-                    <div class="bg-danger border border-dark py-auto"
+            <div class="col-12 p-3 text-center p-1" style="border-radius: 15px !important;">
+                <div class="p-4" style="display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 5px 0; margin-top: 15px; position: relative;
+                    background-color: rgba(255, 255, 255, 0.4);
+                    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+                    border: 1px solid rgba(255, 255, 255, 0.5);
+                    border-right: 1px solid rgba(255, 255, 255, 0.2);
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+                    border-radius: 7px;">
+                    <div class="bg-danger bg-gradient py-auto"
                          style="position: absolute; top: -22px; left: 25px; margin: 0; padding: 0 10px 0 10px;">
-                        <b><h5 class="m-0 p-0 px-1 py-2 text-white">WHAT`S NEW</h5></b>
+                        <b><h5 class="m-0 p-0 px-1 py-1 text-white">WHAT`S NEW</h5></b>
                     </div>
                     <div class="w-100 text-start" style="overflow-y: auto; height: 75vh">
                         <small>
@@ -106,12 +118,17 @@
                 </div>
             </div>
 
-            <div class="col-12 p-3 text-center m-1 mb-3" style="border-radius: 15px !important;">
-                <div class="p-4 bg-white"
-                     style="display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 5px 0; margin-top: 15px; border: 1px solid #000; border-radius: 15px; position: relative;">
-                    <div class="bg-danger border border-dark py-auto"
+            <div class="col-12 p-3 text-center p-1" style="border-radius: 15px !important;">
+                <div class="p-4" style="display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 5px 0; margin-top: 15px; position: relative;
+                    background-color: rgba(255, 255, 255, 0.4);
+                    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+                    border: 1px solid rgba(255, 255, 255, 0.5);
+                    border-right: 1px solid rgba(255, 255, 255, 0.2);
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+                    border-radius: 7px;">
+                    <div class="bg-danger bg-gradient py-auto"
                          style="position: absolute; top: -22px; left: 25px; margin: 0; padding: 0 10px 0 10px;">
-                        <b><h5 class="m-0 p-0 px-1 py-2 text-white">KEEP ENCOUNTERING ERRORS?</h5></b>
+                        <b><h5 class="m-0 p-0 px-1 py-1 text-white">KEEP ENCOUNTERING ERRORS?</h5></b>
                     </div>
                     <div class="w-100 text-start" style="overflow-y: auto; height: 75vh">
                         <small>
