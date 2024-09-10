@@ -45,6 +45,7 @@ class Request extends Model
         'audited_by',
         'status',
         'terms',
+        'created_at',
     ];
 
     protected $appends = ['total', 'reference', 'fund', 'fund_item'];

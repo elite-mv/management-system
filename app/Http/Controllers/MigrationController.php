@@ -64,6 +64,7 @@ class MigrationController
 
                 $saveRequest = \App\Models\Expense\Request::create([
                     'id' => $request->id,
+                    'created_at' => $request->deyt,
                     'company_id' => $company ? $company->id : 1,
                     'supplier' => $request->supplier,
                     'paid_to' => $request->paid_to,
