@@ -222,6 +222,7 @@ Route::get('/tae', function (){
 Route::get('/test-sql', [MigrationController::class, 'index']);
 Route::get('/check', [PdfController::class, 'check']);
 
+Route::get('/check-excel/{expenseRequestID}', [PdfController::class, 'requestCheck']);
 Route::post('/check-excel', [PdfController::class, 'index']);
 Route::post('/test-pdf', [PdfController::class, 'downloadMultiplePDF']);
 

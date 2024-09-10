@@ -22,14 +22,14 @@
             <td>{!! \App\Helper\Helper::formatCurrency($request->items_sum_approve_total) !!}</td>
             <td>{!! \App\Helper\Helper::amountToWords($request->items_sum_approve_total) !!}</td>
             <td>
-                @if($request->bankDetails)
+                @if($request->bankDetails && $request->bankDetails->bank)
                     {{ $request->bankDetails->bank->name}}
                 @else
                     --
                 @endif
             </td>
             <td>
-                @if($request->bankDetails)
+                @if($request->bankDetails && $request->bankDetails->code)
                     {{ $request->bankDetails->code->code}}
                 @else
                     --

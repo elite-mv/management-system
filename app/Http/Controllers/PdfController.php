@@ -115,6 +115,99 @@ class PdfController
 
     }
 
+    public function requestCheck($expenseRequestID)
+    {
+
+        try {
+
+            $requests = ExpenseRequest::with(['bankDetails', 'preparedBy', 'company'])
+                ->withCount(['approvals' => function ($query) {
+                    $query->whereHas('role', function ($qb) {
+
+                        $approvedRoles = [
+                            UserRole::BOOK_KEEPER->value,
+                            UserRole::ACCOUNTANT->value,
+                            UserRole::FINANCE->value,
+                            UserRole::AUDITOR->value,
+                        ];
+
+                        $qb->whereIn('name', $approvedRoles)
+                            ->where('status', RequestApprovalStatus::APPROVED);
+                    });
+                }])
+                ->withSum(['items' => function ($query) {
+                    $query->select(DB::raw('SUM(quantity * cost)'))
+                        ->whereIn('status', [RequestItemStatus::APPROVED->name, RequestItemStatus::PRIORITY->name])
+                        ->groupBy('request_id');
+                }], 'approve_total')
+                ->withSum([], 'approve_total')
+                ->where('id', $expenseRequestID)
+                ->take(1)
+                ->get();
+
+            $html = view('expense.excel.downloadable-request-excel', ['requests' => $requests])->render();
+
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Html();
+            $spreadsheet = $reader->loadFromString($html);
+
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $existingSpreadsheet = IOFactory::load('excel/check-writer-template.xlsx');
+
+            // Create a new sheet in the existing spreadsheet
+            $newSheet = $existingSpreadsheet->getSheetByName('Request Data');
+
+// Copy data from the new spreadsheet to the new sheet in the existing spreadsheet
+            $spreadsheet->getActiveSheet()->toArray(null, true, true, true); // Convert the new sheet to an array
+            $data = $spreadsheet->getActiveSheet()->toArray(); // Get data from the new spreadsheet
+
+// Append the data to the new sheet
+            foreach ($data as $rowIndex => $row) {
+                foreach ($row as $columnIndex => $value) {
+                    $newSheet->setCellValue([$columnIndex + 1, $rowIndex + 1], $value); // Set values in the new sheet
+                }
+            }
+
+            $retrievedCountRequest = count($requests);
+
+            if ($retrievedCountRequest < self::MAX_EXCEL_REQUEST) {
+                for ($i = 0; $i < self::MAX_EXCEL_REQUEST; $i++) {
+
+                    if ($retrievedCountRequest > $i) {
+                        continue;
+                    }
+
+                    $sheetIndex = $existingSpreadsheet->getIndex($existingSpreadsheet->getSheetByName($i + 1));
+
+                    if ($sheetIndex) {
+                        $existingSpreadsheet->removeSheetByIndex($sheetIndex);
+                    }
+
+                }
+            }
+
+            foreach ($requests as $index => $request) {
+
+                $shit = $existingSpreadsheet->getSheetByName($index + 1);
+
+                if (isset($shit)) {
+                    $shit->setTitle($request->reference);
+                }
+            }
+
+            $writer = IOFactory::createWriter($existingSpreadsheet, 'Xlsx');
+            $writer->save('excel/check-writer.xlsx'); // Save the file
+
+
+            return response()->download('excel/check-writer.xlsx');
+
+        } catch (\Exception $exception) {
+            return redirect()->back()->withErrors(['message' => 'error downloading check']);
+        }
+
+    }
+
+
     public function test(ExpenseRequest $expenseRequest)
     {
 

@@ -118,11 +118,10 @@
                     <i class="fas fa-scroll"></i>
                     View Logs
                 </button>
-                <button class="btn btn-secondary" id="check_writer">
+
+                <a class="btn btn-secondary" type="button" href="/check-excel/{{$request->id}}">
                     <i class="fas fa-plus-circle me-2"></i>Check Writer
-                    <input type="hidden" id="hidden_paid_to" value=" {{$request->paid_to}}">
-                    <input type="hidden" id="hidden_amount" value="{{$request->approvedItems->sum('total_cost')}}">
-                </button>
+                </a>
             </div>
 
             <div class="container-fluid mx-auto bg-white">

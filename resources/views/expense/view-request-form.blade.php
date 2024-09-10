@@ -114,9 +114,11 @@
                     <i class="fas fa-scroll"></i>
                     View Logs
                 </button>
-                <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#checkwriterModal">
+
+                <a class="btn btn-secondary" type="button" href="/check-excel/{{$request->id}}">
                     <i class="fas fa-plus-circle me-2"></i>Check Writer
-                </button>
+                </a>
+
             </div>
 
             <div class="modal fade text-dark" id="checkwriterModal" tabindex="-1" aria-labelledby="Check Writer"
