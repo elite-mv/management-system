@@ -137,6 +137,7 @@ class PresidentController extends Controller
             }
         });
 
+
         $query->whereHas('approvals', function ($qb) use ($request) {
 
             $qb->when($request->input('status') && $request->input('status') != 'ALL', function ($q) use ($request) {
@@ -147,6 +148,19 @@ class PresidentController extends Controller
                     $q->where('name', UserRole::PRESIDENT->value);
                     $q->orWhere('name', UserRole::FINANCE->value);
                 });
+            });
+
+            $qb->when($request->input('status'), function ($qb) use ($request) {
+                switch ($request->input('status')) {
+                    case  RequestApprovalStatus::APPROVED->name:
+                        $qb->orderBy('updated_at', 'DESC');
+                        break;
+                    case  RequestApprovalStatus::PENDING->name || RequestApprovalStatus::DISAPPROVED->name:
+                        $qb->orderBy('updated_at', 'ASC');
+                        break;
+                    default:
+                        $qb->orderBy('created_at', 'DESC');
+                }
             });
 
         });

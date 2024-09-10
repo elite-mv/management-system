@@ -63,6 +63,19 @@ class FinanceController extends Controller
                 });
             });
 
+            $qb->when($request->input('status'), function ($qb) use ($request) {
+                switch ($request->input('status')) {
+                    case  RequestApprovalStatus::APPROVED->name:
+                        $qb->orderBy('updated_at', 'DESC');
+                        break;
+                    case  RequestApprovalStatus::PENDING->name || RequestApprovalStatus::DISAPPROVED->name:
+                        $qb->orderBy('updated_at', 'ASC');
+                        break;
+                    default:
+                        $qb->orderBy('created_at', 'DESC');
+                }
+            });
+
         });
 
         $query->when(!$request->input('status'), function ($qb) use ($request) {

@@ -111,25 +111,27 @@ class AccountantController extends Controller
             $qb->whereDate('created_at', '<=', Carbon::createFromFormat('Y-m-d', $request->input('to'))->toDateString());
         });
 
-        $query->when($request->input('status') && $request->input('status') != 'ALL', function ($query) use ($request) {
-            $query->whereHas('approvals', function ($qb) use ($request) {
-                $qb->where(function ($qb) use ($request) {
-                    $qb->whereHas('role', function ($qb) use ($request) {
-                        $qb->where('name', UserRole::BOOK_KEEPER->value)
-                            ->where('status', RequestApprovalStatus::APPROVED);
-                    });
-                });
+        $query->whereHas('approvals', function ($qb) use ($request) {
 
-                $qb->orWhere(function ($qb) use ($request) {
-                    $qb->whereHas('role', function ($qb) use ($request) {
-                        $qb->where(function ($qb) use ($request) {
-                            $qb->where('name', UserRole::ACCOUNTANT->value);
-                            $qb->where('status', RequestApprovalStatus::valueOf($request->input('status')));
-                        });
-                    });
+            $qb->when($request->input('status') && $request->input('status') != 'ALL', function ($q) use ($request) {
+                $q->where('status', RequestApprovalStatus::valueOf($request->input('status')));
+                $q->whereHas('role', function ($q) {
+                    $q->where('name', UserRole::ACCOUNTANT->value);
                 });
+            });
 
-            }, '=', 2);
+            $qb->when($request->input('status'), function ($qb) use ($request) {
+                switch ($request->input('status')) {
+                    case  RequestApprovalStatus::APPROVED->name:
+                        $qb->orderBy('updated_at', 'DESC');
+                        break;
+                    case  RequestApprovalStatus::PENDING->name || RequestApprovalStatus::DISAPPROVED->name:
+                        $qb->orderBy('updated_at', 'ASC');
+                        break;
+                    default:
+                        $qb->orderBy('created_at', 'DESC');
+                }
+            });
         });
 
         $query->when(!$request->input('status'), function ($qb) use ($request) {
