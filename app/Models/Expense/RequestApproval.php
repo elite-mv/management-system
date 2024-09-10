@@ -12,10 +12,10 @@ class RequestApproval extends Model
     use HasFactory;
 
     protected $fillable = [
-               'request_id',
-               'role_id',
-               'user_id',
-               'status',
+        'request_id',
+        'role_id',
+        'user_id',
+        'status',
     ];
 
     protected $casts = [

@@ -109,7 +109,7 @@
                             <div class="row">
                                 <p class="col-12 col-md-2 fw-bold">Prepared by</p>
                                 <div class="col-sm-12 col-md-10">
-                                    <input type="text" class="p-2 form-control" name="preparedBy" value="" disabled>
+                                    <input type="text" class="p-2 form-control" name="preparedBy" value="{{auth()->user()->name}}" disabled>
                                 </div>
                             </div>
                         </div>
@@ -121,7 +121,7 @@
                     border: 1px solid rgba(255, 255, 255, 0.5);
                     border-right: 1px solid rgba(255, 255, 255, 0.2);
                     border-bottom: 1px solid rgba(255, 255, 255, 0.2);" id="request_items">
-                        <div class="d-flex flex-column p-4 gap-4" style="background-color: rgba(255, 255, 255, 0.3);
+                        <div class="d-flex flex-column p-4" style="background-color: rgba(255, 255, 255, 0.3);
                             box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
                             border: 1px solid rgba(255, 255, 255, 0.5);
                             border-right: 1px solid rgba(255, 255, 255, 0.2);
@@ -139,9 +139,7 @@
                                             <th scope="col" class="text-center">TOTAL</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="request_cart">
-
-                                    </tbody>
+                                    <tbody id="request_cart"></tbody>
                                 </table>
                             </div>
 

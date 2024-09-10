@@ -14,13 +14,17 @@ use App\Enums\RequestPriorityLevel;
 use App\Enums\RequestStatus;
 use App\Enums\UserRole;
 use App\Helper\Helper;
+use App\Models\Expense\BankDetail;
 use App\Models\Expense\Company;
 use App\Models\Expense\JobOrder;
 use App\Models\Expense\Measurement;
 use App\Models\Expense\Request as ModelsRequest;
 use App\Models\Expense\RequestApproval;
+use App\Models\Expense\RequestDelivery;
+use App\Models\Expense\RequestExpenseType;
 use App\Models\Expense\RequestItem;
 use App\Models\Expense\RequestLogs;
+use App\Models\Expense\RequestVat;
 use App\Models\Expense\Role;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
@@ -66,6 +70,101 @@ class PastRequestController extends Controller
         return view('expense.daily-requests', [
             'requests' => $query->paginate(25),
         ]);
+    }
+
+    public function add_old_reqeust(Request $request, AddRequestLog $addRequestLog)
+    {
+
+        DB::beginTransaction();
+
+        try {
+            $expenseRequest = new ModelsRequest();
+            
+            $expenseRequest->supplier = $request->input('supplier');
+            $expenseRequest->paid_to = $request->input('paidTo');
+            $expenseRequest->request_by = $request->input('requestedBy');
+            $expenseRequest->prepared_by = Auth::id();
+            $expenseRequest->company_id = $request->input('company') ?? null;
+            $expenseRequest->priority_level = RequestPriorityLevel::HIGH->name;
+            $expenseRequest->payment_method = $request->input('paymentType');
+            $expenseRequest->status = RequestStatus::RELEASED->value;
+            $expenseRequest->attachment = $request->input('attachment') ?? null;
+            $expenseRequest->type = $request->input('attachmentType') ?? null;
+            $expenseRequest->receipt = $request->input('attachmentReceipt') ?? null;
+            $expenseRequest->fund_status = RequestFundStatus::FUNDED->value;
+            $expenseRequest->terms = $request->input('terms');
+
+            $expenseRequest->save();
+
+            foreach ($request->input('expenseCategory') as $categoryID ){
+                RequestExpenseType::create([
+                    'expense_category_id' => $categoryID,
+                    'request_id' => $expenseRequest->id
+                ]);
+            }
+
+            BankDetail::create([
+                'request_id' => $expenseRequest->id,
+                'bank_name_id' => $request->input('bankNameSelection'),
+                'bank_code_id' => $request->input('bankCodeSelection'),
+                'check_number' => $request->input('checkNumberInput')
+            ]);
+
+            RequestDelivery::create([
+                'request_id' => $expenseRequest->id,
+                'completed' => $request->input('requestDeliveryStatus') ?? null,
+                'supplier_verified' => $request->input('bankNameSelection')
+            ]);
+
+            RequestVat::create([
+                'purchase_order' => $request->input('purchaseOrderInput'),
+                'invoice' => $request->input('invoiceNumberInput'),
+                'bill' => $request->input('billNumberInput'),
+                'official_receipt' => $request->input('orNumberInput'),
+                'request_id' => $expenseRequest->id,
+                'option_a' => $request->input('vatOption1'),
+                'option_b' => $request->input('vatOption2')
+            ]);
+
+            $requestItems = RequestItem::where('session_id', Session::getId())
+                ->whereNull('request_id')
+                ->get();
+
+            foreach ($requestItems as $item) {
+                $item->request_id = $expenseRequest->id;
+                $item->save();
+            }
+
+            $roles = [
+                UserRole::BOOK_KEEPER->value,
+                UserRole::ACCOUNTANT->value,
+                UserRole::AUDITOR->value
+            ];
+
+            foreach ($roles as $roleName) {
+                RequestApproval::create([
+                    'request_id' => $expenseRequest->id,
+                    'status' => RequestApprovalStatus::APPROVED,
+                    'role_id' => Role::where('name', $roleName)->pluck('id')->first(),
+                ]);
+            }
+
+            RequestApproval::create([
+                'request_id' => $expenseRequest->id,
+                'status' => RequestApprovalStatus::PENDING,
+                'role_id' => Role::where('name', UserRole::FINANCE->value)->pluck('id')->first(),
+            ]);
+
+            $addRequestLog->handle($expenseRequest->id, 'Request was created');
+
+            DB::commit();
+
+            return redirect('/expense/requests');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
     }
 
     public function addRequest(Request $request, AddRequestLog $addRequestLog)
