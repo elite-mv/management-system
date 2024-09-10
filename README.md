@@ -13,3 +13,4 @@ sudo chmod -R 755 public
 sudo chown -R john:sudo
 ```
 
+mv ./temp/* ./storage/
