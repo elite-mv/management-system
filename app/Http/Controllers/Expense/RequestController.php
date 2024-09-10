@@ -178,7 +178,7 @@ class RequestController extends Controller
                                 $q->select(['id', 'name']);
                             },
                             'jobOrder' => function ($q) {
-                                $q->select(['id', 'name']);
+                                $q->select(['id', 'name','reference']);
                             }
                         ]);
                 },
@@ -223,7 +223,8 @@ class RequestController extends Controller
                 },
                 'bankDetails' => function ($q) {
                     $q->with(['bank', 'code']);
-                }
+                },
+                'checkVoucher',
             ])
             ->firstOrFail();
 

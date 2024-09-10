@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,8 +12,8 @@ return new class extends Migration
     {
         Schema::create('request_deliveries', function (Blueprint $table) {
             $table->id();
-            $table->boolean('completed')->default(false);
-            $table->boolean('supplier_verified')->default(false);
+            $table->boolean('completed')->nullable();
+            $table->boolean('supplier_verified')->nullable();
             $table->foreignId('request_id')->constrained();
             $table->timestamps();
         });

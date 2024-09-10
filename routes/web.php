@@ -30,6 +30,7 @@ use App\Http\Controllers\Income\CustomerController;
 use App\Http\Controllers\Income\IncomeController;
 use App\Http\Controllers\Income\QuoteController;
 use App\Http\Controllers\Income\InvoiceController;
+use App\Http\Controllers\MigrationController;
 use App\Http\Controllers\NavigationController;
 use App\Http\Controllers\PdfController;
 use App\Http\Middleware\BankCodesData;
@@ -215,10 +216,12 @@ Route::get('/tae', function (){
     return view('check');
 });
 
+Route::get('/test-sql', [MigrationController::class, 'index']);
 Route::get('/check', [PdfController::class, 'check']);
-Route::get('/excel-test', [PdfController::class, 'index']);
 
+Route::post('/check-excel', [PdfController::class, 'index']);
 Route::post('/test-pdf', [PdfController::class, 'downloadMultiplePDF']);
+
 Route::get('/test', [PdfController::class, 'index']);
 Route::get('/test/{expenseRequest}', [PdfController::class, 'test']);
 Route::get('/test2/{requestID}', [PdfController::class, 'test2']);

@@ -8,4 +8,5 @@ enum Company: string{
     case GUNTECH = "GUNTECH";
     case SOTERIA = "SOTERIA";
     case ELITE_ACES = "ELITE ACES";
+    case OTHERS = "OTHERS";
 }

@@ -10,6 +10,7 @@ use App\Models\Expense\RequestItem;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use function Webmozart\Assert\Tests\StaticAnalysis\null;
 
 class BookKeeperController extends Controller
 {
@@ -18,7 +19,7 @@ class BookKeeperController extends Controller
     {
         $query = ModelsRequest::query();
 
-        $query->select(['id', 'reference', 'request_by', 'company_id', 'status','created_at']);
+        $query->select(['id', 'reference', 'request_by', 'company_id', 'status', 'created_at']);
 
         $query->with('items', function ($query) {
             $query->select('request_id', DB::raw('SUM(quantity * cost) as total_cost'))
@@ -61,9 +62,36 @@ class BookKeeperController extends Controller
                     $q->where('name', UserRole::BOOK_KEEPER->value);
                 });
             });
+
+            $qb->when($request->input('status'), function ($qb) use ($request) {
+                switch ($request->input('status')) {
+                    case  RequestApprovalStatus::APPROVED->name:
+                        $qb->orderBy('updated_at', 'DESC');
+                        break;
+                    case  RequestApprovalStatus::PENDING->name || RequestApprovalStatus::DISAPPROVED->name:
+                        $qb->orderBy('updated_at', 'ASC');
+                        break;
+                    default:
+                        $qb->orderBy('created_at', 'DESC');
+                }
+            });
         });
 
-        $requests = $query->paginate($request->input('entries') ?? 100, ['*'], 'page', $request->input('page') ?? 1);
+        $query->when(!$request->input('status'), function ($qb) use ($request) {
+            $qb->orderBy('created_at', 'DESC');
+        }, function ($qb) use ($request) {
+            switch ($request->input('status')) {
+                case  RequestApprovalStatus::PENDING->name:
+                    $qb->orderBy('created_at');
+                    break;
+                default:
+                    $qb->orderBy('created_at', 'DESC');
+                    break;
+            }
+        });
+
+
+        $requests = $query->paginate($request->input('entries') ?? 20, ['*'], 'page', $request->input('page') ?? 1);
 
         return view('expense.book-keeper-requests', [
             'requests' => $requests,

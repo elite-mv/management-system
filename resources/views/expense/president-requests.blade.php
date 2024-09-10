@@ -30,7 +30,9 @@
                         <form id="filterForm">
 
                             <div class="d-flex mb-2 gap-2 align-items-center">
-                                <div class="w-100 rounded-pill border d-flex align-items-start flex-direction-row gap-2 py-2 px-3" style="background-color: rgba(255, 255, 255, 0.4);
+                                <div
+                                    class="w-100 rounded-pill border d-flex align-items-start flex-direction-row gap-2 py-2 px-3"
+                                    style="background-color: rgba(255, 255, 255, 0.4);
                                 box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
                                 border: 1px solid rgba(255, 255, 255, 0.5);
                                 border-right: 1px solid rgba(255, 255, 255, 0.2);
@@ -42,42 +44,52 @@
                                     </div>
                                     <div class="w-100 mx-1">
                                         <small>
-                                            <input autocomplete="off" placeholder="Search ..." name="search" type="search" value="{{$app->request->search}}" class="rounded-0 border-0 w-100 bg-transparent">
+                                            <input autocomplete="off" placeholder="Search ..." name="search"
+                                                   type="search" value="{{$app->request->search}}"
+                                                   class="rounded-0 border-0 w-100 bg-transparent">
                                         </small>
                                     </div>
                                 </div>
 
                                 <!-- Button trigger modal -->
                                 <button type="button" class="mt-2 mt-md-0  btn" data-bs-toggle="modal"
-                                        data-bs-target="#filterModal"  data-bs-placement="top"
+                                        data-bs-target="#filterModal" data-bs-placement="top"
                                         title="Advance filter">
                                     <i class="fas fa-filter"></i>
                                 </button>
 
-                                <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                                <div class="modal fade" id="filterModal" tabindex="-1"
+                                     aria-labelledby="exampleModalLabel"
                                      aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h1 class="modal-title fs-5" id="exampleModalLabel">Advance Filter</h1>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
                                                 <div class="form-group row mb-2">
                                                     <div class="col-6">
                                                         <label>From</label>
-                                                        <input value="{{$app->request->from}}" name="from" class="form-control"
+                                                        <input value="{{$app->request->from}}" name="from"
+                                                               class="form-control"
                                                                type="date">
                                                     </div>
                                                     <div class="col-6">
                                                         <label>To</label>
-                                                        <input value="{{$app->request->to}}" name="to" class="form-control" type="date">
+                                                        <input value="{{$app->request->to}}" name="to"
+                                                               class="form-control" type="date">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Filter</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Close
+                                                </button>
+                                                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
+                                                    Filter
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -155,19 +167,30 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <div class="row" style="height: 30px">
+                                <div class="row justify-content-between" style="height: 30px">
                                     <div class="col-sm-12 col-md-6 text-start">
                                         <i class="fas fa-table me-1"></i>
                                         <b>Requests</b>
                                     </div>
                                     <div class="col-sm-12 col-md-6 text-end d-none" id="collapseLayout">
-                                        <form method="POST" action="/test-pdf" id="downloadExpenseForm">
-                                            @csrf
-                                            <input id="downloadExpenseInput" type="hidden" name="id[]">
-                                            <button class="btn btn-sm btn-outline-danger rounded-0 px-4" type="submit">Download
-                                                Check
-                                            </button>
-                                        </form>
+                                        <div class="d-flex gap-2 justify-content-end">
+                                            <form method="POST" action="/test-pdf" id="downloadExpenseForm">
+                                                @csrf
+                                                <input id="downloadExpenseInput" type="hidden" name="id[]">
+                                                <button class="btn btn-sm btn-outline-danger rounded-0 px-4"
+                                                        type="submit">Download
+                                                    Forms
+                                                </button>
+                                            </form>
+                                            <form method="POST" action="/check-excel" id="downloadCheckForm">
+                                                @csrf
+                                                <input id="downloadCheckInput" type="hidden" name="id[]">
+                                                <button class="btn btn-sm btn-outline-danger rounded-0 px-4"
+                                                        type="submit">Download
+                                                    Check
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -177,7 +200,8 @@
                                     <tr>
                                         <th class="sorttable_nosort">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="requestAllInput">
+                                                <input class="form-check-input" type="checkbox" value=""
+                                                       id="requestAllInput">
                                             </div>
                                         </th>
                                         <th>REFERENCE</th>
@@ -203,7 +227,8 @@
                                             <td class="text-uppercase">{{ $request->status}}</td>
                                             <td>{!! \App\Helper\Helper::formatPeso( $request->items->first()->total_cost ) !!}</td>
                                             <td>
-                                                <a target="_blank" role="button" href="/expense/request/{{$request->id}}"
+                                                <a target="_blank" role="button"
+                                                   href="/expense/request/{{$request->id}}"
                                                    class="btn btn-primary">View</a>
                                             </td>
                                         </tr>

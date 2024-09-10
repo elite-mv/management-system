@@ -5,7 +5,7 @@ namespace App\Enums;
 enum RequestApprovalStatus {
     case PENDING;
     case APPROVED;
-    case DISAPPROVE;
+    case DISAPPROVED;
     case PRIORITY;
 
     public static function status(): array
@@ -26,8 +26,8 @@ enum RequestApprovalStatus {
             return RequestApprovalStatus::APPROVED;
         }
 
-        if(strtoupper($target) == RequestApprovalStatus::DISAPPROVE->name) {
-            return RequestApprovalStatus::DISAPPROVE;
+        if(strtoupper($target) == RequestApprovalStatus::DISAPPROVED->name) {
+            return RequestApprovalStatus::DISAPPROVED;
         }
 
         return RequestApprovalStatus::PENDING;

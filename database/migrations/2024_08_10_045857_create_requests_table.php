@@ -40,6 +40,7 @@ return new class extends Migration
             ]);
 
             $table->boolean('priority');
+            $table->string('others')->nullable();
             $table->timestamps();
         });
     }

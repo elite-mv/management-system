@@ -10,6 +10,7 @@ class CheckVoucher extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'request_id'
     ];
 

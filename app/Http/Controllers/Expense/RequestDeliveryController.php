@@ -45,7 +45,8 @@ class RequestDeliveryController extends Controller
         try{
             DB::beginTransaction();
 
-            RequestDelivery::where('request_id', $requestID)->delete();
+            RequestDelivery::where('request_id', $requestID)
+                ->update(['completed' => null]);
 
             DB::commit();
 
@@ -97,7 +98,8 @@ class RequestDeliveryController extends Controller
         try{
             DB::beginTransaction();
 
-            RequestDelivery::where('request_id', $requestID)->delete();
+            RequestDelivery::where('request_id', $requestID)
+                ->update(['supplier_verified' => null]);
 
             DB::commit();
 

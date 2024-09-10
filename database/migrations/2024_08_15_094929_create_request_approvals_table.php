@@ -22,7 +22,8 @@ return new class extends Migration
             $table->enum('status', [
                 RequestApprovalStatus::PENDING->name,
                 RequestApprovalStatus::APPROVED->name,
-                RequestApprovalStatus::DISAPPROVE->name
+                RequestApprovalStatus::DISAPPROVED->name,
+                RequestApprovalStatus::PRIORITY->name
             ]);
             $table->timestamps();
         });

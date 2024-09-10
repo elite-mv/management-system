@@ -288,7 +288,7 @@
                                 <td colspan="2"
                                     class="small px-2 bg-transparent text-transparent">{{$item->quantity}}</td>
                                 <td colspan="3" class="small px-2 bg-transparent">{{$item->measurement->name}}</td>
-                                <td colspan="2" class="small px-2 bg-transparent">{{$item->jobOrder->name}}</td>
+                                <td colspan="2" class="small px-2 bg-transparent">{{$item->jobOrder->reference}}</td>
                                 <td colspan="2" class="small bg-transparent">
                                     <div class="d-flex align-items-center bg-transparent">
                                         <p class="m-0 p-0 text-ellipsis"
@@ -329,7 +329,7 @@
                                 <select id="paymentMethodInput" class="w-100 border-0 outline-0 ">
 
                                     @if(\App\Enums\PaymentMethod::NONE == $request->payment_method)
-                                        <option selected disabled></option>
+                                        <option selected disabled>SELECT AN OPTION</option>
                                     @endif
 
                                     @foreach(App\Enums\PaymentMethod::modes() as $type)

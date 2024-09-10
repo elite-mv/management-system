@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->text('email')->nullable();
             $table->text('deyt')->nullable();
-            $table->text('qty')->nullable();
+            $table->integer('qty')->nullable();
             $table->text('uom')->nullable();
             $table->text('job_order')->nullable();
             $table->text('description')->nullable();

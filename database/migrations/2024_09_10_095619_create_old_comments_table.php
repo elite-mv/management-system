@@ -10,11 +10,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('request_item_images', function (Blueprint $table) {
+//        `id`, `reference`, `username`, `message`, `time`
+        Schema::create('old_comments', function (Blueprint $table) {
             $table->id();
-            $table->text('file');
-            $table->enum('type', ['image', 'pdf']);
-            $table->foreignId('request_item_id')->constrained()->onDelete('cascade');;
+            $table->string('reference')->nullable();
+            $table->string('username')->nullable();
+            $table->text('message')->nullable();
+            $table->date('time')->nullable();
             $table->timestamps();
         });
     }
@@ -24,6 +26,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('request_item_images');
+        Schema::dropIfExists('old_comments');
     }
 };

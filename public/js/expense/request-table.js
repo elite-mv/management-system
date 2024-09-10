@@ -1,6 +1,10 @@
 const downloadExpenseForm = document.querySelector('#downloadExpenseForm');
 const downloadExpenseInput = document.querySelector('#downloadExpenseInput');
 
+const downloadCheckForm = document.querySelector('#downloadCheckForm');
+const downloadCheckInput = document.querySelector('#downloadCheckInput');
+
+
 const filterModal = new bootstrap.Modal('#filterModal');
 const checkedInputs = new Map();
 
@@ -127,5 +131,13 @@ if (downloadExpenseForm) {
         downloadExpenseInput.value = JSON.parse(localStorage.getItem('checkedInputs'));
 
         downloadExpenseForm.submit();
+    })
+
+    downloadCheckForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        downloadCheckInput.value = JSON.parse(localStorage.getItem('checkedInputs'));
+
+        downloadCheckForm.submit();
     })
 }

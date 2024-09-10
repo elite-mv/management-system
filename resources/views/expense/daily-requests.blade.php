@@ -62,17 +62,17 @@
                                     <td>{{ $request->reference}}</td>
                                     <td>{{$request->created_at->diffForHumans()}}</td>
                                     <td>{{ $request->company->name}}</td>
-                                    <td>{{ $request->request_by}}</td>
+                                    <td class="text-capitalize">{{ strtolower( $request->request_by)}}</td>
                                     <td>{{ $request->status}}</td>
                                     <td>
-                                        @if($request->bankDetails)
+                                        @if($request->bankDetails && $request->bankDetails->bank)
                                             {{ $request->bankDetails->bank->name}}
                                         @else
                                             --
                                         @endif
                                     </td>
                                     <td>
-                                        @if($request->bankDetails)
+                                        @if($request->bankDetails && $request->bankDetails->code)
                                             {{ $request->bankDetails->code->code}}
                                         @else
                                             --

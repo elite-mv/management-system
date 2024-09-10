@@ -29,7 +29,9 @@ class DatabaseSeeder extends Seeder
             CurrencySeeder::class,
             SalutationSeeder::class,
             CustomerSeeder::class,
-            RequestItemSeeder::class,
+//            RequestItemSeeder::class,
+        MigrationSeeder::class,
+        OldCommentSeeder::class,
         ]);
 
     }

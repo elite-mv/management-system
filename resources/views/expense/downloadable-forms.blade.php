@@ -154,8 +154,8 @@
                                     <tr>
                                         <td class="text-nowrap">{{$request->reference}}</td>
                                         <td>{{$request->company->name}}</td>
-                                        <td class="text-capitalize">{{$request->paid_to}}</td>
-                                        <td class="text-capitalize">{{$request->request_by}}</td>
+                                        <td class="text-capitalize text-nowrap">{{strtolower($request->paid_to)}}</td>
+                                        <td class="text-capitalize text-nowrap">{{strtolower($request->request_by)}}</td>
                                         <td>
                                             @if($request->bookKeeper)
                                                 {{$request->bookKeeper->created_at}}

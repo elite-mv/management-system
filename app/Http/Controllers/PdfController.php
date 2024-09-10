@@ -50,7 +50,7 @@ class PdfController
                         ->groupBy('request_id');
                 }], 'approve_total')
                 ->withSum([], 'approve_total')
-                ->take(3)
+                ->take(self::MAX_EXCEL_REQUEST)
                 ->get();
 
             $html = view('expense.excel.downloadable-request-excel', ['requests' => $requests])->render();
@@ -110,7 +110,7 @@ class PdfController
             return response()->download('excel/check-writer.xlsx');
 
         } catch (\Exception $exception) {
-            return $exception->getMessage();
+            return redirect()->back()->withErrors(['message' => 'error downloading check']);
         }
 
     }
@@ -167,10 +167,12 @@ class PdfController
             return response()->download('pdf/' . $request->reference . '.pdf');
 
         } catch (\Exception $exception) {
-            return $exception->getMessage();
+//            return $exception->getMessage();
 //
-//            return redirect()->back()->withErrors([$exception->getMessage()]);
+            return redirect()->back()->withErrors([$exception->getMessage()]);
         }
+
+
     }
 
     public function downloadMultiplePDF(Request $request)
