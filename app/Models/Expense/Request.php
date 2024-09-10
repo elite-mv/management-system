@@ -67,8 +67,8 @@ class Request extends Model
     protected static function booted()
     {
         static::created(function ($request) {
-//            $request->reference = $request->created_at->format('Ymd') . '-' . str_pad($request->id, 3, "0", STR_PAD_LEFT);;
-//            $request->save();
+            $request->reference = $request->created_at->format('Ymd') . '-' . str_pad($request->id, 3, "0", STR_PAD_LEFT);;
+            $request->save();
         });
     }
 
