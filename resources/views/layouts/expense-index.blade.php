@@ -181,7 +181,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <a href="/expense/past_request" class="past_request_nav">
+                    <a href="/expense/past-request" class="past_request_nav">
                         <i class="fas fa-record-vinyl" style="height: 20px; width: 20px;"></i>
                         <small><b>Past Request</b></small>
                     </a>

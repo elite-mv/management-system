@@ -83,7 +83,7 @@
 @section('body')
 
 
-    <form id="requestForm" method="GET" action="/expense/past_request">
+    <form id="requestForm" method="GET" action="/expense/past-request">
         @csrf
         <div class="py-3 px-3 px-md-0">
 
@@ -511,7 +511,7 @@
                                             <input type="text" name="vatOption2" class="h-100 w-100 border-0 outline-0">
                                         </td>
                                         <td colspan="5" class="small px-2">
-                                            
+
                                         </td>
                                     </tr>
                                     <tr>

@@ -198,8 +198,10 @@ Route::prefix('expense')->group(function () {
         Route::post('/account/update/secret_pin', [AccountController::class, 'update_secret_pin']);
         Route::post('/account/update/password', [AccountController::class, 'update_password']);
 
-        Route::middleware([ExpenseCategoryData::class, BankData::class, BankCodesData::class])->get('/past_request', [PastRequestController::class, 'index']);
-        Route::get('/past_request', [PastRequestController::class, 'add_old_request']);
+        Route::middleware([ExpenseCategoryData::class, BankData::class, BankCodesData::class])
+            ->get('/past-request', [PastRequestController::class, 'index']);
+
+        Route::get('/past-request', [PastRequestController::class, 'addOldRequest']);
 
         Route::get('/accounts', [AccountController::class, 'accounts']);
 

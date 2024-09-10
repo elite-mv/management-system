@@ -72,14 +72,14 @@ class PastRequestController extends Controller
         ]);
     }
 
-    public function add_old_reqeust(Request $request, AddRequestLog $addRequestLog)
+    public function addOldRequest(Request $request, AddRequestLog $addRequestLog)
     {
 
         DB::beginTransaction();
 
         try {
             $expenseRequest = new ModelsRequest();
-            
+
             $expenseRequest->supplier = $request->input('supplier');
             $expenseRequest->paid_to = $request->input('paidTo');
             $expenseRequest->request_by = $request->input('requestedBy');
