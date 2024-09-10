@@ -167,9 +167,8 @@ class PdfController
             return response()->download('pdf/' . $request->reference . '.pdf');
 
         } catch (\Exception $exception) {
-//            return $exception->getMessage();
-//
-            return redirect()->back()->withErrors([$exception->getMessage()]);
+            return $exception->getMessage();
+//            return redirect()->back()->withErrors([$exception->getMessage()]);
         }
 
 

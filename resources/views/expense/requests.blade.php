@@ -31,7 +31,9 @@
                         <form id="filterForm" method="GET" action="/expense/requests">
                             @csrf
                             <div class="d-flex mb-2 gap-2 align-items-center">
-                                <div class="w-100 rounded-pill border d-flex align-items-start flex-direction-row gap-2 py-2 px-3" style="background-color: rgba(255, 255, 255, 0.4);
+                                <div
+                                    class="w-100 rounded-pill border d-flex align-items-start flex-direction-row gap-2 py-2 px-3"
+                                    style="background-color: rgba(255, 255, 255, 0.4);
                                 box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
                                 border: 1px solid rgba(255, 255, 255, 0.5);
                                 border-right: 1px solid rgba(255, 255, 255, 0.2);
@@ -43,7 +45,9 @@
                                     </div>
                                     <div class="w-100 mx-1">
                                         <small>
-                                            <input autocomplete="off" placeholder="Search ..." name="search" type="search" value="{{$app->request->search}}" class="rounded-0 border-0 w-100 bg-transparent">
+                                            <input autocomplete="off" placeholder="Search ..." name="search"
+                                                   type="search" value="{{$app->request->search}}"
+                                                   class="rounded-0 border-0 w-100 bg-transparent">
                                         </small>
                                     </div>
                                 </div>
@@ -59,13 +63,15 @@
                                     border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
                                         <option value="ALL">All</option>
                                         @foreach(\App\Enums\RequestStatus::cases() as $status)
-                                            <option value="{{$status->value}}">{{$status->value}}</option>
+                                            <option
+                                                @selected($app->request->paymentStatus == $status->value) value="{{$status->value}}">{{$status->value}}</option>
                                         @endforeach
                                     </select>
                                 </div>
 
                                 <div class="col-6 col-md-3 form-group d-flex gap-2 align-items-center">
-                                    <label class="form-label mb-0 text-capitalize" for="status">{{auth()->user()->role->name}}</label>
+                                    <label class="form-label mb-0 text-capitalize"
+                                           for="status">{{auth()->user()->role->name}}</label>
                                     <select name="status" class="form-select inputs" id="status" style="background-color: rgba(255, 255, 255, 0.4);
                                     box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
                                     border: 1px solid rgba(255, 255, 255, 0.5);
@@ -73,7 +79,8 @@
                                     border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
                                         <option value="ALL">All</option>
                                         @foreach(\App\Enums\RequestApprovalStatus::status() as $status)
-                                            <option value="{{$status->name}}">{{$status->name}}</option>
+                                            <option
+                                                @selected($app->request->status == $status->name) value="{{$status->name}}">{{$status->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -85,11 +92,11 @@
                                     border: 1px solid rgba(255, 255, 255, 0.5);
                                     border-right: 1px solid rgba(255, 255, 255, 0.2);
                                     border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
-                                        <option value="20">20</option>
-                                        <option value="30">30</option>
-                                        <option value="40">40</option>
-                                        <option value="50">50</option>
-                                        <option value="100">100</option>
+                                        <option @selected($app->request->entries == '20') value="20">20</option>
+                                        <option @selected($app->request->entries == '30') value="30">30</option>
+                                        <option @selected($app->request->entries == '40') value="40">40</option>
+                                        <option @selected($app->request->entries == '50') value="50">50</option>
+                                        <option @selected($app->request->entries == '100') value="100">100</option>
                                     </select>
                                 </div>
 
@@ -127,15 +134,15 @@
                             <div class="card-body overflow-x-auto">
                                 <table class="table sortable" id="sortableTable">
                                     <thead>
-                                        <tr>
-                                            <th>REFERENCE</th>
-                                            <th>DURATION</th>
-                                            <th>ENTITY</th>
-                                            <th>REQUESTED BY</th>
-                                            <th>STATUS</th>
-                                            <th>TOTAL</th>
-                                            <th>ACTION</th>
-                                        </tr>
+                                    <tr>
+                                        <th>REFERENCE</th>
+                                        <th>DURATION</th>
+                                        <th>ENTITY</th>
+                                        <th>REQUESTED BY</th>
+                                        <th>STATUS</th>
+                                        <th>TOTAL</th>
+                                        <th>ACTION</th>
+                                    </tr>
                                     </thead>
                                     <tbody id="requestData">
                                     @forelse ($requests as $request)
@@ -147,7 +154,9 @@
                                             <td>{{ $request->status}}</td>
                                             <td>{!! \App\Helper\Helper::formatPeso( $request->items->first()->total_cost ) !!}</td>
                                             <td>
-                                                <a target="_blank"  role="button" href="/expense/request/{{$request->id}}" class="btn btn-primary">View</a>
+                                                <a target="_blank" role="button"
+                                                   href="/expense/request/{{$request->id}}"
+                                                   class="btn btn-primary">View</a>
                                             </td>
                                         </tr>
                                     @empty
@@ -180,19 +189,19 @@
 
     <script>
 
-        $('#filterForm').find('select[name="entries"]').on('change', function() {
+        $('#filterForm').find('select[name="entries"]').on('change', function () {
             $('#filterForm').submit();
         })
 
-        $('#filterForm').find('select[name="status"]').on('change', function() {
+        $('#filterForm').find('select[name="status"]').on('change', function () {
             $('#filterForm').submit();
         })
 
-        $('#filterForm').find('select[name="paymentStatus"]').on('change', function() {
+        $('#filterForm').find('select[name="paymentStatus"]').on('change', function () {
             $('#filterForm').submit();
         })
 
-        $('#filterForm').find('select[name="entity"]').on('change', function() {
+        $('#filterForm').find('select[name="entity"]').on('change', function () {
             $('#filterForm').submit();
         })
 
