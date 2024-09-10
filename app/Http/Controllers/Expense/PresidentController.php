@@ -124,32 +124,32 @@ class PresidentController extends Controller
             $qb->whereDate('created_at', '<=', Carbon::createFromFormat('Y-m-d', $request->input('to'))->toDateString());
         });
 
+        $query->when(!$request->input('status'), function ($qb) use ($request) {
+            $qb->orderBy('created_at', 'DESC');
+        }, function ($qb) use ($request) {
+            switch ($request->input('status')) {
+                case  RequestApprovalStatus::PENDING->name:
+                    $qb->orderBy('created_at');
+                    break;
+                default:
+                    $qb->orderBy('created_at', 'DESC');
+                    break;
+            }
+        });
+
         $query->whereHas('approvals', function ($qb) use ($request) {
 
-            $qb->where(function ($qb) use ($request) {
-                $qb->whereHas('role', function ($qb) use ($request) {
-                    $qb->where('name', UserRole::BOOK_KEEPER->value)
-                        ->where('status', RequestApprovalStatus::APPROVED);
+            $qb->when($request->input('status') && $request->input('status') != 'ALL', function ($q) use ($request) {
+
+                $q->where('status', RequestApprovalStatus::valueOf($request->input('status')));
+
+                $q->whereHas('role', function ($q) {
+                    $q->where('name', UserRole::PRESIDENT->value);
+                    $q->orWhere('name', UserRole::FINANCE->value);
                 });
             });
 
-            $qb->orwhere(function ($qb) use ($request) {
-                $qb->whereHas('role', function ($qb) use ($request) {
-                    $qb->where('name', UserRole::ACCOUNTANT->value)
-                        ->where('status', RequestApprovalStatus::APPROVED);
-                });
-            });
-
-            $qb->orWhere(function ($qb) use ($request) {
-                $qb->whereHas('role', function ($qb) use ($request) {
-                    $qb->where('name', UserRole::FINANCE->value);
-                    $qb->when($request->input('status') && $request->input('status') != 'ALL', function ($qb) use ($request) {
-                        $qb->where('status', RequestApprovalStatus::valueOf($request->input('status')));
-                    });
-                });
-            });
-
-        }, '=', 3);
+        });
 
         $requests = $query->paginate($request->input('entries') ?? 10, ['*'], 'page', $request->input('page') ?? 1);
 

@@ -132,6 +132,20 @@ class AccountantController extends Controller
             }, '=', 2);
         });
 
+        $query->when(!$request->input('status'), function ($qb) use ($request) {
+            $qb->orderBy('created_at', 'DESC');
+        }, function ($qb) use ($request) {
+            switch ($request->input('status')) {
+                case  RequestApprovalStatus::PENDING->name:
+                    $qb->orderBy('created_at');
+                    break;
+                default:
+                    $qb->orderBy('created_at', 'DESC');
+                    break;
+            }
+        });
+
+
 
 //        $query->whereHas('approvals', function ($qb) use ($request) {
 //
