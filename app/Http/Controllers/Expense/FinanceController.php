@@ -73,7 +73,6 @@ class FinanceController extends Controller
                     break;
                 default:
                     $qb->orderBy('created_at', 'DESC');
-                    break;
             }
         });
 

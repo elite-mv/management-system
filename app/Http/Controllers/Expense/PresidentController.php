@@ -133,10 +133,8 @@ class PresidentController extends Controller
                     break;
                 default:
                     $qb->orderBy('created_at', 'DESC');
-                    break;
             }
         });
-
 
         $query->whereHas('approvals', function ($qb) use ($request) {
 

@@ -63,6 +63,19 @@ class AccountantController extends Controller
 
         });
 
+        $query->when(!$request->input('status'), function ($qb) use ($request) {
+            $qb->orderBy('created_at', 'DESC');
+        }, function ($qb) use ($request) {
+            switch ($request->input('status')) {
+                case  RequestApprovalStatus::PENDING->name:
+                    $qb->orderBy('created_at');
+                    break;
+                default:
+                    $qb->orderBy('created_at', 'DESC');
+            }
+        });
+
+
         $requests = $query->paginate($request->input('entries') ?? 100, ['*'], 'page', $request->input('page') ?? 1);
 
         return view('expense.accountant-requests', [
@@ -120,19 +133,19 @@ class AccountantController extends Controller
                 });
             });
         });
+        $query->orderBy('id', 'ASC');
 
-        $query->when(!$request->input('status'), function ($qb) use ($request) {
-            $qb->orderBy('created_at', 'DESC');
-        }, function ($qb) use ($request) {
-            switch ($request->input('status')) {
-                case  RequestApprovalStatus::PENDING->name:
-                    $qb->orderBy('created_at');
-                    break;
-                default:
-                    $qb->orderBy('created_at', 'DESC');
-                    break;
-            }
-        });
+//        $query->when(!$request->input('status'), function ($qb) use ($request) {
+//            $qb->orderBy('created_at', 'DESC');
+//        }, function ($qb) use ($request) {
+//            switch ($request->input('status')) {
+//                case  RequestApprovalStatus::PENDING->name:
+//                    $qb->orderBy('created_at');
+//                    break;
+//                default:
+//                    $qb->orderBy('created_at', 'DESC');
+//            }
+//        });
 
 
 
