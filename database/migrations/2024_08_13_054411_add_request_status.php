@@ -14,13 +14,13 @@ return new class extends Migration
     {
         Schema::table('requests', function (Blueprint $table) {
             $table->enum('status',[
-                    RequestStatus::PENDING->value,
-                    RequestStatus::TO_RETURN->value,
-                    RequestStatus::HOLD->value,
-                    RequestStatus::TO_PROCESS->value,
-                    RequestStatus::PROCESSING->value,
-                    RequestStatus::FOR_FUNDING->value,
-                    RequestStatus::RELEASED->value,
+                RequestStatus::PENDING->value,
+                RequestStatus::TO_RETURN->value,
+                RequestStatus::HOLD->value,
+                RequestStatus::TO_PROCESS->value,
+                RequestStatus::PROCESSING->value,
+                RequestStatus::FOR_FUNDING->value,
+                RequestStatus::RELEASED->value,
             ]);
         });
     }

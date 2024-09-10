@@ -28,7 +28,7 @@ window.addEventListener("load", ()=>{
 const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'PHP',
-  });
+});
 
 requestItemQuantity.addEventListener('change',calculateSubtotal)
 requestItemUnitCost.addEventListener('change',calculateSubtotal)
@@ -48,7 +48,55 @@ requestForm.addEventListener('submit',(e)=>{
 
         return;
     }
-
+    
+    // const company = $('input[name="company"]:checked').val();
+    // const supplier = $('input[name="supplier"]').val();
+    // const paid_to = $('input[name="paidTo"]').val();
+    // const requested_by = $('input[name="requestedBy"]').val();
+    // const prepared_by = $('input[name="preparedBy"]').val();
+    // const payment_type = $('select[name="paymentType"]').val();
+    // const terms = $('input[name="terms"]').val();
+    // const priority_level = 'HIGH';
+    // const expense_category = [$('select[data-index="1"]').val(), $('select[data-index="2"]').val(), $('select[data-index="3"]').val(), $('select[data-index="4"]').val(), $('select[data-index="5"]').val(), $('select[data-index="6"]').val(), $('select[data-index="7"]').val(), $('select[data-index="8"]').val(), $('select[data-index="9"]').val(), $('select[data-index="10"]').val(), $('select[data-index="11"]').val(), $('select[data-index="12"]').val()];
+    // const bank_name = $('#bankNameSelection').val();
+    // const bank_code = $('#bankCodeSelection').val();
+    // const check_number = $('#checkNumberInput').val();
+    // const delivery_status = $('input[name="requestDeliveryStatus"]:checked').val();
+    // const attachment = $('input[name="attachment"]:checked').val();
+    // const attachment_type = $('input[name="attachmentType"]:checked').val();
+    // const attachment_receipt = $('input[name="attachmentReceipt"]:checked').val();
+    // const vat_1 = $('#vatOption1').val();
+    // const vat_2 = $('#vatOption2').val();
+    // const po = $('#purchaseOrderInput').val();
+    // const invoice = $('#invoiceNumberInput').val();
+    // const bill = $('#billNumberInput').val();
+    // const or = $('#orNumberInput').val();
+    // const other = $('#othersInput').val();
+    // const log = 'Company: ' + company + '\n' +
+    //             'Supplier: ' + supplier + '\n' +
+    //             'Paid_to: ' + paid_to + '\n' +
+    //             'Requested By: ' + requested_by + '\n' +
+    //             'Prepared By: ' + prepared_by + '\n' +
+    //             'Payment Type: ' + payment_type + '\n' +
+    //             'Terms: ' + terms + '\n' +
+    //             'Priority Level: ' + priority_level + '\n' +
+    //             'Expense Category: ' + expense_category + '\n' +
+    //             'Bank Name: ' + bank_name + '\n' +
+    //             'Bank Code: ' + bank_code + '\n' +
+    //             'Check Number: ' + check_number + '\n' +
+    //             'Delivery Status: ' + delivery_status + '\n' +
+    //             'Atachment: ' + attachment + '\n' +
+    //             'Atachment Type: ' + attachment_type + '\n' +
+    //             'Atachment Receipt: ' + attachment_receipt + '\n' +
+    //             'Vat 1: ' + vat_1 + '\n' +
+    //             'Vat 2: ' + vat_2 + '\n' +
+    //             'PO No.: ' + po + '\n' +
+    //             'Invoice No.: ' + invoice + '\n' +
+    //             'Bill No.: ' + bill + '\n' +
+    //             'OR No.: ' + or + '\n' +
+    //             'Others: ' + other + '\n'
+    // ;
+    // console.log(log);
     requestForm.submit();
 })
 

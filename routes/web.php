@@ -198,6 +198,7 @@ Route::prefix('expense')->group(function () {
         Route::post('/account/update/password', [AccountController::class, 'update_password']);
 
         Route::middleware([ExpenseCategoryData::class, BankData::class, BankCodesData::class])->get('/past_request', [PastRequestController::class, 'index']);
+        Route::get('/past_request', [PastRequestController::class, 'add_old_request']);
 
         Route::get('/accounts', [AccountController::class, 'accounts']);
 

@@ -180,7 +180,7 @@
                 <button class="btn btn-danger rounded-0" id="sms_blaster">Proceed</button>
             </div>
         </div>
-        <div class="item" style="background-image: url(src/general/expense_request.jpg);">
+        <div class="item" style="background-image: url(images/expense_request.jpg);">
             <div class="content">
                 <div class="name">Expense Request</div>
                 <div class="des">Submit a new expense form, record a past expense record, manage a submitted expense requests and produce an expense report.</div>

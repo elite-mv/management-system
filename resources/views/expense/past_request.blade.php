@@ -6,15 +6,6 @@
 
 @section('style')
     <style type="text/css">
-        .cart-items {
-            cursor: pointer;
-        }
-
-        .cart-items:hover {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(0, 0, 0, 0.1) !important;
-        }
-
         .uploaded-img {
             height: 250px;
             width: auto;
@@ -57,8 +48,7 @@
             background-color: var(--gray) !important;
         }
 
-        td {
-            padding: 0 !important;
+        td:not(#request_cart td) {
             border: 1px solid black;
         }
 
@@ -93,7 +83,7 @@
 @section('body')
 
 
-    <form id="requestForm" method="POST" action="/expense/request">
+    <form id="requestForm" method="GET" action="/expense/past_request">
         @csrf
         <div class="py-3 px-3 px-md-0">
 
@@ -144,13 +134,13 @@
                             <div class="row">
                                 <p class="col-12 col-md-2 fw-bold">Supplier:</p>
                                 <div class="col-12 col-md-10">
-                                    <input type="text" class="p-2 form-control" name="supplier">
+                                    <input type="text" class="p-2 form-control" name="supplier" required>
                                 </div>
                             </div>
                             <div class="row">
                                 <p class="col-12 col-md-2 fw-bold">Paid to:</p>
                                 <div class="col-12 col-md-10">
-                                    <input type="text" class="p-2 form-control" name="paidTo">
+                                    <input type="text" class="p-2 form-control" name="paidTo" required>
                                 </div>
                             </div>
                             <div class="row">
@@ -162,13 +152,13 @@
                             <div class="row">
                                 <p class="col-12 col-md-2 fw-bold">Prepared by</p>
                                 <div class="col-sm-12 col-md-10">
-                                    <input type="text" class="p-2 form-control" name="preparedBy" value="" disabled>
+                                    <input type="text" class="p-2 form-control" name="preparedBy" value="{{auth()->user()->name}}" disabled>
                                 </div>
                             </div>
                             <div class="row">
                                 <p class="col-12 col-md-2 fw-bold">Payment Type</p>
                                 <div class="col-sm-12 col-md-10">
-                                    <select class="p-2 form-control" name="paymentType">
+                                    <select class="p-2 form-control" name="paymentType" required>
                                         <option value="">SELECT AN OPTION</option>
                                         <option value="CASH">CASH</option>
                                         <option value="ONLINE TRANSFER">ONLINE TRANSFER</option>
@@ -193,14 +183,14 @@
                     border: 1px solid rgba(255, 255, 255, 0.5);
                     border-right: 1px solid rgba(255, 255, 255, 0.2);
                     border-bottom: 1px solid rgba(255, 255, 255, 0.2);" id="request_items">
-                        <div class="d-flex flex-column p-4 gap-4" style="background-color: rgba(255, 255, 255, 0.3);
+                        <div class="d-flex flex-column p-4" style="background-color: rgba(255, 255, 255, 0.3);
                             box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
                             border: 1px solid rgba(255, 255, 255, 0.5);
                             border-right: 1px solid rgba(255, 255, 255, 0.2);
                             border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
 
                             <div class="d-flex flex-column justify-content-start overflow-x-auto p-4">
-                                <table class="table table-bordered table-responsive table-hover" id="request_cart">
+                                <table class="table table-bordered table-responsive table-hover">
                                     <thead class="table-dark">
                                         <tr>
                                             <th scope="col" class="text-center">QTY</th>
@@ -211,7 +201,7 @@
                                             <th scope="col" class="text-center">TOTAL</th>
                                         </tr>
                                     </thead>
-                                    <tbody></tbody>
+                                    <tbody id="request_cart"></tbody>
                                 </table>
                             </div>
 
@@ -316,7 +306,7 @@
                     box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
                     border: 1px solid rgba(255, 255, 255, 0.5);
                     border-right: 1px solid rgba(255, 255, 255, 0.2);
-                    border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.2);" id="request_basta">
                         <div class="d-flex flex-column p-4 gap-4" style="background-color: rgba(255, 255, 255, 0.3);
                         box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
                         border: 1px solid rgba(255, 255, 255, 0.5);
@@ -339,7 +329,7 @@
                                     </tr>
                                     <tr>
                                         <td colspan="1" class="text-center" style="width: 32px">
-                                            <input class="priorityLevel" value="" type="checkbox" name="LOW">
+                                            <input class="priorityLevel" type="checkbox" name="LOW" disabled>
                                         </td>
                                         <td colspan="2" class="small px-2">Low</td>
                                         <td colspan="1" class="small px-2">5 days</td>
@@ -354,7 +344,7 @@
                                             </select>
                                         </td>
                                         <td colspan="1">
-                                            <select id="bankNameSelection" class="w-100 h-100 border-0 box outline-0 small">
+                                            <select name="bankNameSelection" class="w-100 h-100 border-0 box outline-0 small">
                                                 <option value="-1" selected>SELECT AN OPTION</option>
                                                 @foreach($bank_names as $bankName)
                                                     <option class="text-dark" value="{{$bankName->id}}">{{$bankName->name}}</option>
@@ -362,10 +352,7 @@
                                             </select>
                                         </td>
                                         <td colspan="1" class="text-center" style="width: 32px">
-                                            <input value="1" class="deliveryStatus" name="requestDeliveryStatus"
-                                                    id="requestDeliveryComplete"
-                                                    type="checkbox">
-            
+                                            <input value="1" class="deliveryStatus" name="requestDeliveryStatus" type="checkbox">
                                         </td>
                                         <td colspan="3" class="px-2 bg-green small">Complete</td>
                                         <td colspan="5" class="px-2 small">
@@ -374,7 +361,7 @@
                                     </tr>
                                     <tr>
                                         <td colspan="1" class="text-center">
-                                            <input class="priorityLevel" value="" type="checkbox" name="MEDIUM">
+                                            <input class="priorityLevel" value="" type="checkbox" name="MEDIUM" disabled>
                                         </td>
                                         <td colspan="2" class="small px-2">Medium</td>
                                         <td colspan="1" class="small px-2">3 days</td>
@@ -393,13 +380,11 @@
                                             <input value="0" class="deliveryStatus" name="requestDeliveryStatus" id="requestDeliveryIncomplete" type="checkbox">
                                         </td>
                                         <td colspan="3" class="px-2 bg-blue small">Incomplete</td>
-                                        <td colspan="5" class="px-2 small">
-                                            
-                                        </td>
+                                        <td colspan="5" class="px-2 small">TBA</td>
                                     </tr>
                                     <tr>
                                         <td colspan="1" class="text-center">
-                                            <input class="priorityLevel" value="" type="checkbox" name="HIGH">
+                                            <input class="priorityLevel" value="" type="checkbox" name="HIGH" disabled checked>
                                         </td>
                                         <td colspan="2" class="small px-2">High</td>
                                         <td colspan="1" class="small px-2">1 day</td>
@@ -414,7 +399,7 @@
                                             </select>
                                         </td>
                                         <td colspan="1">
-                                            <select id="bankCodeSelection" class="w-100 h-100 border-0 box outline-0 small">
+                                            <select name="bankCodeSelection" class="w-100 h-100 border-0 box outline-0 small">
                                                 <option value="-1" selected>SELECT AN OPTON</option>
                                                 @foreach($bank_codes as $bankCode)
                                                     <option class="text-dark" value="{{$bankCode->id}}">{{$bankCode->code}}</option>
@@ -447,7 +432,7 @@
                                     </tr>
                                     <tr>
                                         <td colspan="1" class="text-center">
-                                            <input value="\" class="attachment" type="checkbox">
+                                            <input value="{{\App\Enums\AccountingAttachment::WITH->name}}" name="attachment" type="checkbox">
                                         </td>
                                         <td colspan="3" class="small px-2">With</td>
                                         <td colspan="1" class="text-center">
@@ -461,19 +446,17 @@
                                             </select>
                                         </td>
                                         <td colspan="1">
-                                            <input id="checkNumberInput" class="w-100 border-0 outline-0">
+                                            <input name="checkNumberInput" class="w-100 border-0 outline-0">
                                         </td>
                                         <td colspan="1" class="text-center">
                                             <input value="0" class="deliverySupplier" type="checkbox">
                                         </td>
                                         <td colspan="3" class="small px-2">No</td>
-                                        <td colspan="5" class="small px-2">
-                                            
-                                        </td>
+                                        <td colspan="5" class="small px-2">TBA</td>
                                     </tr>
                                     <tr>
                                         <td colspan="1" class="text-center">
-                                            <input value="" class="attachment" type="checkbox">
+                                            <input value="{{\App\Enums\AccountingAttachment::WITHOUT->name}}" name="attachment" type="checkbox">
                                         </td>
                                         <td colspan="3" class="small px-2">Without</td>
                                         <td colspan="1" class="text-center">
@@ -503,7 +486,7 @@
                                             </select>
                                         </td>
                                         <td colspan="4" class="text-center small px-2">
-                                            <input type="text" id="vatOption1" class="h-100 w-100 border-0 outline-0">
+                                            <input type="text" name="vatOption1" class="h-100 w-100 border-0 outline-0">
                                         </td>
                                         <td colspan="5" class="small px-2">
                                             Pending
@@ -511,7 +494,7 @@
                                     </tr>
                                     <tr>
                                         <td colspan="1" class="text-center">
-                                            <input value="" class="attachmentType" type="checkbox">
+                                            <input value="{{App\Enums\AccountingType::OPEX->name}}" name="attachmentType" type="checkbox">
                                         </td>
                                         <td colspan="3" class="small px-2">OPEX</td>
                                         <td colspan="1" class="text-center">
@@ -525,7 +508,7 @@
                                             </select>
                                         </td>
                                         <td colspan="4" class="text-center small px-2">
-                                            <input type="text" id="vatOption2" class="h-100 w-100 border-0 outline-0">
+                                            <input type="text" name="vatOption2" class="h-100 w-100 border-0 outline-0">
                                         </td>
                                         <td colspan="5" class="small px-2">
                                             
@@ -533,7 +516,7 @@
                                     </tr>
                                     <tr>
                                         <td colspan="1" class="text-center">
-                                            <input value="" class="attachmentType" type="checkbox">
+                                            <input value="{{App\Enums\AccountingType::NON_OPEX->name}}" name="attachmentType" type="checkbox">
                                         </td>
                                         <td colspan="3" class="small px-2">NON OPEX</td>
                                         <td colspan="1" class="text-center">
@@ -548,7 +531,7 @@
                                         </td>
                                         <td colspan="2" class="small px-2 fw-bold">PO No.</td>
                                         <td colspan="2" class="small px-2">
-                                            <input id="purchaseOrderInput" class="w-100 border-0 outline-0">
+                                            <input name="purchaseOrderInput" class="w-100 border-0 outline-0">
                                         </td>
                                         <td colspan="5" class="small px-2 fw-bold bg-blue">AUDITOR</td>
                                     </tr>
@@ -566,7 +549,7 @@
                                         </td>
                                         <td colspan="2" class="small px-2 fw-bold">Invoice No</td>
                                         <td colspan="2" class="small px-2">
-                                            <input id="invoiceNumberInput" class="w-100 border-0 outline-0">
+                                            <input name="invoiceNumberInput" class="w-100 border-0 outline-0">
                                         </td>
                                         <td colspan="5" class="small px-2">
                                             Approved
@@ -574,7 +557,7 @@
                                     </tr>
                                     <tr>
                                         <td colspan="1" class="text-center">
-                                            <input value="" class="attachmentReceipt" type="checkbox">
+                                            <input value="{{\App\Enums\AccountingReceipt::OFFICIAL_RECEIPT_VAT->name}}" name="attachmentReceipt" type="checkbox">
                                         </td>
                                         <td colspan="3" class="small px-2">Official Receipt VAT</td>
                                         <td colspan="1" class="text-center">
@@ -589,15 +572,13 @@
                                         </td>
                                         <td colspan="2" class="fw-bold small px-2">Bill No.</td>
                                         <td colspan="2" class="small px-2">
-                                            <input id="billNumberInput" class="w-100 border-0 outline-0">
+                                            <input name="billNumberInput" class="w-100 border-0 outline-0">
                                         </td>
-                                        <td colspan="5" class="small px-2">
-                                            
-                                        </td>
+                                        <td colspan="5" class="small px-2">TBA</td>
                                     </tr>
                                     <tr>
                                         <td colspan="1" class="text-center">
-                                            <input value="" class="attachmentReceipt" type="checkbox">
+                                            <input value="{{\App\Enums\AccountingReceipt::DELIVERY_RECEIPT->name}}" name="attachmentReceipt" type="checkbox">
                                         </td>
                                         <td colspan="3" class="small px-2">Delivery Receipt</td>
                                         <td colspan="1" class="text-center">
@@ -610,9 +591,9 @@
                                                 @endforeach
                                             </select>
                                         </td>
-                                        <td colspan="2" class="fw-bold small px-2">OR No</td>
+                                        <td colspan="2" class="fw-bold small px-2">OR No.</td>
                                         <td colspan="2" class="small px-2">
-                                            <input id="orNumberInput" class="w-100 border-0 outline-0">
+                                            <input name="orNumberInput" class="w-100 border-0 outline-0">
                                         </td>
                                         <td colspan="4" rowspan="2" class="small px-2" style="width: 171px"></td>
                                         <td colspan="1" rowspan="2" class="text-center fw-bold align-middle">
@@ -621,7 +602,7 @@
                                     </tr>
                                     <tr>
                                         <td colspan="1" class="text-center">
-                                            <input value="" class="attachmentReceipt" type="checkbox">
+                                            <input value="{{\App\Enums\AccountingReceipt::NONE->name}}" name="attachmentReceipt" type="checkbox">
                                         </td>
                                         <td colspan="3" class="small px-2">None</td>
                                         <td colspan="1" class="text-center">
@@ -630,8 +611,7 @@
                                         <td colspan="4" class="px-2">
                                             <div class="d-flex gap-1 align-items-center mb-1">
                                                 <label class="small">Others:</label>
-                                                <input
-                                                    class="small w-100 outline-0 border-1 border-top-0 border-start-0 border-end-0">
+                                                <input id="othersInput" class="small w-100 outline-0 border-1 border-top-0 border-start-0 border-end-0">
                                             </div>
                                         </td>
                                         <td colspan="2" class="fw-bold small px-2">Voucher No</td>
@@ -659,18 +639,6 @@
                                 <label class="form-label text-nowrap m-0">TOTAL :</label>
                                 <input id="itemTotal" type="text" class="form-control p-2" name="total" disabled>
                             </div>
-                            <div class="col-auto me-auto">
-                                <select class="form-control" name="priorityLevel" id="requestPriorityLevel">
-                                    <option value="{{\App\Enums\RequestPriorityLevel::NONE->name}}">Pick a level</option>
-                                    <option value="{{\App\Enums\RequestPriorityLevel::LOW->name}}">Low (5 Days)</option>
-                                    <option value="{{\App\Enums\RequestPriorityLevel::MEDIUM->name}}">Medium (3 Days)</option>
-                                    <option value="{{\App\Enums\RequestPriorityLevel::HIGH->name}}">High (1 Day)</option>
-                                </select>
-                            </div>
-                            <div class="col-auto d-flex flex-row gap-2 align-items-center me-auto">
-                                <input class="form-check-input mt-0" type="checkbox" name="priority" value="priority" id="requestPriority">
-                                <label class="form-label mb-0">PRIORITY</label>
-                            </div>
                             <div class="col-auto mx-auto">
                                 <button type="submit" class="btn btn-success btn-md rounded-0 px-5 w-100 h-100">
                                     SUBMIT
@@ -686,5 +654,5 @@
 @endsection
 
 @section('script')
-    <script type="text/javascript" src="/js/expense/request.js"></script>
+    <script type="text/javascript" src="/js/expense/past_request.js"></script>
 @endsection
