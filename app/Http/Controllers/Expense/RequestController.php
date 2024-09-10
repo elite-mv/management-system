@@ -270,7 +270,7 @@ class RequestController extends Controller
                 }
                 break;
             case UserRole::ACCOUNTANT->value:
-                if ($expenseRequest->accountant && $expenseRequest->accountat->status != RequestApprovalStatus::PENDING) {
+                if ($expenseRequest->accountant && $expenseRequest->accountant->status != RequestApprovalStatus::PENDING) {
                     $viewForm = 'expense.view-request-form';
                 }
                 break;
