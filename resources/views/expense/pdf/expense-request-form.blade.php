@@ -146,7 +146,6 @@
         </div>
 
     </div>
-
     <table class="table table-bordered border-dark w-100">
         <tbody>
         <tr>
@@ -382,7 +381,7 @@
                 @endif
             </td>
             <td colspan="1">
-                @if($request->bankDetails)
+                @if($request->bankDetails && $request->bankDetails->bank)
                     {{$request->bankDetails->bank->name}}
                 @endif
             </td>
@@ -472,7 +471,7 @@
                 @endif
             </td>
             <td colspan="1">
-                @if($request->bankDetails)
+                @if($request->bankDetails && $request->bankDetails->code)
                     {{$request->bankDetails->code->code}}
                 @endif
             </td>
