@@ -47,42 +47,6 @@
                                         </small>
                                     </div>
                                 </div>
-
-                                <!-- Button trigger modal -->
-                                <button type="button" class="mt-2 mt-md-0  btn" data-bs-toggle="modal"
-                                        data-bs-target="#filterModal"  data-bs-placement="top"
-                                        title="Advance filter">
-                                    <i class="fas fa-filter"></i>
-                                </button>
-
-                                <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                                    aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h1 class="modal-title fs-5" id="exampleModalLabel">Advance Filter</h1>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="form-group row mb-2">
-                                                    <div class="col-6">
-                                                        <label>From</label>
-                                                        <input name="from" class="form-control" type="date">
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <label>To</label>
-                                                        <input name="to" class="form-control" type="date">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                <button type="button" onclick="clearForm()" class="btn btn-secondary" data-bs-dismiss="modal">Clear Filter</button>
-                                                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Filter</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
 
                             <div class="row align-items-center">
@@ -101,7 +65,7 @@
                                 </div>
 
                                 <div class="col-6 col-md-3 form-group d-flex gap-2 align-items-center">
-                                    <label class="form-label mb-0" for="status">Book Keeper</label>
+                                    <label class="form-label mb-0 text-capitalize" for="status">{{auth()->user()->role->name}}</label>
                                     <select name="status" class="form-select inputs" id="status" style="background-color: rgba(255, 255, 255, 0.4);
                                     box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
                                     border: 1px solid rgba(255, 255, 255, 0.5);
@@ -121,13 +85,11 @@
                                     border: 1px solid rgba(255, 255, 255, 0.5);
                                     border-right: 1px solid rgba(255, 255, 255, 0.2);
                                     border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
-                                        <option value="5">5</option>
-                                        <option value="10">10</option>
-                                        <option value="15">15</option>
                                         <option value="20">20</option>
-                                        <option value="25">30</option>
-                                        <option value="25">50</option>
-                                        <option value="25">100</option>
+                                        <option value="30">30</option>
+                                        <option value="40">40</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
                                     </select>
                                 </div>
 
@@ -166,11 +128,6 @@
                                 <table class="table sortable" id="sortableTable">
                                     <thead>
                                         <tr>
-                                            <th class="sorttable_nosort">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value="" id="requestAllInput">
-                                                </div>
-                                            </th>
                                             <th>REFERENCE</th>
                                             <th>DURATION</th>
                                             <th>ENTITY</th>
@@ -180,8 +137,34 @@
                                             <th>ACTION</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="requestData"></tbody>
+                                    <tbody id="requestData">
+                                    @forelse ($requests as $request)
+                                        <tr>
+                                            <td>{{ $request->reference}}</td>
+                                            <td>{{$request->timeLapse}}</td>
+                                            <td>{{ $request->company->name}}</td>
+                                            <td>{{ $request->request_by}}</td>
+                                            <td>{{ $request->status}}</td>
+                                            <td>{!! \App\Helper\Helper::formatPeso( $request->items->first()->total_cost ) !!}</td>
+                                            <td>
+                                                <a target="_blank"  role="button" href="/expense/request/{{$request->id}}" class="btn btn-primary">View</a>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td class="text-center" colspan='8'>
+                                                <p class="text-secondary">
+                                                    EMPTY TABLE
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                    </tbody>
                                 </table>
+
+                                <div class="container-fluid">
+                                    {{ $requests->links()}}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -197,134 +180,20 @@
 
     <script>
 
-        const filterModal = new bootstrap.Modal('#filterModal', {
-            keyboard: false
+        const searchForm = document.querySelector('#filterForm');
+
+        $('#searchForm').find('select[name="entries"]').on('change', function() {
+            $('#searchForm').submit();
         })
 
-        const checkedInputs = new Map();
-
-        const requestData = document.querySelector('#requestData');
-        const filterForm = document.querySelector('#filterForm');
-        const inputs = document.querySelectorAll('.inputs');
-
-        let requestAllInput;
-        let requestInputSelections = [];
-
-        function addSelectionEvent(){
-            requestInputSelections.forEach(selection =>{
-
-                if(!selection.checked){
-                    checkedInputs.set(selection.value, selection.value);
-                }else{
-                    checkedInputs.delete(selection.value);
-                }
-
-                selection.checked =  requestAllInput.checked;
-
-                console.log(checkedInputs);
-            })
-        }
-
-        filterForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            getData();
-            filterModal.hide();
+        $('#searchForm').find('select[name="status"]').on('change', function() {
+            $('#searchForm').submit();
         })
 
-        inputs.forEach(input => {
-            input.addEventListener('change', () => {
-                getData();
-            })
-        });
-
-        window.addEventListener('load', () => {
-            getData();
+        $('#searchForm').find('select[name="paymentStatus"]').on('change', function() {
+            $('#searchForm').submit();
         })
 
-        function selectionEvent(e){
-
-            if(e.target.checked){
-                checkedInputs.set(e.target.value, e.target.value);
-            }else{
-                checkedInputs.delete(e.target.value);
-            }
-
-            console.log(checkedInputs);
-        }
-
-        function clearForm(){
-            filterForm.reset();
-            getData();
-        }
-
-        function getData(cb = null) {
-
-            let formData = new FormData(filterForm);
-
-            if(cb){
-                cb(formData);
-            }
-
-            const params = new URLSearchParams(formData);
-
-            fetch(`/expense/api/my-requests?${params.toString()}`, {
-                headers: {
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                }
-            })
-                .then(data => data.text())
-                .then(data => {
-
-                    requestData.innerHTML = data;
-
-                    requestInputSelections = document.querySelectorAll('.request-input-selection');
-
-                    requestAllInput = document.querySelector('#requestAllInput')
-
-                    requestAllInput.removeEventListener('change', addSelectionEvent)
-                    requestAllInput.addEventListener('change', addSelectionEvent)
-
-
-                    requestInputSelections.forEach(selection =>{
-                        selection.removeEventListener('change', selectionEvent)
-                        selection.addEventListener('change', selectionEvent)
-                    })
-
-                    for (let key of checkedInputs.keys()) {
-
-                        const target = document.querySelector(`#requestInput${key}`);
-
-                        if(target){
-                            target.checked = true;
-                        }
-                    }
-
-                    setupPageLinks();
-                }).catch(err => {
-                console.error(err)
-            })
-        }
-
-        function setupPageLinks(){
-
-            const links = document.querySelectorAll('.page-link');
-
-            links.forEach(link =>{
-                link.addEventListener('click',(e)=>{
-
-                    e.preventDefault();
-
-                    const url = new URL(e.target.href);
-
-                    getData(formData =>{
-                        formData.append('page', url.searchParams.get("page") ?? 1);
-                    });
-
-                })
-            })
-        }
     </script>
-
-
     <script type="text/javascript" src="/js/sortable.js"></script>
 @endsection

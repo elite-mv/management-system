@@ -120,8 +120,37 @@ class RequestController extends Controller
 
     public function getRequests(Request $request)
     {
-        return view('expense.requests',
-            []);
+        $query = ModelsRequest::query();
+
+        $query->when($request->input('search'), function ($qb) use ($request) {
+            $qb->where(function ($qb) use ($request) {
+                $qb->where('id', Helper::rawID($request->input('search')));
+                $qb->orWhere('request_by', 'LIKE', $request->input('search') . '%');
+                $qb->orWhere('reference', 'LIKE', $request->input('search') . '%');
+            });
+        });
+
+        $query->when($request->input('entity') && $request->input('entity') != 'ALL', function ($qb) use ($request) {
+            $qb->where('company_id', $request->input('entity'));
+        });
+
+        $query->when($request->input('paymentStatus') && $request->input('paymentStatus') != 'ALL', function ($qb) use ($request) {
+            $qb->where('status', $request->input('paymentStatus'));
+        });
+
+        $query->when($request->input('from'), function ($qb) use ($request) {
+            $qb->whereDate('created_at', '>=', Carbon::createFromFormat('Y-m-d', $request->input('from'))->toDateString());
+        });
+
+        $query->when($request->input('to'), function ($qb) use ($request) {
+            $qb->whereDate('created_at', '<=', Carbon::createFromFormat('Y-m-d', $request->input('to'))->toDateString());
+        });
+
+        $query->where('prepared_by', Auth::id());
+
+        $requests = $query->paginate($request->input('entries') ?? 20, ['*'], 'page', $request->input('page') ?? 1);
+
+        return view('expense.requests',  ['requests' => $requests]);
     }
 
     public function getRequestsData(Request $request)
