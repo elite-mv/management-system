@@ -28,8 +28,8 @@
                     border: 1px solid rgba(255, 255, 255, 0.3);
                     border-right: 1px solid rgba(255, 255, 255, 0.2);
                     border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
-                        <form id="filterForm">
-
+                        <form id="filterForm" method="GET" action="/expense/requests">
+                            @csrf
                             <div class="d-flex mb-2 gap-2 align-items-center">
                                 <div class="w-100 rounded-pill border d-flex align-items-start flex-direction-row gap-2 py-2 px-3" style="background-color: rgba(255, 255, 255, 0.4);
                                 box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
@@ -180,18 +180,20 @@
 
     <script>
 
-        const searchForm = document.querySelector('#filterForm');
-
-        $('#searchForm').find('select[name="entries"]').on('change', function() {
-            $('#searchForm').submit();
+        $('#filterForm').find('select[name="entries"]').on('change', function() {
+            $('#filterForm').submit();
         })
 
-        $('#searchForm').find('select[name="status"]').on('change', function() {
-            $('#searchForm').submit();
+        $('#filterForm').find('select[name="status"]').on('change', function() {
+            $('#filterForm').submit();
         })
 
-        $('#searchForm').find('select[name="paymentStatus"]').on('change', function() {
-            $('#searchForm').submit();
+        $('#filterForm').find('select[name="paymentStatus"]').on('change', function() {
+            $('#filterForm').submit();
+        })
+
+        $('#filterForm').find('select[name="entity"]').on('change', function() {
+            $('#filterForm').submit();
         })
 
     </script>
