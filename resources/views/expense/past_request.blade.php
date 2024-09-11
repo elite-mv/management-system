@@ -83,7 +83,7 @@
 @section('body')
 
 
-    <form id="requestForm" method="GET" action="/expense/past-request">
+    <form id="requestForm" method="POST" action="/expense/past-request">
         @csrf
         <div class="py-3 px-3 px-md-0">
 
@@ -158,13 +158,11 @@
                             <div class="row">
                                 <p class="col-12 col-md-2 fw-bold">Payment Type</p>
                                 <div class="col-sm-12 col-md-10">
-                                    <select class="p-2 form-control" name="paymentType" required>
+                                    <select class="p-2 form-select text-capitalize" name="paymentType" required>
                                         <option value="">SELECT AN OPTION</option>
-                                        <option value="CASH">CASH</option>
-                                        <option value="ONLINE TRANSFER">ONLINE TRANSFER</option>
-                                        <option value="GCASH">GCASH</option>
-                                        <option value="CREDIT CARD">CREDIT CARD</option>
-                                        <option value="CHECK">CHECK</option>
+                                        @foreach(\App\Enums\PaymentMethod::modes() as $mode)
+                                            <option class="text-uppercase" value="{{$mode->name}}">{{$mode->value}}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -220,7 +218,7 @@
                                 <div class="row">
                                     <p class="col-12 col-md-2 fw-bold">Units of measurement:</p>
                                     <div class="col-12 col-md-10">
-                                        <select id="requestUnitOfMeasure" class="p-2 form-control">
+                                        <select id="requestUnitOfMeasure" class="p-2 form-select">
                                             <option disabled selected>--</option>
                                             @foreach($measurements as $measurement)
                                                 <option value="{{$measurement->id}}">{{$measurement->name}}</option>
@@ -232,7 +230,7 @@
                                 <div class="row">
                                     <p class="col-12 col-md-2 fw-bold">Job Order:</p>
                                     <div class="col-12 col-md-10">
-                                        <select id="requestJobOrder" class="form-control p-2">
+                                        <select id="requestJobOrder" class="form-select p-2">
                                             <option disabled selected>--</option>
                                             @foreach($jobOrders as $jobOrder)
                                                 <option value="{{$jobOrder->id}}">{{$jobOrder->reference}}</option>

@@ -86,17 +86,27 @@ class PastRequestController extends Controller
             $expenseRequest->prepared_by = Auth::id();
             $expenseRequest->company_id = $request->input('company') ?? null;
             $expenseRequest->priority_level = RequestPriorityLevel::HIGH->name;
-            $expenseRequest->payment_method = $request->input('paymentType');
-            $expenseRequest->status = RequestStatus::RELEASED->value;
-            $expenseRequest->attachment = $request->input('attachment') ?? null;
-            $expenseRequest->type = $request->input('attachmentType') ?? null;
-            $expenseRequest->receipt = $request->input('attachmentReceipt') ?? null;
-            $expenseRequest->fund_status = RequestFundStatus::FUNDED->value;
+            $expenseRequest->payment_method = PaymentMethod::valueOf($request->input('paymentType'));
+            $expenseRequest->status = RequestStatus::RELEASED;
+            $expenseRequest->fund_status = RequestFundStatus::FUNDED;
             $expenseRequest->terms = $request->input('terms');
+            $expenseRequest->priority = true;
+
+            if ($request->input('attachment')) {
+                $expenseRequest->attachment = AccountingAttachment::valueOf($request->input('attachment'));
+            }
+
+            if ($request->input('attachmentType')) {
+                $expenseRequest->type = AccountingType::valueOf($request->input('attachmentType'));
+            }
+
+            if ($request->input('attachmentReceipt')) {
+                $expenseRequest->receipt = AccountingReceipt::valueOf($request->input('attachmentReceipt'));
+            }
 
             $expenseRequest->save();
 
-            foreach ($request->input('expenseCategory') as $categoryID ){
+            foreach ($request->input('expenseCategory') as $categoryID) {
                 RequestExpenseType::create([
                     'expense_category_id' => $categoryID,
                     'request_id' => $expenseRequest->id
@@ -105,8 +115,8 @@ class PastRequestController extends Controller
 
             BankDetail::create([
                 'request_id' => $expenseRequest->id,
-                'bank_name_id' => $request->input('bankNameSelection'),
-                'bank_code_id' => $request->input('bankCodeSelection'),
+                'bank_name_id' => $request->input('bankNameSelection') != -1 ? $request->input('bankNameSelection') : null,
+                'bank_code_id' => $request->input('bankCodeSelection') != -1 ? $request->input('bankCodeSelection') : null,
                 'check_number' => $request->input('checkNumberInput')
             ]);
 
@@ -331,7 +341,7 @@ class PastRequestController extends Controller
         $measurements = Measurement::select(['id', 'name'])->get();
         $jobOrder = JobOrder::select(['id', 'name', 'reference'])->get();
 
-        $logs = RequestLogs::select(['id','description','user_id','created_at'])
+        $logs = RequestLogs::select(['id', 'description', 'user_id', 'created_at'])
             ->where('request_id', '=', $id)
             ->with('user')
             ->orderBy('created_at', 'desc')
