@@ -11,6 +11,27 @@
         .my_profile_nav {
             color: rgb(255, 255, 255, 1.0);
         }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .profile-image {
+            width: 150px;
+            height: 150px;www
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+        .profile-info {
+            text-align: center;
+        }
+        .profile-info h1 {
+            margin-top: 0;
+        }
+        .profile-info p {
+            margin-bottom: 0;
+        }
     </style>
 @endsection
 
@@ -71,7 +92,13 @@
 @endsection
 
 @section('body')
-    <div class="container p-3" style="position: relative;">
+    <div class="container-fluid p-0" style="position: relative;">
+        <img style="width: 100%;" src="/././images/bg.png">
+        <div class="border border-5 border-danger rounded-circle bg-white" style="position: absolute; top: 85%; left: 5%; overflow: hidden;">
+            <img src="/././images/logos/ELITE_ACES_LOGO.png" style="height: 200px; width: auto;">
+        </div>
+    </div>
+    {{-- <div class="container p-3" style="position: relative;">
 
         <div class="row">
 
@@ -144,7 +171,8 @@
                 </div>
             </div>
         </div>
-    </div>
+
+    </div> --}}
 @endsection
 
 @section('script')
@@ -194,7 +222,7 @@
                         current_id: current_id
                     },
                     success: function (data) {
-                        
+
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         console.error('Error:', textStatus, errorThrown);
@@ -215,7 +243,7 @@
                             current_id: current_id
                         },
                         success: function (data) {
-                            
+
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
                             console.error('Error:', textStatus, errorThrown);
@@ -240,7 +268,7 @@
                                 current_id: current_id
                             },
                             success: function (data) {
-                                
+
                             },
                             error: function (jqXHR, textStatus, errorThrown) {
                                 console.error('Error:', textStatus, errorThrown);
