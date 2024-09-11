@@ -186,38 +186,40 @@
                 </small>
             </div>
 
-            <div class="col-auto px-5 py-3 fw-bold bg-warning bg-gradient">
-                <small>
-                    REQUEST ITEMS
-                    [
-                        @php
-                            $counter = 0;
-                            foreach ($requests as $index => $request) {
-                                foreach ($items as $index => $item) {
-                                    if ($request->id === $item->request_id) {
-                                        $counter++;
-                                    }
-                                }
-                            }
-                            echo $counter;
-                        @endphp
-                     ]
-                </small>
-            </div>
+            <div class="col-12" id="profile_container">
+                <div class="w-100 bg-white p-3 border border-dark rounded border-2 mx-auto">
+                    <p class="fw-bold">MY PROFILE</p>
+                    <form id="accountForm">
+                        <div class="mb-3 small form-group">
+                            <label CLASS="fw-bold text-danger form-label">USERNAME</label>
+                            <input class="p-2 form-control" type="text" value="{{auth()->user()->name}}" name="name">
+                        </div>
+                        <div class="mb-3 small form-group">
+                            <label CLASS="fw-bold text-danger form-label">5 SECRET PIN</label>
+                            <input class="p-2 form-control" type="password" name="secret_pin" minlength="5" maxlength="5">
+                        </div>
+                        <div class="mb-3 small form-group">
+                            <label CLASS="fw-bold text-danger form-label">Password</label>
+                            <input class="p-2 form-control" type="password" minlength="8" maxlength="16" name="password" id="password">
+                        </div>
 
-            <div class="col-auto px-5 py-3 fw-bold bg-info bg-gradient">
-                <small>No. of request: </small>
-                <b>
-                    @php
-                        $counter = 0;
-                        foreach ($requests as $index => $request) {
-                            $counter++;
-                        }
-                        echo $counter;
-                    @endphp
-                </b>
+                        <div class="mb-3 small form-group d-none" id="confirmPasswordHolder">
+                            <label CLASS="fw-bold text-danger form-label">Confirm Password</label>
+                            <input class="p-2 form-control" type="password" minlength="8" maxlength="16" name="confirmPassword" id="confirmPassword">
+                        </div>
+
+                        <button type="submit" class="d-block mx-auto btn btn-success w-50 rounded-pill">
+                            UPDATE
+                        </button>
+                        <input type="hidden" name="current_id" value="{{auth()->user()->id}}">
+                        <input type="hidden" name="current_name" value="{{auth()->user()->name}}">
+                        <input type="hidden" name="current_secret_pin" value="{{auth()->user()->pin}}">
+                        <input type="hidden" name="current_password" value="{{auth()->user()->password}}">
+                    </form>
+                </div>
             </div>
         </div>
+
 
     </div>
     {{-- <div class="container p-3" style="position: relative;">
