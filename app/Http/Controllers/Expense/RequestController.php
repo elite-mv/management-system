@@ -146,11 +146,15 @@ class RequestController extends Controller
             $qb->whereDate('created_at', '<=', Carbon::createFromFormat('Y-m-d', $request->input('to'))->toDateString());
         });
 
+        $query->with(['items' => function ($q) {
+            $q->select(['request_id', DB::raw('quantity * cost as total_cost')]);
+        }]);
+
         $query->where('prepared_by', Auth::id());
 
         $requests = $query->paginate($request->input('entries') ?? 20, ['*'], 'page', $request->input('page') ?? 1);
 
-        return view('expense.requests',  ['requests' => $requests]);
+        return view('expense.requests', ['requests' => $requests]);
     }
 
     public function getRequestsData(Request $request)
@@ -207,7 +211,7 @@ class RequestController extends Controller
                                 $q->select(['id', 'name']);
                             },
                             'jobOrder' => function ($q) {
-                                $q->select(['id', 'name','reference']);
+                                $q->select(['id', 'name', 'reference']);
                             }
                         ]);
                 },

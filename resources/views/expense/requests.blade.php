@@ -148,7 +148,7 @@
                                     @forelse ($requests as $request)
                                         <tr>
                                             <td>{{ $request->reference}}</td>
-                                            <td>{{$request->timeLapse}}</td>
+                                            <td>{{$request->created_at->diffForHumans()}}</td>
                                             <td>{{ $request->company->name}}</td>
                                             <td>{{ $request->request_by}}</td>
                                             <td>{{ $request->status}}</td>
