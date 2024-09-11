@@ -115,9 +115,9 @@
     </div>
     <div class="container-fluid p-0 bg-white h-100 px-5 py-2">
         <div class="d-flex flex-direction-row align-items-end">
-            <h1 class="" style="margin-left: 250px;"><b>{{auth()->user()->name}}</b></h1><h3><b class="ms-2 text-secondary">({{auth()->user()->email}})</b></h3>
+            <h1 style="margin-left: 250px;"><b>{{auth()->user()->name}}</b></h1><h3><b class="ms-2 text-secondary">({{auth()->user()->email}})</b></h3>
         </div>
-        <h3 class="text-primary" style="margin-left: 250px;"><b>{{auth()->user()->role->name}}</b></h3>
+        <h3 class="text-primary text-uppercase" style="margin-left: 250px;"><b>{{auth()->user()->role->name}}</b></h3>
         <hr class="my-5">
         <div class="row gap-2">
             <div class="col-auto px-5 py-3 fw-bold bg-primary bg-gradient">
