@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Expense;
 use App\Models\Expense\Company;
 use App\Models\Expense\User;
 use Illuminate\Http\Request;
+use App\Models\Expense\Request as ModelsRequest;
+use App\Models\Expense\RequestItem;
 use Illuminate\Support\Facades\Auth;
 
 class AccountController
@@ -13,9 +15,15 @@ class AccountController
     public function index(){
 
         $companies = Company::select('id', 'name', 'logo')->get();
+        $requests_query = ModelsRequest::query();
+        $requests_query->where('prepared_by', Auth::id());
+        $requests = $requests_query->get();
+
+        // $items = RequestItem::all()->get();
 
         return view('expense.account', [
-            'companies' => $companies
+            'companies' => $companies,
+            'requests' => $requests
         ]);
     }
 

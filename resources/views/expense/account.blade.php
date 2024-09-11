@@ -94,9 +94,131 @@
 @section('body')
     <div class="container-fluid p-0" style="position: relative;">
         <img style="width: 100%;" src="/././images/bg.png">
-        <div class="border border-5 border-danger rounded-circle bg-white" style="position: absolute; top: 85%; left: 5%; overflow: hidden;">
-            <img src="/././images/logos/ELITE_ACES_LOGO.png" style="height: 200px; width: auto;">
+        <div class="border border-5 border-danger rounded-circle bg-white d-flex align-items-center justify-content-center" style="position: absolute; top: 85%; left: 5%; overflow: hidden; height: 200px; width: 200px;">
+            @php
+                if (isset(auth()->user()->company_id)) {
+                    foreach ($companies as $index => $company) {
+                        if ($company->id == auth()->user()->company_id) {
+                            echo '
+                                <img src="/././images/logos/'. $company->logo . '" class="img-fluid" style="object-fit: cover;">
+                            ';
+                            break;
+                        }
+                    }
+                } else {
+                    echo '
+                        <img src="/././images/ELITE_ACES_LOGO.png" class="img-fluid" style="object-fit: cover;">
+                    ';
+                }
+            @endphp
         </div>
+    </div>
+    <div class="container-fluid p-0 bg-white h-100 px-5 py-2">
+        <div class="d-flex flex-direction-row align-items-end">
+            <h1 class="" style="margin-left: 250px;"><b>{{auth()->user()->name}}</b></h1><h3><b class="ms-2 text-secondary">({{auth()->user()->email}})</b></h3>
+        </div>
+        <h3 class="text-primary" style="margin-left: 250px;"><b>{{auth()->user()->role->name}}</b></h3>
+        <hr class="my-5">
+        <div class="row gap-2">
+            <div class="col-auto px-5 py-3 fw-bold bg-primary bg-gradient">
+                <small>
+                    REQUEST
+                    [
+                        @php
+                            $counter = 0;
+                            foreach ($requests as $index => $request) {
+                                $counter++;
+                            }
+                            echo $counter;
+                        @endphp
+                     ]
+                </small>
+            </div>
+
+            <div class="col-auto px-5 py-3 fw-bold bg-secondary bg-gradient">
+                <small>
+                    PRIORITY REQUEST
+                    [
+                        @php
+                            $counter = 0;
+                            foreach ($requests as $index => $request) {
+                                if ($request->priority === 1) {
+                                    $counter++;
+                                }
+                            }
+                            echo $counter;
+                        @endphp
+                     ]
+                </small>
+            </div>
+
+            <div class="col-auto px-5 py-3 fw-bold bg-success bg-gradient">
+                <small>
+                    PENDING REQUEST
+                    [
+                        @php
+                            $counter = 0;
+                            foreach ($requests as $index => $request) {
+                                if ($request->status === 'PENDING') {
+                                    $counter++;
+                                }
+                            }
+                            echo $counter;
+                        @endphp
+                     ]
+                </small>
+            </div>
+
+            <div class="col-auto px-5 py-3 fw-bold bg-danger bg-gradient">
+                <small>
+                    RELEASED REQUEST
+                    [
+                        @php
+                            $counter = 0;
+                            foreach ($requests as $index => $request) {
+                                if ($request->status === 'RELEASED') {
+                                    $counter++;
+                                }
+                            }
+                            echo $counter;
+                        @endphp
+                     ]
+                </small>
+            </div>
+
+            <div class="col-auto px-5 py-3 fw-bold bg-warning bg-gradient">
+                <small>
+                    REQUEST ITEMS
+                    [
+                        @php
+                            $counter = 0;
+                            foreach ($requests as $index => $request) {
+                                foreach ($items as $index => $item) {
+                                    if ($request->id === $item->request_id) {
+                                        $counter++;
+                                    }
+                                }
+                            }
+                            echo $counter;
+                        @endphp
+                     ]
+                </small>
+            </div>
+
+            <div class="col-auto px-5 py-3 fw-bold bg-info bg-gradient">
+                <small>No. of request: </small>
+                <b>
+                    @php
+                        $counter = 0;
+                        foreach ($requests as $index => $request) {
+                            $counter++;
+                        }
+                        echo $counter;
+                    @endphp
+                </b>
+            </div>
+        </div>
+
     </div>
     {{-- <div class="container p-3" style="position: relative;">
 
