@@ -146,6 +146,7 @@ class RequestController extends Controller
             $qb->whereDate('created_at', '<=', Carbon::createFromFormat('Y-m-d', $request->input('to'))->toDateString());
         });
 
+
         $query->with(['items' => function ($q) {
             $q->select(['request_id', DB::raw('quantity * cost as total_cost')]);
         }]);
