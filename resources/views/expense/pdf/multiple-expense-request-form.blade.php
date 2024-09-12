@@ -39,10 +39,6 @@
             background-color: var(--gray) !important;
         }
 
-        * {
-            font-size: 12px;
-        }
-
         td {
             padding: 0 5px 0 5px !important;
         }
@@ -50,7 +46,7 @@
         @page {
             margin: 20px 20px 20px 20px;
             padding: 0;
-            size: A4;
+            size: A3;
         }
 
         table, table td {
@@ -65,8 +61,7 @@
 </head>
 <body>
 @foreach($requests as $request)
-
-    <div class="mx-auto" style="max-width: 780px; overflow: hidden">
+    <div class="mx-auto">
         <div class="d-flex mb-4 gap-2">
             <div>
                 <div class="border border-dark"
@@ -243,28 +238,29 @@
             </tr>
 
             <tr>
-                <td colspan="2" class="small bg-yellow text-center fw-bold">QTY</td>
-                <td colspan="3" class="small bg-yellow text-center fw-bold">UOM</td>
-                <td colspan="2" class="small bg-yellow text-center fw-bold">JOB ORDER</td>
-                <td colspan="7" class="small bg-yellow text-center fw-bold">DESCRIPTION</td>
-                <td colspan="2" class="small bg-yellow text-center fw-bold">UNIT COST</td>
-                <td colspan="2" class="small bg-yellow text-center fw-bold">TOTAL</td>
+                <td colspan="4" class="small bg-yellow text-center fw-bold">QTY</td>
+                <td colspan="4" class="small bg-yellow text-center fw-bold">UOM</td>
+                <td colspan="1" class="small bg-yellow text-center fw-bold">JOB ORDER</td>
+                <td colspan="3" class="small bg-yellow text-center fw-bold">DESCRIPTION</td>
+                <td colspan="3" class="small bg-yellow text-center fw-bold">UNIT COST</td>
+                <td colspan="3" class="small bg-yellow text-center fw-bold">TOTAL</td>
             </tr>
 
             @foreach ($request->fund_item as $item)
                 <tr>
-                    <td colspan="2" class="small px-2 bg-transparent text-transparent">{{$item->quantity}}</td>
-                    <td colspan="3" class="small px-2 bg-transparent"
-                        style="max-width: 10ch">{{$item->measurement->name}}</td>
-                    <td colspan="2" class="small px-2 bg-transparent"
+                    <td colspan="4" class="small px-2 bg-transparent">{{$item->quantity}}</td>
+                    <td colspan="4" class="small px-2 bg-transparent text-truncate"
+                        style="max-width: 20ch">{{$item->measurement->name}}</td>
+                    <td colspan="1" class="small px-2 bg-transparent text-truncate"
                         style="max-width: 20ch">{{$item->jobOrder->name}}</td>
-                    <td colspan="7" class="small bg-transparent text-overflow">
+                    <td colspan="3" role="button" class="small px-2 pointer" data-bs-toggle="modal"
+                        data-bs-target="#exampleModal">
                         <p class="m-0 p-0 text-truncate" style="max-width: 20ch">{{$item->description}}</p>
                     </td>
-                    <td colspan="2"
+                    <td colspan="3"
                         class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->cost) !!}</td>
-                    <td colspan="2"
-                        class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->total) !!}</td>
+                    <td colspan="3"
+                        class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->cost) !!}</td>
                 </tr>
             @endforeach
             <tr>
@@ -728,11 +724,11 @@
             </tr>
             </tbody>
         </table>
-
         @if(!$loop->last)
             <div style="page-break-before: always" class="page-break"></div>
         @endif
     </div>
+
 @endforeach
 
 </body>

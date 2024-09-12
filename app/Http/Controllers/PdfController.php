@@ -379,6 +379,25 @@ class PdfController
         } catch (\Exception $e) {
             return $e->getMessage();
         }
+    }
 
+    public function eut($requestID)
+    {
+        $request = ExpenseRequest::findOrFail($requestID);
+
+        $measurements = Measurement::get();
+        $jobOrder = JobOrder::get();
+        $bankNames = BankName::get();
+        $bankCodes = BankCode::get();
+        $expenseCategory = ExpenseCategory::get();
+
+        return view('expense.pdf.expense-request-form', [
+            'bank_names' => $bankNames,
+            'bank_codes' => $bankCodes,
+            'expense_category' => $expenseCategory,
+            'request' => $request,
+            'measurements' => $measurements,
+            'jobOrders' => $jobOrder,
+        ]);
     }
 }

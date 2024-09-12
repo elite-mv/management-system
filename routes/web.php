@@ -43,6 +43,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'index'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/eut/{$requestID}', [PdfController::class, 'eut']);
 
 Route::middleware(['auth'])->group(function () {
 
