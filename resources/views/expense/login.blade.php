@@ -57,6 +57,111 @@
         .item5 {
             animation-delay: calc(20s / 5 * (5 - 5) * -1);
         }
+
+        .lightrope {
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            position: absolute;
+            z-index: 1;
+            margin: -15px 0 0 0;
+            padding: 0;
+            pointer-events: none;
+            width: 100%;
+        }
+
+        .lightrope li {
+            position: relative;
+            animation-fill-mode: both;
+            animation-iteration-count: infinite;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: block;
+            width: 12px;
+            height: 28px;
+            border-radius: 50%;
+            margin: 20px;
+            display: inline-block;
+            background: rgba(0, 247, 165, 1);
+            box-shadow: 0px 4.6666666667px 24px 3px rgba(0, 247, 165, 1);
+            animation-name: flash-1;
+            animation-duration: 2s;
+        }
+        .lightrope li:nth-child(2n+1) {
+            background: rgba(0, 255, 255, 1);
+            box-shadow: 0px 4.6666666667px 24px 3px rgba(0, 255, 255, 0.5);
+            animation-name: flash-2;
+            animation-duration: 0.4s;
+        }
+        .lightrope li:nth-child(4n+2) {
+            background: rgba(247, 0, 148, 1);
+            box-shadow: 0px 4.6666666667px 24px 3px rgba(247, 0, 148, 1);
+            animation-name: flash-3;
+            animation-duration: 1.1s;
+        }
+        .lightrope li:nth-child(odd) {
+            animation-duration: 1.8s;
+        }
+        .lightrope li:nth-child(3n+1) {
+            animation-duration: 1.4s;
+        }
+        .lightrope li:before {
+            content: "";
+            position: absolute;
+            background: #222;
+            width: 10px;
+            height: 9.3333333333px;
+            border-radius: 3px;
+            top: -4.6666666667px;
+            left: 1px;
+        }
+        .lightrope li:after {
+            content: "";
+            top: -14px;
+            left: 9px;
+            position: absolute;
+            width: 52px;
+            height: 18.6666666667px;
+            border-bottom: solid #222 2px;
+            border-radius: 50%;
+        }
+        .lightrope li:last-child:after {
+            content: none;
+        }
+        .lightrope li:first-child {
+            margin-left: -40px;
+        }
+        @keyframes flash-1 {
+            0%, 100% {
+                background: rgba(0, 247, 165, 1);
+                box-shadow: 0px 4.6666666667px 24px 3px rgba(0, 247, 165, 1);
+            }
+            50% {
+                background: rgba(0, 247, 165, 0.4);
+                box-shadow: 0px 4.6666666667px 24px 3px rgba(0, 247, 165, 0.2);
+            }
+        }
+        @keyframes flash-2 {
+            0%, 100% {
+                background: rgba(0, 255, 255, 1);
+                box-shadow: 0px 4.6666666667px 24px 3px rgba(0, 255, 255, 1);
+            }
+            50% {
+                background: rgba(0, 255, 255, 0.4);
+                box-shadow: 0px 4.6666666667px 24px 3px rgba(0, 255, 255, 0.2);
+            }
+        }
+        @keyframes flash-3 {
+            0%, 100% {
+                background: rgba(247, 0, 148, 1);
+                box-shadow: 0px 4.6666666667px 24px 3px rgba(247, 0, 148, 1);
+            }
+            50% {
+                background: rgba(247, 0, 148, 0.4);
+                box-shadow: 0px 4.6666666667px 24px 3px rgba(247, 0, 148, 0.2);
+            }
+        }
     </style>
 @endsection
 
@@ -65,7 +170,52 @@
         <main class="container-fluid p-0">
             <div class="row m-0 p-0 w-100"
                  style="height: 100vh; height: 100svh; background-image: linear-gradient(135deg, rgb(169, 169, 169),rgb(41, 41, 41)),linear-gradient(22.5deg, rgb(84, 190, 204) 0%, rgb(84, 190, 204) 19%,rgb(89, 172, 188) 19%, rgb(89, 172, 188) 20%,rgb(94, 154, 171) 20%, rgb(94, 154, 171) 22%,rgb(99, 136, 155) 22%, rgb(99, 136, 155) 31%,rgb(105, 117, 138) 31%, rgb(105, 117, 138) 33%,rgb(110, 99, 122) 33%, rgb(110, 99, 122) 45%,rgb(115, 81, 105) 45%, rgb(115, 81, 105) 51%,rgb(120, 63, 89) 51%, rgb(120, 63, 89) 100%),linear-gradient(45deg, rgb(84, 190, 204) 0%, rgb(84, 190, 204) 19%,rgb(89, 172, 188) 19%, rgb(89, 172, 188) 20%,rgb(94, 154, 171) 20%, rgb(94, 154, 171) 22%,rgb(99, 136, 155) 22%, rgb(99, 136, 155) 31%,rgb(105, 117, 138) 31%, rgb(105, 117, 138) 33%,rgb(110, 99, 122) 33%, rgb(110, 99, 122) 45%,rgb(115, 81, 105) 45%, rgb(115, 81, 105) 51%,rgb(120, 63, 89) 51%, rgb(120, 63, 89) 100%); background-blend-mode:overlay, overlay, normal;">
-                <div class="m-auto signin_form text-center">
+                <ul class="lightrope">
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+
+                 <div class="m-auto signin_form text-center">
                     <div>
                         <h1 class="text-danger">SIGN IN</h1>
                         <div class="my-5 wraper">
@@ -105,7 +255,7 @@
                                     Remember Me
                                 </label>
                             </div>
-                            
+
                             <small id="wrong-password"
                                    class="text-danger bg-white border border-danger rounded-pill px-3 py-1"
                                    style="font-size: 10px; visibility: hidden;">You've entered a wrong password!</small>
