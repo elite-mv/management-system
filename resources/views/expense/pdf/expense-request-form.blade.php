@@ -250,18 +250,33 @@
 
         @foreach ($request->fund_item as $item)
             <tr>
-                <td colspan="4" class="small px-2 bg-transparent" >{{$item->quantity}}</td>
-                <td colspan="4" class="small px-2 bg-transparent text-truncate"  style="max-width: 20ch">{{$item->measurement->name}}</td>
-                <td colspan="1" class="small px-2 bg-transparent text-truncate" style="max-width: 20ch">{{$item->jobOrder->name}}</td>
-                <td colspan="3" role="button" class="small px-2 pointer" data-bs-toggle="modal"
-                    data-bs-target="#exampleModal">
+                <td colspan="2" class="small px-2 bg-transparent text-transparent">{{$item->quantity}}</td>
+                <td colspan="3" class="small px-2 bg-transparent"
+                    style="max-width: 10ch">{{$item->measurement->name}}</td>
+                <td colspan="2" class="small px-2 bg-transparent" style="max-width: 20ch">{{$item->jobOrder->name}}</td>
+                <td colspan="2" class="small bg-transparent text-overflow">
                     <p class="m-0 p-0 text-truncate" style="max-width: 20ch">{{$item->description}}</p>
                 </td>
-                <td colspan="3"
+                <td colspan="2"
                     class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->cost) !!}</td>
-                <td colspan="3"
-                    class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->cost) !!}</td>
+                <td colspan="2"
+                    class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->total) !!}</td>
+                <td colspan="3" class="small px-2 bg-transparent">{{$item->status}}</td>
+                <td colspan="2" class="small px-2 bg-transparent">{{$item->remarks}}</td>
             </tr>
+{{--            <tr>--}}
+{{--                <td colspan="4" class="small px-2 bg-transparent" >{{$item->quantity}}</td>--}}
+{{--                <td colspan="4" class="small px-2 bg-transparent text-truncate"  style="max-width: 20ch">{{$item->measurement->name}}</td>--}}
+{{--                <td colspan="1" class="small px-2 bg-transparent text-truncate" style="max-width: 20ch">{{$item->jobOrder->name}}</td>--}}
+{{--                <td colspan="3" role="button" class="small px-2 pointer" data-bs-toggle="modal"--}}
+{{--                    data-bs-target="#exampleModal">--}}
+{{--                    <p class="m-0 p-0 text-truncate" style="max-width: 20ch">{{$item->description}}</p>--}}
+{{--                </td>--}}
+{{--                <td colspan="3"--}}
+{{--                    class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->cost) !!}</td>--}}
+{{--                <td colspan="3"--}}
+{{--                    class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->cost) !!}</td>--}}
+{{--            </tr>--}}
         @endforeach
         <tr>
             <td colspan="15" class="px-2 small bg-yellow text-end fw-bold">TOTAL</td>
