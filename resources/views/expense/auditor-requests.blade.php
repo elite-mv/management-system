@@ -228,9 +228,12 @@
                     </div>
                 </div>
             </div>
-            @endsection
+        </div>
 
-            @section('script')
-                <script type="text/javascript" src="/js/expense/request-table.js"></script>
-                <script type="text/javascript" src="/js/sortable.js"></script>
+    </div>
+@endsection
+
+@section('script')
+    <script type="text/javascript" src="/js/expense/request-table.js"></script>
+    <script type="text/javascript" src="/js/sortable.js"></script>
 @endsection
