@@ -39,9 +39,15 @@ use App\Http\Middleware\CheckUserPin;
 use App\Http\Middleware\CompanyData;
 use App\Http\Middleware\CompanyMiddleware;
 use App\Http\Middleware\ExpenseCategoryData;
+use App\Http\Middleware\RedirectAuthUser;
+use App\Http\Middleware\CheckBK;
+use App\Http\Middleware\CheckACC;
+use App\Http\Middleware\CheckFIN;
+use App\Http\Middleware\CheckAUD;
+use App\Http\Middleware\CheckPRES;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [AuthController::class, 'index'])->name('login');
+Route::middleware([RedirectAuthUser::class])->get('/', [AuthController::class, 'index'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/eut/{$requestID}', [PdfController::class, 'eut']);
 
@@ -103,11 +109,11 @@ Route::prefix('expense')->group(function () {
         Route::middleware([CompanyData::class])->get('/requests', [RequestController::class, 'getRequests']);
         Route::get('/daily-request', [DailyRequest::class, 'index']);
 
-        Route::middleware([CompanyData::class])->get('/book-keeper', [BookKeeperController::class, 'index']);
-        Route::middleware([CompanyData::class])->get('/accountant', [AccountantController::class, 'index']);
-        Route::middleware([CompanyData::class])->get('/finance', [FinanceController::class, 'index']);
-        Route::middleware([CompanyData::class])->get('/president', [PresidentController::class, 'index']);
-        Route::middleware([CompanyData::class])->get('/auditor', [AuditorController::class, 'index']);
+        Route::middleware([CompanyData::class, CheckBK::class])->get('/book-keeper', [BookKeeperController::class, 'index']);
+        Route::middleware([CompanyData::class, CheckACC::class])->get('/accountant', [AccountantController::class, 'index']);
+        Route::middleware([CompanyData::class, CheckFIN::class])->get('/finance', [FinanceController::class, 'index']);
+        Route::middleware([CompanyData::class, CheckPRES::class])->get('/president', [PresidentController::class, 'index']);
+        Route::middleware([CompanyData::class, CheckAUD::class])->get('/auditor', [AuditorController::class, 'index']);
 
         Route::get('/job-order', [JobOrderController::class, 'index']);
         Route::post('/job-order', [JobOrderController::class, 'addJobOrder']);

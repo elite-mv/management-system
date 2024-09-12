@@ -1,6 +1,6 @@
 @extends('layouts.expense-index')
 
-@section('title', 'Accountant')
+@section('title', 'Auditor')
 
 @section('style')
     <style type="text/css">
