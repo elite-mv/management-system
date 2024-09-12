@@ -2530,45 +2530,6 @@
     </script>
 
     <script>
-        document.getElementById('check_writer').addEventListener('click', function (event) {
-            event.preventDefault();
-            const date = new Date();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            const year = date.getFullYear().toString();
-            const formattedDate = `${month.split('').join('   ')}     ${day.split('').join('   ')}     ${year.split('').join('   ')}`;
-
-            var number = parseFloat($('#hidden_amount').val());
-            var formattedNumber = number.toLocaleString('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            }) + '***';
-
-            const formattedPaidTo = '***' + $('#hidden_paid_to').val() + '***';
-
-            const fileUrl = '/excel/Check Writer-2024.xlsx';
-            fetch(fileUrl)
-                .then(response => response.arrayBuffer())
-                .then(async (data) => {
-                    const workbook = new ExcelJS.Workbook();
-                    await workbook.xlsx.load(data);
-                    const worksheet = workbook.worksheets[0];
-
-                    worksheet.getCell('C3').value = formattedPaidTo;
-                    worksheet.getCell('C4').value = formattedNumber;
-                    worksheet.getCell('C5').value = 'SAMPLE AMOUNT TO WORDS';
-                    worksheet.getCell('C6').value = formattedDate;
-
-                    const buffer = await workbook.xlsx.writeBuffer();
-                    const blob = new Blob([buffer], {type: 'application/octet-stream'});
-
-                    saveAs(blob, 'Check Writer-2024.xlsx');
-                })
-                .catch(error => console.error('Error fetching or processing the file:', error));
-        });
-    </script>
-
-    <script>
 
         const historyHolder = document.querySelector('#requestHistory');
 

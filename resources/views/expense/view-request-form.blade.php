@@ -101,7 +101,7 @@
         {{--        <h4>{{$errors->first()}}</h4>--}}
     @endif
 
-    <div class="d-flex gap-2">
+    <div class="d-flex gap-2 m-0 mx-auto p-0">
 
         <div>
             <div class="bg-light p-2">
@@ -119,56 +119,6 @@
                     <i class="fas fa-plus-circle me-2"></i>Check Writer
                 </a>
 
-            </div>
-
-            <div class="modal fade text-dark" id="checkwriterModal" tabindex="-1" aria-labelledby="Check Writer"
-                 aria-hidden="true">
-                <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                        <form id="checkwriterForm">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5">Check Writer</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body d-flex align-items-center justify-content-around">
-                                <div style="width: 7.95in; height: 2.9in; position: relative;" class="my-auto"
-                                     id="printable_check">
-                                    <img src="https://html.scribdassets.com/5xqh18575sa7ssqi/images/1-f2cc24c5d0.jpg"
-                                         class="img-fluid h-100" alt="check-writer">
-
-                                    <div style="position: absolute; top: 0.23in; right: 0.35in; width: 2in;">
-                                        <input type="text"
-                                               class="form-control rounded-0 bg-transparent border-0 text-end fw-bold"
-                                               style="line-height: 8px;" name="date"
-                                               placeholder="0  0    0  0    0  0  0  0">
-                                    </div>
-                                    <div style="position: absolute; top: 0.6in; left: 0.95in; width: 4.43in;">
-                                        <input type="text"
-                                               class="form-control rounded-0 bg-transparent border-0 fw-bold"
-                                               style="line-height: 8px;" name="paid_to"
-                                               placeholder="*** JOHN CASTILLO ***">
-                                    </div>
-                                    <div style="position: absolute; top: 0.6in; left: 5.5in; width: 2in;">
-                                        <input type="text"
-                                               class="form-control rounded-0 bg-transparent border-0 fw-bold"
-                                               style="line-height: 8px;" name="amount_words"
-                                               placeholder="*** 1,000,000 ***">
-                                    </div>
-                                    <div style="position: absolute; top: 0.92in; left: 0.695in; width: 6.8in;">
-                                        <input type="text"
-                                               class="form-control rounded-0 bg-transparent border-0 fw-bold"
-                                               style="line-height: 8px;" name="amount_value"
-                                               placeholder="*** ONE MILLION ONLY ***">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-success rounded-pill w-50 mx-auto">Print</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
             </div>
 
             <div class="container-fluid mx-auto bg-white">
@@ -312,23 +262,40 @@
                             <td colspan="2" class="small text-center fw-bold bg-gray text-uppercase">REMARKS</td>
                         </tr>
                         @foreach ($request->items as $item)
-                            <tr class="selectable" role="button">
+                            <tr class="selectable" role="button" onclick="viewItem('{{$item->id}}')">
                                 <td colspan="2"
-                                    class="small px-2 bg-transparent text-transparent">{{$item->quantity}}</td>
-                                <td colspan="3" class="small px-2 bg-transparent">{{$item->measurement->name}}</td>
+                                    class="small px-2 bg-transparent text-transparent">{{$item->quantity}}
+                                </td>
+
+                                <td colspan="3" class="small px-2 bg-transparent">{{$item->measurement->name}}
+                                </td>
+
                                 <td colspan="2" class="small px-2 bg-transparent">{{$item->jobOrder->name}}</td>
+
                                 <td colspan="2" class="small bg-transparent">
                                     <div class="d-flex align-items-center bg-transparent">
-                                        <p class="m-0 p-0 text-ellipsis"
-                                           style="max-width: 45ch">{{$item->description}}</p>
+                                        <p class="m-0 p-0 text-ellipsis" style="max-width: 45ch">
+                                            {{$item->description}}
+                                        </p>
                                     </div>
                                 </td>
-                                <td colspan="2"
-                                    class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->cost) !!}</td>
-                                <td colspan="2"
-                                    class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->total_cost) !!}</td>
-                                <td colspan="3" class="small px-2 bg-transparent">{{$item->status}}</td>
-                                <td colspan="2" class="small px-2 bg-transparent">{{$item->remarks}}</td>
+
+                                <td colspan="2" class="small px-2 bg-transparent">
+                                    {!! \App\Helper\Helper::formatPeso($item->cost) !!}
+                                </td>
+
+                                <td colspan="2" class="small px-2 bg-transparent">
+                                    {!! \App\Helper\Helper::formatPeso($item->total_cost) !!}
+                                </td>
+
+                                <td colspan="3" class="small px-2 bg-transparent">
+                                    {{$item->status}}
+
+                                </td>
+
+                                <td colspan="2" class="small px-2 bg-transparent">
+                                    {{$item->remarks}}
+                                </td>
                             </tr>
                         @endforeach
                         <tr>
@@ -1024,12 +991,13 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <form method="POST" id="editItemForm" class="container-fluid">
+                    @csrf
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Item</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        @csrf
+
                         <input readonly id="editItemId" type="hidden" class="d-none">
 
                         <div class="col-12">
@@ -1066,14 +1034,14 @@
                                            name="quantity">
                                 </div>
                                 <div class="col-2 m-0 p-0 small border-0">
-                                    <select name="measurement" id="editItemUnitOfMeasurement" class="p-2 h-100 w-100">
+                                    <select disabled name="measurement" id="editItemUnitOfMeasurement" class="p-2 h-100 w-100">
                                         @foreach($measurements as $measurement)
                                             <option value="{{$measurement->id}}">{{$measurement->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="col-2 m-0 p-0 small border-0">
-                                    <select name="jobOrder" id="editItemJobOrder" class="p-2 h-100 w-100">
+                                    <select disabled name="jobOrder" id="editItemJobOrder" class="p-2 h-100 w-100">
                                         @foreach($jobOrders as $jobOrder)
                                             <option value="{{$jobOrder->id}}">{{$jobOrder->reference}}</option>
                                         @endforeach
@@ -1093,7 +1061,7 @@
 
                             <div class="row mt-3 py-3 px-2 border border-dark">
                                 <div class="col-sm-12 col-md-6 col-lg-6">
-                                    <input readonly data-id="0" id="fileUpload" type="file" accept="image/*" multiple=""
+                                    <input data-id="0" id="fileUpload" type="file" accept="image/*" multiple=""
                                            name="files[]" class="px-4 py-2 border border-dark w-100"
                                            style="border: 1px dashed !important; border-radius: 6px;">
                                 </div>
@@ -1124,23 +1092,20 @@
                                 </div>
                                 <div class="col-4 text-center border border-dark small "
                                      style="border-style: solid none solid solid !important; word-wrap: break-word; display: flex; align-items: center; justify-content: center;">
-                                    <select id="editItemStatus" class="p-2" name="status">
+                                    <select disabled id="editItemStatus" class="p-2" name="status">
                                         @foreach(App\Enums\RequestItemStatus::status() as $requestStatus)
                                             <option value="{{$requestStatus->name}}">{{$requestStatus->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="col-4 text-center p-0" style="word-wrap: break-word;">
-  <textarea id="editItemRemarks" rows="5" placeholder="Type here..."
-            style="resize: none;" class="p-2 w-100 h-100 small"
-            name="remarks"></textarea>
+                                    <textarea disabled id="editItemRemarks" rows="5" placeholder="Type here..." style="resize: none;" class="p-2 w-100 h-100 small" name="remarks"></textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
                     </div>
                 </form>
             </div>
@@ -1230,6 +1195,133 @@
 
         function viewHistory() {
             historyHolder.classList.toggle('d-none')
+        }
+
+        const editItemModal = new bootstrap.Modal(document.getElementById('editItemModal'), {
+            keyboard: false
+        })
+
+
+        const viewer = new Viewer(document.getElementById('uploads'));
+
+        const fileUpload = document.querySelector('#fileUpload');
+
+        const editItemForm = document.querySelector('#editItemForm');
+        const editItemId = document.querySelector('#editItemId');
+        const editItemQuantity = document.querySelector('#editItemQuantity');
+        const editItemDescription = document.querySelector('#editItemDescription');
+        const editItemJobOrder = document.querySelector('#editItemJobOrder');
+        const editItemUnitOfMeasurement = document.querySelector('#editItemUnitOfMeasurement');
+        const editItemCost = document.querySelector('#editItemCost');
+        const editItemTotal = document.querySelector('#editItemTotal');
+        const editItemStatus = document.querySelector('#editItemStatus');
+        const editItemRemarks = document.querySelector('#editItemRemarks');
+
+        async function viewItem(id) {
+
+            try {
+
+                const result = await fetch(`/expense/api/request-item/${id}`);
+
+                const data = await result.json();
+
+                if (!result.ok) {
+                    throw new Error(data.message);
+                }
+
+                fileUpload.setAttribute("data-id", id);
+
+                editItemQuantity.value = data.quantity;
+                editItemDescription.value = data.description;
+                editItemJobOrder.value = data.job_order_id;
+                editItemUnitOfMeasurement.value = data.measurement_id;
+                editItemCost.value = data.cost;
+                editItemTotal.value = data.total;
+                editItemStatus.value = data.status;
+                editItemRemarks.value = data.remarks;
+
+                $('#uploads').html('');
+
+                data.attachments.forEach(attachment => {
+
+                    let imageSrc = (attachment.file.split('/'))[1];
+
+                    const thumbnail = $('<img>').attr('src', '/storage/' + imageSrc).addClass('uploaded-img');
+
+                    $('#uploads').append(thumbnail);
+
+                });
+
+                editItemModal.show();
+
+                viewer.update();
+
+            } catch (error) {
+                showErrorMessage('Unable to view item');
+            }
+
+        }
+
+        if (fileUpload) {
+            fileUpload.addEventListener('change', async () => {
+
+                let formData = new FormData();
+
+                const files = fileUpload.files;
+                const itemId = fileUpload.dataset.id;
+
+                Array.from(files).forEach(file => {
+                    formData.append('files[]', file);
+                });
+
+                try {
+
+                    let result = await fetch(`/expense/api/request-item/file/${itemId}`, {
+                        method: "POST",
+                        body: formData,
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                        }
+                    })
+
+                    if (!result.ok) {
+
+                        let data = await result.json();
+
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: 'An error occurred while uploading attachment',
+                        });
+
+                        return;
+                    }
+
+                    let files = await result.json();
+
+                    files.images.forEach(attachment => {
+
+                        let imageSrc = (attachment.split('/'))[1];
+
+                        const thumbnail = $('<img>').attr('src', '/storage/' + imageSrc).addClass('uploaded-img');
+
+                        $('#uploads').append(thumbnail);
+
+                    });
+
+                    viewer.update();
+
+                } catch (error) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: error.message,
+                    })
+
+                } finally {
+                    fileUpload.value = null;
+                }
+            })
         }
     </script>
 @endsection

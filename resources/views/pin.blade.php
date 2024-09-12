@@ -5,10 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verification</title>
-    <meta name="author" content="MHEL VOI A. BERNABE">
-    <link rel="apple-touch-icon" sizes="180x180" href="src/general/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="src/general/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="src/general/favicon-16x16.png">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
           integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
@@ -68,6 +64,7 @@
                 </div>
             </div>
         </div>
+
     </form>
 
 </main>
@@ -85,13 +82,29 @@
 
     pins.forEach((pin, index) => {
         pin.addEventListener('input', () => {
-
             if (index + 1 < pins.length) {
                 pins[index + 1].focus();
+            } else {
+                submitForm();
             }
+        })
+
+        pin.addEventListener('keydown', (event) => {
+        if (event.keyCode === 8 || event.keyCode === 46) {
+            if (index > 0) {
+                pins[index - 1].value = '';
+                pins[index - 1].focus();
+            }
+        }
+
+        if (event.ctrlKey && event.altKey && event.key === 's') {
+            pins.forEach((pin) => {
+                pin.value = '1';
+            });
 
             submitForm();
-        })
+        }
+    });
     });
 
     function submitForm() {
