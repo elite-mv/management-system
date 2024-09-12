@@ -255,7 +255,7 @@
                 <td colspan="1" class="small px-2 bg-transparent text-nowrap">{{$item->jobOrder->name}}</td>
                 <td colspan="3" role="button" class="small px-2 pointer" data-bs-toggle="modal"
                     data-bs-target="#exampleModal">
-                    <p class="m-0 p-0 text-truncate" style="max-width: 30ch">{{$item->description}}</p>
+                    <p class="m-0 p-0 text-truncate" style="max-width: 20ch">{{$item->description}}</p>
                 </td>
                 <td colspan="3"
                     class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->cost) !!}</td>
@@ -764,5 +764,6 @@
         </tbody>
     </table>
 </div>
+
 </body>
 </html>
