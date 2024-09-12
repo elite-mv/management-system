@@ -65,87 +65,87 @@
 </head>
 <body>
 <div class="mx-auto" style="max-width: 780px; overflow: hidden">
-    <div class="d-flex mb-4 gap-2">
-        <div>
-            <div class="border border-dark"
-                 style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
-                <img src="{{\Illuminate\Support\Facades\Storage::url($request->company->logo)}}" class="img-fluid"
-                     alt="LOGO"
-                     style="height: 100px; width: auto;">
-            </div>
-            <div class="bg-red text-center text-white border border-dark"
-                 style="width: 100px; border-style: none solid none solid !important;">
-                <strong>{{$request->company->name}}</strong>
-            </div>
-        </div>
+{{--    <div class="d-flex mb-4 gap-2">--}}
+{{--        <div>--}}
+{{--            <div class="border border-dark"--}}
+{{--                 style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">--}}
+{{--                <img src="{{\Illuminate\Support\Facades\Storage::url($request->company->logo)}}" class="img-fluid"--}}
+{{--                     alt="LOGO"--}}
+{{--                     style="height: 100px; width: auto;">--}}
+{{--            </div>--}}
+{{--            <div class="bg-red text-center text-white border border-dark"--}}
+{{--                 style="width: 100px; border-style: none solid none solid !important;">--}}
+{{--                <strong>{{$request->company->name}}</strong>--}}
+{{--            </div>--}}
+{{--        </div>--}}
 
-        <div style="font-size: 70px;" class="m-0 mr-auto px-5 border border-5 border-danger">
-            <div class="w-100 h-100 border-0 outline-0 text-danger text-center" style="font-size: 60px">
-                @if($request->status)
-                    {{$request->status->value}}
-                @endif
-            </div>
-        </div>
+{{--        <div style="font-size: 70px;" class="m-0 mr-auto px-5 border border-5 border-danger">--}}
+{{--            <div class="w-100 h-100 border-0 outline-0 text-danger text-center" style="font-size: 60px">--}}
+{{--                @if($request->status)--}}
+{{--                    {{$request->status->value}}--}}
+{{--                @endif--}}
+{{--            </div>--}}
+{{--        </div>--}}
 
-        <div class="ms-auto">
-            <div class="bg-red text-center text-white border border-dark px-2"
-                 style="border-style: solid solid none solid !important;">
-                <b>PAYMENT STATUS</b>
-            </div>
+{{--        <div class="ms-auto">--}}
+{{--            <div class="bg-red text-center text-white border border-dark px-2"--}}
+{{--                 style="border-style: solid solid none solid !important;">--}}
+{{--                <b>PAYMENT STATUS</b>--}}
+{{--            </div>--}}
 
-            <div class="border border-dark"
-                 style="display: flex; align-items: center; justify-content: center; flex-direction: column;">
-                <div class="w-100" style="display: flex; flex-direction: row;">
-                    <div class="w-25 text-center border border-dark"
-                         style="border-style: none solid solid none !important;">
-                        <input
-                            @checked($request->fund_status == \App\Enums\RequestFundStatus::FUNDED )  value="{{\App\Enums\RequestFundStatus::FUNDED->value}}"
-                            class="fundStatus" type="checkbox" name="FUNDED" id="fundedStatus">
-                    </div>
-                    <div class="w-75 text-start border border-dark px-2"
-                         style="border-style: none none solid none !important;">
-                        <small>FUNDED</small>
-                    </div>
-                </div>
+{{--            <div class="border border-dark"--}}
+{{--                 style="display: flex; align-items: center; justify-content: center; flex-direction: column;">--}}
+{{--                <div class="w-100" style="display: flex; flex-direction: row;">--}}
+{{--                    <div class="w-25 text-center border border-dark"--}}
+{{--                         style="border-style: none solid solid none !important;">--}}
+{{--                        <input--}}
+{{--                            @checked($request->fund_status == \App\Enums\RequestFundStatus::FUNDED )  value="{{\App\Enums\RequestFundStatus::FUNDED->value}}"--}}
+{{--                            class="fundStatus" type="checkbox" name="FUNDED" id="fundedStatus">--}}
+{{--                    </div>--}}
+{{--                    <div class="w-75 text-start border border-dark px-2"--}}
+{{--                         style="border-style: none none solid none !important;">--}}
+{{--                        <small>FUNDED</small>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
 
-                <div class="w-100" style="display: flex; flex-direction: row;">
-                    <div class="w-25 text-center border border-dark"
-                         style="border-style: none solid none none !important;">
-                        <input
-                            @checked($request->fund_status == \App\Enums\RequestFundStatus::DECLINED ) value="{{\App\Enums\RequestFundStatus::DECLINED->value}}"
-                            class="fundStatus" type="checkbox" name="FUNDED" id="declinedStatus">
-                    </div>
-                    <div class="w-75 text-start border border-dark px-2"
-                         style="border-style: none none none none !important;">
-                        <small>DECLINED</small>
-                    </div>
-                </div>
-            </div>
-        </div>
+{{--                <div class="w-100" style="display: flex; flex-direction: row;">--}}
+{{--                    <div class="w-25 text-center border border-dark"--}}
+{{--                         style="border-style: none solid none none !important;">--}}
+{{--                        <input--}}
+{{--                            @checked($request->fund_status == \App\Enums\RequestFundStatus::DECLINED ) value="{{\App\Enums\RequestFundStatus::DECLINED->value}}"--}}
+{{--                            class="fundStatus" type="checkbox" name="FUNDED" id="declinedStatus">--}}
+{{--                    </div>--}}
+{{--                    <div class="w-75 text-start border border-dark px-2"--}}
+{{--                         style="border-style: none none none none !important;">--}}
+{{--                        <small>DECLINED</small>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--        </div>--}}
 
-        <div style="width: 150px;">
-            <div class="bg-red text-center text-white border border-dark px-2"
-                 style="border-style: solid solid none solid !important;">
-                <b>STATUS</b>
-            </div>
-            <div class="border border-dark"
-                 style="height: 100px; display: flex; align-items: center; justify-content: center;">
-                <h1 class="text-danger">{{$request->requestStatus}}</h1>
-            </div>
-        </div>
+{{--        <div style="width: 150px;">--}}
+{{--            <div class="bg-red text-center text-white border border-dark px-2"--}}
+{{--                 style="border-style: solid solid none solid !important;">--}}
+{{--                <b>STATUS</b>--}}
+{{--            </div>--}}
+{{--            <div class="border border-dark"--}}
+{{--                 style="height: 100px; display: flex; align-items: center; justify-content: center;">--}}
+{{--                <h1 class="text-danger">{{$request->requestStatus}}</h1>--}}
+{{--            </div>--}}
+{{--        </div>--}}
 
-        <div>
-            <div class="bg-red text-center text-white border border-dark px-2"
-                 style="border-style: solid solid none solid !important;">
-                <b>REQUEST FORM NUMBER</b>
-            </div>
-            <div class="border border-dark"
-                 style="height: 100px; display: flex; align-items: center; justify-content: center;">
-                <h1 class="fw-bold">{{ $request->pad_id}}</h1>
-            </div>
-        </div>
+{{--        <div>--}}
+{{--            <div class="bg-red text-center text-white border border-dark px-2"--}}
+{{--                 style="border-style: solid solid none solid !important;">--}}
+{{--                <b>REQUEST FORM NUMBER</b>--}}
+{{--            </div>--}}
+{{--            <div class="border border-dark"--}}
+{{--                 style="height: 100px; display: flex; align-items: center; justify-content: center;">--}}
+{{--                <h1 class="fw-bold">{{ $request->pad_id}}</h1>--}}
+{{--            </div>--}}
+{{--        </div>--}}
 
-    </div>
+{{--    </div>--}}
     <table class="table table-bordered border-dark w-100">
         <tbody>
         <tr>
