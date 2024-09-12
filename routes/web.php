@@ -219,6 +219,7 @@ Route::get('/tae', function (){
     return view('check');
 });
 
+Route::get('/yawa', [PdfController::class, 'yawa']);
 Route::get('/test-sql', [MigrationController::class, 'index']);
 Route::get('/check', [PdfController::class, 'check']);
 

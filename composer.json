@@ -20,6 +20,7 @@
         "phpoffice/phpspreadsheet": "^2.2",
         "pragmarx/google2fa-laravel": "^2.2",
         "pusher/pusher-php-server": "^7.2",
+        "spatie/browsershot": "^4.3",
         "spatie/laravel-activitylog": "^4.8"
     },
     "require-dev": {

@@ -18,10 +18,16 @@ use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Spatie\Browsershot\Browsershot;
 
 class PdfController
 {
     const MAX_EXCEL_REQUEST = 10;
+
+    public function yawa()
+    {
+        Browsershot::html('<h1>Hello world!!</h1>')->save('example.pdf');
+    }
 
     public function index()
     {
