@@ -19,6 +19,10 @@
             --gray: rgba(0, 0, 0, 0.2)
         }
 
+        *{
+            font-size: 12px !important;
+        }
+
         .bg-red {
             background-color: var(--red) !important;
         }
@@ -37,10 +41,6 @@
 
         .bg-gray {
             background-color: var(--gray) !important;
-        }
-
-        * {
-            font-size: 12px !important;
         }
 
         td {
@@ -161,11 +161,11 @@
         <tr>
             <td colspan="4" class="small px-2">Supplier:</td>
             <td colspan="8" class="small px-2 text-capitalize">
-                @management
-                <small>{{$request->supplier}}</small>
+                @can('management',\Illuminate\Support\Facades\Auth::user())
+                    {{$request->supplier}}
                 @else
-                    <small>[HIDDEN]</small>
-                    @endmanagement
+                    [HIDDEN]
+                @endcan
             </td>
             <td colspan="2" class="small px-2">REF NO:</td>
             <td colspan="4" class="small px-2">{{ $request->reference }}</td>
@@ -200,7 +200,7 @@
                 <td colspan="2" class="small px-2 bg-transparent text-transparent">{{$item->quantity}}</td>
                 <td colspan="3" class="small px-2 bg-transparent"
                     style="max-width: 10ch">{{$item->measurement->name}}</td>
-                <td colspan="2" class="small px-2 bg-transparent">{{$item->jobOrder->name}}</td>
+                <td colspan="2" class="small px-2 bg-transparent" style="max-width: 20ch">{{$item->jobOrder->name}}</td>
                 <td colspan="2" class="small bg-transparent text-overflow">
                     <p class="m-0 p-0 text-truncate" style="max-width: 20ch">{{$item->description}}</p>
                 </td>
@@ -250,9 +250,9 @@
 
         @foreach ($request->fund_item as $item)
             <tr>
-                <td colspan="4" class="small px-2 bg-transparent">{{$item->quantity}}</td>
-                <td colspan="4" class="small px-2 bg-transparent">{{$item->measurement->name}}</td>
-                <td colspan="1" class="small px-2 bg-transparent text-nowrap">{{$item->jobOrder->name}}</td>
+                <td colspan="4" class="small px-2 bg-transparent" >{{$item->quantity}}</td>
+                <td colspan="4" class="small px-2 bg-transparent text-truncate"  style="max-width: 20ch">{{$item->measurement->name}}</td>
+                <td colspan="1" class="small px-2 bg-transparent text-truncate" style="max-width: 20ch">{{$item->jobOrder->name}}</td>
                 <td colspan="3" role="button" class="small px-2 pointer" data-bs-toggle="modal"
                     data-bs-target="#exampleModal">
                     <p class="m-0 p-0 text-truncate" style="max-width: 20ch">{{$item->description}}</p>
