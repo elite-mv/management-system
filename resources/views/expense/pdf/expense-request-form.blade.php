@@ -704,8 +704,8 @@
             <td colspan="3" class="small px-2">None</td>
             <td colspan="5" class="px-2">
                 <div class="d-flex gap-1 align-items-center mb-1">
-                    <label class="small">Others:</label>
-                    123
+                    <label class="small">Others: </label>
+                    {{$request->others}}
                 </div>
             </td>
             <td colspan="2" class="fw-bold small px-2">Voucher No</td>
