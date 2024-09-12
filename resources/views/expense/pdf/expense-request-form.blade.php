@@ -66,7 +66,7 @@
             <div class="border border-dark"
                  style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
                 <img src="{{\Illuminate\Support\Facades\Storage::url($request->company->logo)}}" class="img-fluid"
-                     alt="LOGO"
+                     alt="{{$request->company->name}}"
                      style="height: 100px; width: auto;">
             </div>
             <div class="bg-red text-center text-white border border-dark"
