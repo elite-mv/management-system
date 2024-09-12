@@ -477,10 +477,6 @@ class RequestController extends Controller
     {
         try {
 
-            if (!Gate::allows(Auth::user())) {
-                throw new \Exception('Unauthorized');
-            }
-
             DB::beginTransaction();
 
             $status = RequestStatus::valueOf($request->input('status'));

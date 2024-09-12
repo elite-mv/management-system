@@ -20,8 +20,8 @@ class DailyRequest
 
         $query->whereHas('approvals', function ($query) use ($request) {
 
-            $query->where('created_at', '>=', Carbon::now()->startOfDay()->format('Y-m-d H:i:s'));
-            $query->where('created_at', '<=', Carbon::now()->endOfDay()->format('Y-m-d H:i:s'));
+            $query->where('updated_at', '>=', Carbon::now()->startOfDay()->format('Y-m-d H:i:s'));
+            $query->where('updated_at', '<=', Carbon::now()->endOfDay()->format('Y-m-d H:i:s'));
 
             $query->where('status', RequestApprovalStatus::APPROVED->name);
 
