@@ -19,10 +19,6 @@
             --gray: rgba(0, 0, 0, 0.2)
         }
 
-        *{
-            font-size: 12px !important;
-        }
-
         .bg-red {
             background-color: var(--red) !important;
         }
