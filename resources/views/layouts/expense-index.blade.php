@@ -135,7 +135,7 @@
         }
     </style>
 
-    {{-- <style>
+    <style>
         .lightrope {
             text-align: center;
             white-space: nowrap;
@@ -240,7 +240,7 @@
                 box-shadow: 0px 4.6666666667px 24px 3px rgba(247, 0, 148, 0.2);
             }
         }
-    </style> --}}
+    </style>
 </head>
 <body>
 
@@ -248,52 +248,6 @@
 
 <main>
     <div class="row m-0 p-0">
-
-        {{-- <ul class="lightrope">
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-        </ul> --}}
-
         <div class="col-2 m-0 p-0 px-3 bg-dark bg-gradient"
              style="min-height: 100vh; max-height: 100%; overflow-y: auto;" id="collapseLayout1">
             <header class="text-light text-center d-flex flex-column p-2 pt-3">
@@ -493,6 +447,50 @@
                 </form>
             </div>
             @yield('body')
+                <ul class="lightrope">
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
         </div>
     </div>
 </main>
