@@ -372,10 +372,7 @@
             </td>
             <td colspan="2" class="small px-2">Low</td>
             <td colspan="1" class="small px-2 text-nowrap">5 days</td>
-            <td colspan="1" class="text-center">
-                <input type="checkbox">
-            </td>
-            <td colspan="3" class="small px-2 text-nowrap">
+            <td colspan="4" class="small px-2 text-nowrap">
                 @if($request->expenseTypes->get(0))
                     {{$request->expenseTypes->get(0)->category->name}}
                 @endif
@@ -419,10 +416,7 @@
             </td>
             <td colspan="2" class="small px-2">Medium</td>
             <td colspan="1" class="small px-2">3 days</td>
-            <td colspan="1" class="text-center">
-                <input type="checkbox">
-            </td>
-            <td colspan="3" class="small px-2">
+            <td colspan="4" class="small px-2">
                 @if($request->expenseTypes->get(1))
                     {{$request->expenseTypes->get(1)->category->name}}
                 @endif
@@ -462,10 +456,7 @@
             </td>
             <td colspan="2" class="small px-2">High</td>
             <td colspan="1" class="small px-2">1 day</td>
-            <td colspan="1" class="text-center">
-                <input type="checkbox">
-            </td>
-            <td colspan="3" class="small px-2">
+            <td colspan="4" class="small px-2">
                 @if($request->expenseTypes->get(2))
                     {{$request->expenseTypes->get(2)->category->name}}
                 @endif
@@ -480,10 +471,7 @@
         </tr>
         <tr>
             <td colspan="4" class="small px-2 fw-bold bg-red text-center">Attachment</td>
-            <td colspan="1" class="text-center">
-                <input type="checkbox">
-            </td>
-            <td colspan="3" class="small px-2">
+            <td colspan="4" class="small px-2">
                 @if($request->expenseTypes->get(3))
                     {{$request->expenseTypes->get(3)->category->name}}
                 @endif
@@ -516,10 +504,7 @@
                 @endif
             </td>
             <td colspan="3" class="small px-2">With</td>
-            <td colspan="1" class="text-center">
-                <input type="checkbox">
-            </td>
-            <td colspan="3" class="small px-2">
+            <td colspan="4" class="small px-2">
                 @if($request->expenseTypes->get(4))
                     {{$request->expenseTypes->get(4)->category->name}}
                 @endif
@@ -558,10 +543,7 @@
                 @endif
             </td>
             <td colspan="3" class="small px-2">Without</td>
-            <td colspan="1" class="text-center">
-                <input type="checkbox">
-            </td>
-            <td colspan="3" class="small px-2">
+            <td colspan="4" class="small px-2">
                 @if($request->expenseTypes->get(5))
                     {{$request->expenseTypes->get(5)->category->name}}
                 @endif
@@ -572,10 +554,7 @@
         </tr>
         <tr>
             <td colspan="4" class="small px-2 text-center bg-red fw-bold">Type</td>
-            <td colspan="1" class="text-center">
-                <input type="checkbox">
-            </td>
-            <td colspan="3" class="small px-2">
+            <td colspan="4" class="small px-2">
                 @if($request->expenseTypes->get(6))
                     {{$request->expenseTypes->get(6)->category->name}}
                 @endif
@@ -602,10 +581,7 @@
                 @endif
             </td>
             <td colspan="3" class="small px-2">OPEX</td>
-            <td colspan="1" class="text-center">
-                <input type="checkbox">
-            </td>
-            <td colspan="3" class="small px-2">
+            <td colspan="4" class="small px-2">
                 @if($request->expenseTypes->get(7))
                     {{$request->expenseTypes->get(7)->category->name}}
                 @endif
@@ -632,10 +608,7 @@
                 @endif
             </td>
             <td colspan="3" class="small px-2">NON OPEX</td>
-            <td colspan="1" class="text-center">
-                <input type="checkbox">
-            </td>
-            <td colspan="3" class="small px-2">
+            <td colspan="4" class="small px-2">
                 @if($request->expenseTypes->get(8))
                     {{$request->expenseTypes->get(8)->category->name}}
                 @endif
@@ -650,10 +623,7 @@
         </tr>
         <tr>
             <td colspan="4" class="small px-2 text-center bg-red fw-bold">Receipt</td>
-            <td colspan="1" class="text-center">
-                <input type="checkbox">
-            </td>
-            <td colspan="3" class="small px-2">
+            <td colspan="4" class="small px-2">
                 @if($request->expenseTypes->get(9))
                     {{$request->expenseTypes->get(9)->category->name}}
                 @endif
@@ -681,10 +651,7 @@
                 @endif
             </td>
             <td colspan="3" class="small px-2">Official Receipt VAT</td>
-            <td colspan="1" class="text-center">
-                <input type="checkbox">
-            </td>
-            <td colspan="3" class="small px-2">
+            <td colspan="4" class="small px-2">
                 @if($request->expenseTypes->get(10))
                     {{$request->expenseTypes->get(10)->category->name}}
                 @endif
@@ -712,10 +679,7 @@
                 @endif
             </td>
             <td colspan="3" class="small px-2">Delivery Receipt</td>
-            <td colspan="1" class="text-center">
-                <input type="checkbox">
-            </td>
-            <td colspan="3" class="small px-2 selectable">
+            <td colspan="4" class="small px-2 selectable">
                 @if($request->expenseTypes->get(11))
                     {{$request->expenseTypes->get(11)->category->name}}
                 @endif
@@ -742,10 +706,7 @@
                 @endif
             </td>
             <td colspan="3" class="small px-2">None</td>
-            <td colspan="1" class="text-center">
-                <input type="checkbox">
-            </td>
-            <td colspan="4" class="px-2">
+            <td colspan="5" class="px-2">
                 <div class="d-flex gap-1 align-items-center mb-1">
                     <label class="small">Others:</label>
                     123
