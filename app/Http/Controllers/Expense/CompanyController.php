@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
-    public function  index()
+    public function index()
     {
 
         $companies = Company::where('archive', false)->paginate(10);
@@ -18,7 +18,8 @@ class CompanyController extends Controller
         ]);
     }
 
-    public function addCompany(Request $request){
+    public function addCompany(Request $request)
+    {
 
         try {
 
@@ -29,7 +30,7 @@ class CompanyController extends Controller
             $company->name = $request->input('name');
             $company->priority = $request->input('priority');
 
-            if($request->file('logo')){
+            if ($request->file('logo')) {
                 $company->logo = $request->file('logo')->store('public');
             }
 
@@ -37,14 +38,15 @@ class CompanyController extends Controller
 
             DB::commit();
 
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             DB::rollBack();
         }
 
         return redirect()->back();
     }
 
-    public function deleteCompany(Company $company){
+    public function deleteCompany(Company $company)
+    {
 
         try {
 
@@ -57,14 +59,15 @@ class CompanyController extends Controller
 
             DB::commit();
 
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             DB::rollBack();
         }
 
         return redirect()->back();
     }
 
-    public function updateCompany(Request $request, Company $company){
+    public function updateCompany(Request $request, Company $company)
+    {
 
         try {
 
@@ -73,7 +76,7 @@ class CompanyController extends Controller
             $company->name = $request->input('name');
             $company->priority = $request->input('priority');
 
-            if($request->file('logo')){
+            if ($request->file('logo')) {
                 $company->logo = $request->file('logo')->store('public');
             }
 
@@ -81,8 +84,9 @@ class CompanyController extends Controller
 
             DB::commit();
 
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             DB::rollBack();
+            return redirect()->back()->withErrors(['message' => $exception->getMessage()]);
         }
 
         return redirect()->back();
