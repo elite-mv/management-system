@@ -252,7 +252,7 @@
             <td colspan="2" class="small bg-yellow text-center fw-bold">QTY</td>
             <td colspan="3" class="small bg-yellow text-center fw-bold">UOM</td>
             <td colspan="2" class="small bg-yellow text-center fw-bold">JOB ORDER</td>
-            <td colspan="2" class="small bg-yellow text-center fw-bold">DESCRIPTION</td>
+            <td colspan="7" class="small bg-yellow text-center fw-bold">DESCRIPTION</td>
             <td colspan="2" class="small bg-yellow text-center fw-bold">UNIT COST</td>
             <td colspan="2" class="small bg-yellow text-center fw-bold">TOTAL</td>
         </tr>
@@ -263,15 +263,13 @@
                 <td colspan="3" class="small px-2 bg-transparent"
                     style="max-width: 10ch">{{$item->measurement->name}}</td>
                 <td colspan="2" class="small px-2 bg-transparent" style="max-width: 20ch">{{$item->jobOrder->name}}</td>
-                <td colspan="2" class="small bg-transparent text-overflow">
+                <td colspan="7" class="small bg-transparent text-overflow">
                     <p class="m-0 p-0 text-truncate" style="max-width: 20ch">{{$item->description}}</p>
                 </td>
                 <td colspan="2"
                     class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->cost) !!}</td>
                 <td colspan="2"
                     class="small px-2 bg-transparent">{!! \App\Helper\Helper::formatPeso($item->total) !!}</td>
-                <td colspan="3" class="small px-2 bg-transparent">{{$item->status}}</td>
-                <td colspan="2" class="small px-2 bg-transparent">{{$item->remarks}}</td>
             </tr>
 {{--            <tr>--}}
 {{--                <td colspan="3" class="small px-2 bg-transparent" >{{$item->quantity}}</td>--}}
