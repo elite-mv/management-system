@@ -3512,3 +3512,5 @@ update old_request_lists set bk_status = 'Disapproved' where bk_status = 'Disapp
 update old_request_lists set acc_status = 'Disapproved' where acc_status = 'Disapprove';
 update old_request_lists set fin_status = 'Disapproved' where fin_status = 'Disapprove';
 update old_request_lists set aud_status = 'Disapproved' where aud_status = 'Disapprove';
+update old_request_lists set prepared_by = 'MS. AMORBELLE DIJAMCO' where prepared_by = 'belledijamco' or where prepared_by = 'Belle Dijamco';
+update old_request_lists set prepared_by = '[DEVELOPER]' where prepared_by = '[ TESTER ]';
