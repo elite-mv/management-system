@@ -24,23 +24,20 @@
             <td>
                 @if($request->bankDetails && $request->bankDetails->bank)
                     {{ $request->bankDetails->bank->name}}
-                @else
-                    --
                 @endif
             </td>
             <td>
                 @if($request->bankDetails && $request->bankDetails->code)
                     {{ $request->bankDetails->code->code}}
-                @else
-                    --
                 @endif
             </td>
             <td>
                 @if($request->bankDetails)
                     {{ $request->bankDetails->check_number}}
-                @else
-                    --
                 @endif
+            </td>
+            <td>
+                {{\Carbon\Carbon::now()->format('m d Y')}}
             </td>
         </tr>
     @endforeach

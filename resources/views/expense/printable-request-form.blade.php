@@ -95,8 +95,6 @@
 
 @section('body')
 
-    {{--    {{count($errors) }}--}}
-
     @if($errors->any())
         <div class="container-fluid mt-2">
             <div class="alert alert-danger" role="alert">
@@ -237,7 +235,7 @@
                         <tbody>
                         <tr>
                             <td colspan="4" class="small px-2">Date:</td>
-                            <td colspan="8" class="small px-2">{{$request->created_at->format('Y-m-d H:m')}}</td>
+                            <td colspan="8" class="small px-2">{{$request->created_at->format('Y-m-d H:i')}}</td>
                             <td colspan="2" class="small px-2">CV NO:</td>
                             <td colspan="4" class="small px-2">
                                 @if(isset($request->checkVoucher))

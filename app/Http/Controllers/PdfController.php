@@ -29,11 +29,12 @@ class PdfController
         Browsershot::html('<h1>Hello world!!</h1>')->save('example.pdf');
     }
 
-    public function index()
+    public function index(Request $request)
     {
 
         try {
 
+            $ids = explode(',', $request->input('id')[0]);
 
             $requests = ExpenseRequest::with(['bankDetails', 'preparedBy', 'company'])
                 ->withCount(['approvals' => function ($query) {
@@ -50,12 +51,12 @@ class PdfController
                             ->where('status', RequestApprovalStatus::APPROVED);
                     });
                 }])
+                ->whereIn('id', $ids)
                 ->withSum(['items' => function ($query) {
                     $query->select(DB::raw('SUM(quantity * cost)'))
                         ->whereIn('status', [RequestItemStatus::APPROVED->name, RequestItemStatus::PRIORITY->name])
                         ->groupBy('request_id');
                 }], 'approve_total')
-                ->withSum([], 'approve_total')
                 ->take(self::MAX_EXCEL_REQUEST)
                 ->get();
 
@@ -75,7 +76,7 @@ class PdfController
             $spreadsheet->getActiveSheet()->toArray(null, true, true, true); // Convert the new sheet to an array
             $data = $spreadsheet->getActiveSheet()->toArray(); // Get data from the new spreadsheet
 
-// Append the data to the new sheet
+                // Append the data to the new sheet
             foreach ($data as $rowIndex => $row) {
                 foreach ($row as $columnIndex => $value) {
                     $newSheet->setCellValue([$columnIndex + 1, $rowIndex + 1], $value); // Set values in the new sheet
