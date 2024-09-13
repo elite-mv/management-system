@@ -203,7 +203,9 @@
                                 <tfoot>
                                 <tr>
                                     <td colspan="13">
-                                        {{$requests->links()}}
+                                        <div class="container-fluid">
+                                            {{$requests->links()}}
+                                        </div>
                                     </td>
                                 </tr>
                                 </tfoot>
