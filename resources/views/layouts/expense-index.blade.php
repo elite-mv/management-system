@@ -436,7 +436,7 @@
         </div>
         <div class="col-10 m-0 p-0 d-flex flex-column" style="
         background-image: repeating-linear-gradient(0deg, rgb(221,219,219) 0px, rgb(221,219,219) 1px,transparent 1px, transparent 51px),repeating-linear-gradient(90deg, rgb(221,219,219) 0px, rgb(221,219,219) 1px,transparent 1px, transparent 51px),linear-gradient(90deg, rgb(201,201,201),rgb(201,201,201));
-        min-height: 100vh;" id="collapseLayout2">
+        min-height: 100vh; position: relative;" id="collapseLayout2">
             <div class="d-flex align-items-center px-3 bg-white bg-gradient" style="height: 70px;">
                 <button class="btn btn-link text-dark me-auto collapsed" id="collapseButton">
                     <i class="fas fa-bars"></i>
@@ -449,51 +449,51 @@
                     </button>
                 </form>
             </div>
+            <ul class="lightrope">
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
             @yield('body')
-                <ul class="lightrope">
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                </ul>
         </div>
     </div>
 </main>
