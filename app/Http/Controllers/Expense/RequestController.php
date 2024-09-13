@@ -146,18 +146,16 @@ class RequestController extends Controller
             $qb->whereDate('created_at', '<=', Carbon::createFromFormat('Y-m-d', $request->input('to'))->toDateString());
         });
 
-
-        $query->with(['items' => function ($q) {
-            $q->select(['request_id', DB::raw('quantity * cost as total_cost')]);
-        }]);
-
+        $query->with('items', function ($query) {
+            $query->select('request_id', DB::raw('SUM(quantity * cost) as total_cost'))
+                ->groupBy('request_id');
+        });
 
         if ($request->input('order') && $request->input('order') === 'ASC') {
             $query->orderBy('created_at');
         }else{
             $query->orderBy('created_at', 'desc');
         }
-
 
         $query->where('prepared_by', Auth::id());
 
