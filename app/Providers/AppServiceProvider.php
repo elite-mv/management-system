@@ -38,7 +38,7 @@ class AppServiceProvider extends ServiceProvider
                 return true;
             }
 
-            $isAllowed = in_array($user->role->name, [
+            return in_array($user->role->name, [
                 UserRole::BOOK_KEEPER->value,
                 UserRole::AUDITOR->value,
                 UserRole::ACCOUNTANT->value,
@@ -46,7 +46,6 @@ class AppServiceProvider extends ServiceProvider
                 UserRole::PRESIDENT->value,
             ]);
 
-            return $isAllowed;
         });
 
         Gate::define('book-keeper', function (User $user) {

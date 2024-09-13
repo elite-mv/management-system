@@ -153,7 +153,7 @@ class RequestController extends Controller
 
         if ($request->input('order') && $request->input('order') === 'ASC') {
             $query->orderBy('created_at');
-        }else{
+        } else {
             $query->orderBy('created_at', 'desc');
         }
 
@@ -277,33 +277,28 @@ class RequestController extends Controller
         switch ($role->name) {
             case UserRole::BOOK_KEEPER->value:
 
-                if(!$expenseRequest->bookKeeper){
-                    $viewForm = 'expense.view-request-form';
-                }
-
                 if ($expenseRequest->bookKeeper && $expenseRequest->bookKeeper->status != RequestApprovalStatus::PENDING) {
                     $viewForm = 'expense.view-request-form';
                 }
                 break;
             case UserRole::ACCOUNTANT->value:
 
-                if(!$expenseRequest->accountant){
-                    $viewForm = 'expense.view-request-form';
-                }
 
                 if ($expenseRequest->accountant && $expenseRequest->accountant->status != RequestApprovalStatus::PENDING) {
                     $viewForm = 'expense.view-request-form';
                 }
+
                 break;
             case UserRole::AUDITOR->value:
-
-                if(!$expenseRequest->auditor){
-                    $viewForm = 'expense.view-request-form';
-                }
 
                 if ($expenseRequest->auditor && $expenseRequest->auditor->status != RequestApprovalStatus::PENDING) {
                     $viewForm = 'expense.view-request-form';
                 }
+                break;
+
+            case UserRole::STAFF->value:
+
+                $viewForm = 'expense.view-request-form';
                 break;
         }
 
