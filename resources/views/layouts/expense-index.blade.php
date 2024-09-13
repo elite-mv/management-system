@@ -413,12 +413,15 @@
                             <small><b>Downloadable Forms</b></small>
                         </a>
                     </div>
-                    <div class="mb-3">
-                        <a href="/expense/daily-request" class="daily_request_nav">
-                            <i class="fas fa-calendar" style="height: 20px; width: 20px;"></i>
-                            <small><b>Daily Request</b></small>
-                        </a>
-                    </div>
+                @endcan
+
+                @can('finance-president',auth()->user())
+                <div class="mb-3">
+                    <a href="/expense/daily-request" class="daily_request_nav">
+                        <i class="fas fa-calendar" style="height: 20px; width: 20px;"></i>
+                        <small><b>Daily Request</b></small>
+                    </a>
+                </div>
                 @endcan
 
                 <hr class="border-1 border-top border-light m-0 p-0 w-100"/>

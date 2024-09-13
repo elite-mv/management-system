@@ -117,9 +117,11 @@
                     View Logs
                 </button>
 
-                <a class="btn btn-secondary" type="button" href="/check-excel/{{$request->id}}">
-                    <i class="fas fa-plus-circle me-2"></i>Check Writer
-                </a>
+                @can('finance-president',auth()->user())
+                    <a class="btn btn-secondary" type="button" href="/check-excel/{{$request->id}}">
+                        <i class="fas fa-plus-circle me-2"></i>Check Writer
+                    </a>
+                @endcan
             </div>
 
             <div class="container-fluid mx-auto bg-white">
@@ -1061,8 +1063,7 @@
                             <td colspan="4" class="px-2">
                                 <div class="d-flex gap-1 align-items-center mb-1">
                                     <label class="small">Others:</label>
-                                    <input
-                                        class="small w-100 outline-0 border-1 border-top-0 border-start-0 border-end-0">
+                                    <input value="{{$request->others}}" id="othersInput" class="small w-100 outline-0 border-1 border-top-0 border-start-0 border-end-0">
                                 </div>
                             </td>
                             <td colspan="2" class="fw-bold small px-2">Voucher No</td>
@@ -1369,7 +1370,11 @@
 
         const commentForm = document.querySelector('#commentForm');
         const commentHolder = document.querySelector('#commentsHolder');
+
+        const othersInput = document.querySelector('#othersInput');
+
         let initialLoad = true;
+
 
         if (receivedBy) {
             receivedBy.addEventListener('change', async () => {
@@ -2513,6 +2518,36 @@
                     fileUpload.value = null;
                 }
             })
+        }
+
+        if (othersInput) {
+            othersInput.addEventListener('change', async () => {
+
+                try {
+
+                    const formData = new FormData();
+
+                    formData.append('others', othersInput.value);
+
+                    const response = await fetch('/expense/expense-request/others/{{$request->id}}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Others updated failed!');
+                    }
+
+                    showSuccessMessage('Others updated');
+
+                } catch (error) {
+                    othersInput.value = null;
+                    showErrorMessage(error.message);
+                }
+            });
         }
 
         function showSuccessMessage(message) {
