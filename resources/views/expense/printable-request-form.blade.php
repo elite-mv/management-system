@@ -96,11 +96,11 @@
 @section('body')
 
     @if($errors->any())
-        <div class="container-fluid mt-2">
+        @if($errors->any())
             <div class="alert alert-danger" role="alert">
-                An error occurred!, please contact developer
+                {{$errors->first()}}
             </div>
-        </div>
+        @endif
     @endif
 
     <div class="row m-0">
