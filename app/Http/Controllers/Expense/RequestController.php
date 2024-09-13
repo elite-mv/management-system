@@ -56,9 +56,9 @@ class RequestController extends Controller
 
             $validated = $request->validate([
                 'company' => 'required',
-                'supplier' => 'required',
+                'supplier' => 'nullable',
                 'requestedBy' => 'required',
-                'paidTo' => 'required',
+                'paidTo' => 'nullable',
                 'priorityLevel' => 'required',
                 'priority' => 'nullable',
             ]);
