@@ -40,7 +40,7 @@ class ChatAlert extends Mailable
      */
     public function envelope(): Envelope
     {
-        $date = Carbon::now()->format('Y-m-d');
+        $date = Carbon::now()->format('Y-m-d H:i:s');
 
         return new Envelope(
             subject: 'Request Comment Alert ' . $date,
