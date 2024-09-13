@@ -48,6 +48,21 @@ class AppServiceProvider extends ServiceProvider
 
         });
 
+        Gate::define('manage', function () {
+
+            switch (Auth::user()->role->name) {
+                case UserRole::ACCOUNTANT:
+                case UserRole::AUDITOR:
+                case UserRole::BOOK_KEEPER:
+                case UserRole::FINANCE:
+                case UserRole::PRESIDENT:
+                    return true;
+                default:
+                    return false;
+            }
+
+        });
+
         Gate::define('book-keeper', function (User $user) {
             return $user->role->name == UserRole::BOOK_KEEPER->value;
         });

@@ -1210,34 +1210,66 @@
                                     <b>TOTAL</b>
                                 </div>
                             </div>
-
                             <div class="row">
                                 <div class="col-2 m-0 p-0 small border-0">
-                                    <input id="editItemQuantity" type="text" class="p-2 h-100 w-100" name="quantity">
+                                    @can('manage')
+                                        <input id="editItemQuantity" type="text" class="p-2 h-100 w-100" name="quantity">
+                                    @else
+                                        <input id="editItemQuantity" type="text" class="p-2 h-100 w-100" name="quantity" disabled>
+                                    @endcan
                                 </div>
                                 <div class="col-2 m-0 p-0 small border-0">
-                                    <select name="measurement" id="editItemUnitOfMeasurement" class="p-2 h-100 w-100">
-                                        @foreach($measurements as $measurement)
-                                            <option value="{{$measurement->id}}">{{$measurement->name}}</option>
-                                        @endforeach
-                                    </select>
+                                    @can('manage')
+                                        <select name="measurement" id="editItemUnitOfMeasurement" class="p-2 h-100 w-100">
+                                            @foreach($measurements as $measurement)
+                                                <option value="{{$measurement->id}}">{{$measurement->name}}</option>
+                                            @endforeach
+                                        </select>
+                                    @else
+                                        <select disabled name="measurement" id="editItemUnitOfMeasurement" class="p-2 h-100 w-100">
+                                            @foreach($measurements as $measurement)
+                                                <option value="{{$measurement->id}}">{{$measurement->name}}</option>
+                                            @endforeach
+                                        </select>
+                                    @endcan
                                 </div>
                                 <div class="col-2 m-0 p-0 small border-0">
-                                    <select name="jobOrder" id="editItemJobOrder" class="p-2 h-100 w-100">
-                                        @foreach($jobOrders as $jobOrder)
-                                            <option value="{{$jobOrder->id}}">{{$jobOrder->reference}}</option>
-                                        @endforeach
-                                    </select>
+                                    @can('manage')
+                                        <select name="jobOrder" id="editItemJobOrder" class="p-2 h-100 w-100">
+                                            @foreach($jobOrders as $jobOrder)
+                                                <option value="{{$jobOrder->id}}">{{$jobOrder->reference}}</option>
+                                            @endforeach
+                                        </select>
+                                    @else
+                                        <select disabled name="jobOrder" id="editItemJobOrder" class="p-2 h-100 w-100">
+                                            @foreach($jobOrders as $jobOrder)
+                                                <option value="{{$jobOrder->id}}">{{$jobOrder->reference}}</option>
+                                            @endforeach
+                                        </select>
+                                    @endcan
                                 </div>
                                 <div class="col-2 m-0 p-0 small border-0">
-                                    <input name="description" id="editItemDescription" type="text"
-                                           class="p-2 h-100 w-100">
+                                    @can('manage')
+                                        <input name="description" id="editItemDescription" type="text"
+                                               class="p-2 h-100 w-100">
+                                    @else
+                                        <input name="description" id="editItemDescription" type="text"
+                                               class="p-2 h-100 w-100" disabled>
+                                    @endcan
                                 </div>
                                 <div class="col-2 small border-0 m-0 p-0">
-                                    <input name="cost" id="editItemCost" type="text" class="p-2 h-100 w-100">
+                                    @can('manage')
+                                        <input name="cost" id="editItemCost" type="text" class="p-2 h-100 w-100">
+                                    @else
+                                        <input name="cost" id="editItemCost" type="text" class="p-2 h-100 w-100" disabled>
+                                    @endcan
                                 </div>
                                 <div class="col-2 small border-0 m-0 p-0">
-                                    <input id="editItemTotal" type="text" class="p-2 h-100 w-100" name="total">
+                                    @can('manage')
+                                        <input id="editItemTotal" type="text" class="p-2 h-100 w-100" name="total">
+                                    @else
+                                        <input id="editItemTotal" type="text" class="p-2 h-100 w-100" name="total" disabled>
+                                    @endcan
                                 </div>
                             </div>
 
@@ -1274,23 +1306,41 @@
                                 </div>
                                 <div class="col-4 text-center border border-dark small "
                                      style="border-style: solid none solid solid !important; word-wrap: break-word; display: flex; align-items: center; justify-content: center;">
-                                    <select id="editItemStatus" class="p-2" name="status">
-                                        @foreach(App\Enums\RequestItemStatus::status() as $requestStatus)
-                                            <option value="{{$requestStatus->name}}">{{$requestStatus->name}}</option>
-                                        @endforeach
-                                    </select>
+
+                                    @can('manage')
+                                        <select id="editItemStatus" class="p-2" name="status">
+                                            @foreach(App\Enums\RequestItemStatus::status() as $requestStatus)
+                                                <option value="{{$requestStatus->name}}">{{$requestStatus->name}}</option>
+                                            @endforeach
+                                        </select>
+                                    @else
+                                        <select id="editItemStatus" class="p-2" name="status" disabled>
+                                            @foreach(App\Enums\RequestItemStatus::status() as $requestStatus)
+                                                <option value="{{$requestStatus->name}}">{{$requestStatus->name}}</option>
+                                            @endforeach
+                                        </select>
+                                    @endcan
                                 </div>
                                 <div class="col-4 text-center p-0" style="word-wrap: break-word;">
-                                    <textarea id="editItemRemarks" rows="5" placeholder="Type here..."
-                                              style="resize: none;" class="p-2 w-100 h-100 small"
-                                              name="remarks"></textarea>
+
+                                    @can('manage')
+                                        <textarea id="editItemRemarks" rows="5" placeholder="Type here..."
+                                                  style="resize: none;" class="p-2 w-100 h-100 small"
+                                                  name="remarks"></textarea>
+                                    @else
+                                        <textarea disabled id="editItemRemarks" rows="5" placeholder="Type here..."
+                                                  style="resize: none;" class="p-2 w-100 h-100 small"
+                                                  name="remarks"></textarea>
+                                    @endcan
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        @can('manage')
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        @endcan
                     </div>
                 </form>
             </div>

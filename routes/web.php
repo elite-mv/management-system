@@ -136,7 +136,6 @@ Route::prefix('expense')->group(function () {
             ->get('/request/{id}', [RequestController::class, 'viewRequest'])
             ->name('request');
 
-
         Route::post('/expense-request/book-keeper/approval/{requestID}', [RequestApprovalController::class, 'updateBookKeeper']);
         Route::post('/expense-request/accountant/approval/{requestID}', [RequestApprovalController::class, 'updateAccountant']);
         Route::post('/expense-request/finance/approval/{requestID}', [RequestApprovalController::class, 'updateFinance']);
