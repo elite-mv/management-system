@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Expense;
 
+use App\Enums\RequestApprovalStatus;
 use App\Enums\RequestItemStatus;
+use App\Enums\RequestStatus;
 use App\Models\Expense\JobOrder;
 use App\Models\Expense\Measurement;
 use App\Models\Expense\RequestItem;
 use App\Models\Expense\RequestItemImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
@@ -129,6 +132,42 @@ class RequestItemController extends Controller
 
     }
 
+    public function getRequestItemStatus(Request $request, $requestID)
+    {
+
+        try {
+
+//            $requestItem =\App\Models\Expense\Request::findOrFail(1);
+
+            $requestItem = \App\Models\Expense\Request::select(['id'])
+
+                ->with(['items' => function ($query) {
+                    $query->select('request_id', DB::raw('SUM(quantity * cost)'))
+                        ->groupBy('request_id');
+                }, 'company'])
+                ->when($request->input('payment_status'), function ($query) use ($request) {
+                    $query->where('status', RequestStatus::valueOf($request->input('payment_status')));
+                })
+                ->when($request->input('status'), function ($query) use ($request) {
+                    $query->whereHas('approvals', function ($query) use ($request) {
+                        $query->where('status', RequestApprovalStatus::valueOf($request->input('payment_status')));
+                        $query->andWhere('role_id', Auth::id());
+                    }, 1);
+                })
+                ->findOrFail($requestID);
+
+            return $requestItem;
+
+//            return response()->json($requestItem);
+
+        } catch (\Exception $exception) {
+//            return response()->json(['message' => 'unable to fetch request item'], 400);
+            return response()->json(['message' => $exception->getMessage()], 400);
+        }
+
+    }
+
+
     public function updateItem(Request $request, $id)
     {
 
@@ -200,7 +239,7 @@ class RequestItemController extends Controller
 
                 $filename = $file->store('public');
 
-                if(!$filename){
+                if (!$filename) {
                     throw new \Exception('Unable to store image');
                 }
 
