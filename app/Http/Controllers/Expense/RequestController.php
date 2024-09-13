@@ -754,7 +754,11 @@ class RequestController extends Controller
                 })
                 ->orderBy('requests.id')
                 ->pluck('id')
-                ->firstOrFail();
+                ->first();
+
+            if (!isset($id)) {
+                throw new \Exception('No more next request');
+            }
 
             return redirect()->route('request', ['id' => $id]);
 
