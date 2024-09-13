@@ -168,20 +168,27 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="row justify-content-between" style="height: 30px">
-                                    <div class="col-sm-12 col-md-6 text-start">
-                                        <i class="fas fa-table me-1"></i>
-                                        <b>Requests</b>
+                                    <div class="col-sm-12 col-md-6 text-start d-flex gap-2 align-items-center">
+                                        <div>
+                                            <i class="fas fa-table me-1"></i>
+                                            <b>Requests</b>
+                                        </div>
+
+                                        <div class="fw-bold">
+                                            <span>Total: </span>
+                                            <span class="pl-5 m-0">{!! \App\Helper\Helper::formatPeso($total) !!}</span>
+                                        </div>
                                     </div>
                                     <div class="col-sm-12 col-md-6 text-end d-none" id="collapseLayout">
                                         <div class="d-flex gap-2 justify-content-end">
                                             {{-- <form method="POST" action="/test-pdf" id="downloadExpenseForm"> --}}
-                                                @csrf
-                                                <input id="downloadExpenseInput" type="hidden" name="id[]">
-                                                {{-- <button class="btn btn-sm btn-outline-danger rounded-0 px-4" type="submit"> --}}
-                                                <button class="btn btn-sm btn-outline-danger rounded-0 px-4" type="button"
+                                            @csrf
+                                            <input id="downloadExpenseInput" type="hidden" name="id[]">
+                                            {{-- <button class="btn btn-sm btn-outline-danger rounded-0 px-4" type="submit"> --}}
+                                            <button class="btn btn-sm btn-outline-danger rounded-0 px-4" type="button"
                                                     onclick="alert('This is temporary unavailable, thank you.')">
-                                                    Download Forms
-                                                </button>
+                                                Download Forms
+                                            </button>
                                             {{-- </form> --}}
                                             <form method="POST" action="/check-excel" id="downloadCheckForm">
                                                 @csrf

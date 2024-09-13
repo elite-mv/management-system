@@ -157,8 +157,15 @@
                             <div class="card-header">
                                 <div class="row" style="height: 30px">
                                     <div class="col-sm-12 col-md-6 text-start">
-                                        <i class="fas fa-table me-1"></i>
-                                        <b>Requests</b>
+                                        <div>
+                                            <i class="fas fa-table me-1"></i>
+                                            <b>Requests</b>
+                                        </div>
+
+                                        <div class="fw-bold">
+                                            <span>Total: </span>
+                                            <span class="pl-5 m-0">{!! \App\Helper\Helper::formatPeso($total) !!}</span>
+                                        </div>
                                     </div>
                                     <div class="col-sm-12 col-md-6 text-end d-none" id="collapseLayout">
                                         <div class="d-flex gap-2 justify-content-end">
