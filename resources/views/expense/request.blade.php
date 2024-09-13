@@ -151,14 +151,14 @@
                                 <div class="row">
                                     <p class="col-12 col-md-2 fw-bold">Quantity:</p>
                                     <div class="col-12 col-md-10">
-                                        <input type="number" id="requestQuantity" min="1" class="p-2 form-control" autocomplete="off">
+                                        <input type="number" id="requestQuantity" min="1" class="p-2 form-control" autocomplete="off" required>
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <p class="col-12 col-md-2 fw-bold">Units of measurement:</p>
                                     <div class="col-12 col-md-10">
-                                        <select id="requestUnitOfMeasure" class="p-2 form-control">
+                                        <select id="requestUnitOfMeasure" class="p-2 form-control" required>
                                             <option disabled selected>--</option>
                                             @foreach($measurements as $measurement)
                                                 <option value="{{$measurement->id}}">{{$measurement->name}}</option>
@@ -170,7 +170,7 @@
                                 <div class="row">
                                     <p class="col-12 col-md-2 fw-bold">Job Order:</p>
                                     <div class="col-12 col-md-10">
-                                        <select id="requestJobOrder" class="form-control p-2">
+                                        <select id="requestJobOrder" class="form-control p-2" required>
                                             <option disabled selected>--</option>
                                             @foreach($jobOrders as $jobOrder)
                                                 <option value="{{$jobOrder->id}}">{{$jobOrder->reference}}</option>
@@ -182,14 +182,14 @@
                                 <div class="row">
                                     <p class="col-12 col-md-2 fw-bold">Description:</p>
                                     <div class="col-12 col-md-10">
-                                        <input type="text" id="requestDescription" class="p-2 form-control" autocomplete="off">
+                                        <input type="text" id="requestDescription" class="p-2 form-control" autocomplete="off" required>
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <p class="col-12 col-md-2 fw-bold">Unit cost:</p>
                                     <div class="col-12 col-md-10">
-                                        <input type="number" id="requestUnitCost" class="p-2 form-control" step="0.1">
+                                        <input type="number" id="requestUnitCost" class="p-2 form-control" step="0.1" required>
                                     </div>
                                 </div>
 

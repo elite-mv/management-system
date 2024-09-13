@@ -29,9 +29,9 @@ class AuthController extends Controller
             $user = Auth::user();
 
             // Check if the user's company ID is 3
-            if ($user->company_id === 3) {
-                return redirect()->intended('/income/gti');
-            }
+            // if ($user->company_id === 3) {
+            //     return redirect()->intended('/income/gti');
+            // }
 
             // Default redirection for other users
             return redirect()->intended('/expense/request');

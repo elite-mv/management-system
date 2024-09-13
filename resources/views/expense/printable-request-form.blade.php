@@ -1128,12 +1128,17 @@
                 </div>
                 <div class="list-group list-group-flush border-bottom scroll-area">
                     @foreach($logs as $log)
-                        <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">
-                            <div class="d-flex w-100 align-items-center justify-content-between">
-                                <strong class="mb-1">{{$log->user->name}}</strong>
-                                <small class="text-muted">{{$log->created_at->format('Y-m-d h:m A')}}</small>
+                        <a href="#" class="list-group-item list-group-item-action py-3 lh-tight d-flex align-items-center">
+                            <div class="w-100">
+                                <div class="d-flex w-100 align-items-center justify-content-between">
+                                    <strong class="mb-1">{{$log->user->name}}</strong>
+                                    <small class="text-muted">{{$log->created_at->format('Y-m-d h:m A')}}</small>
+                                </div>
+                                <div class="col-10 mb-1 small">{{$log->description}}</div>
                             </div>
-                            <div class="col-10 mb-1 small">{{$log->description}}</div>
+                            @can('developer', auth()->user())
+                                <button class="btn btn-sm btn-close bg-transparent ms-3" onclick="delete_log({{$log->id}});"></button>
+                            @endcan
                         </a>
                     @endforeach
                 </div>
@@ -2558,6 +2563,44 @@
         function showErrorMessage(message) {
             toastErrorBody.innerHTML = message;
             toastErrorModal.show();
+        }
+
+        function delete_logs(data) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    try {
+
+                        const formData = new FormData();
+
+                        formData.append('log-id', data);
+
+                        const response = await fetch('/expense/expense-request/delete-log/{{$request->id}}', {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                            }
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Log deleting failed!');
+                        }
+
+                        showSuccessMessage('Log deleted.');
+
+                    } catch (error) {
+                        showErrorMessage(error.message);
+                    }
+                }
+            })
         }
 
     </script>

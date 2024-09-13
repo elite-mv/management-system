@@ -312,6 +312,34 @@ class RequestController extends Controller
 
     }
 
+    public function deleteLog(Request $request, $requestID)
+    {
+        try {
+
+            DB::beginTransaction();
+
+            RequestLogs::where('request_id', $requestID, 'id', $request>input('log-id'))->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'ok',
+                'status' => '200',
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => '500',
+            ],
+                500
+            );
+        }
+    }
+
     public function updatePaymentMethod(Request $request, AddRequestLog $addRequestLog, $requestID)
     {
         try {

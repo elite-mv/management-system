@@ -44,6 +44,7 @@ class AppServiceProvider extends ServiceProvider
                 UserRole::ACCOUNTANT->value,
                 UserRole::FINANCE->value,
                 UserRole::PRESIDENT->value,
+                UserRole::DEVELOPER->value,
             ]);
 
             return $isAllowed;
@@ -76,12 +77,15 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('managing-role', function (User $user) {
             return $user->role->name == UserRole::PRESIDENT->value || $user->role->name == UserRole::FINANCE->value || $user->role->name == UserRole::BOOK_KEEPER->value || $user->role->name == UserRole::ACCOUNTANT->value || $user->role->name == UserRole::AUDITOR->value;
         });
+
+        Gate::define('developer', function (User $user) {
+            return $user->role->name == UserRole::DEVELOPER->value;
+        });
+
         Gate::define('manage', function () {
 
             switch (Auth::user()->role->name) {
                 case UserRole::ACCOUNTANT->value:
-                case UserRole::AUDITOR->value:
-                case UserRole::BOOK_KEEPER->value:
                 case UserRole::FINANCE->value:
                 case UserRole::PRESIDENT->value:
                     return true;

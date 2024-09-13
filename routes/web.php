@@ -190,6 +190,7 @@ Route::prefix('expense')->group(function () {
             Route::post('/expense-request/delivery/supplier/{requestID}', [RequestDeliveryController::class, 'verifySupplier']);
             Route::delete('/expense-request/delivery/supplier/{requestID}', [RequestDeliveryController::class, 'deleteSupplier']);
             Route::post('/expense-request/payment-method/{requestID}', [RequestController::class, 'updatePaymentMethod']);
+            Route::delete('/expense-request/delete-log/{requestID}', [RequestController::class, 'deleteLog']);
             Route::post('/expense-request/attachment/{id}', [RequestController::class, 'updateAttachment']);
             Route::post('/expense-request/type/{id}', [RequestController::class, 'updateType']);
             Route::post('/expense-request/receipt/{id}', [RequestController::class, 'updateReceipt']);
