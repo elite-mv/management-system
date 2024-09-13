@@ -158,7 +158,7 @@
                                 <div class="row">
                                     <p class="col-12 col-md-2 fw-bold">Units of measurement:</p>
                                     <div class="col-12 col-md-10">
-                                        <select id="requestUnitOfMeasure" class="p-2 form-control">
+                                        <select id="requestUnitOfMeasure" class="p-2 form-select">
                                             <option disabled selected>--</option>
                                             @foreach($measurements as $measurement)
                                                 <option value="{{$measurement->id}}">{{$measurement->name}}</option>
@@ -170,7 +170,7 @@
                                 <div class="row">
                                     <p class="col-12 col-md-2 fw-bold">Job Order:</p>
                                     <div class="col-12 col-md-10">
-                                        <select id="requestJobOrder" class="form-control p-2">
+                                        <select id="requestJobOrder" class="form-select p-2">
                                             <option disabled selected>--</option>
                                             @foreach($jobOrders as $jobOrder)
                                                 <option value="{{$jobOrder->id}}">{{$jobOrder->reference}}</option>
