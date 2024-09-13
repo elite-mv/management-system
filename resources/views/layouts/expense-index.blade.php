@@ -443,7 +443,7 @@
                 </button>
                 <form method="POST" action="/logout" class="logoutForm">
                     @csrf
-                    <button class="btn btn-sm btn-outline-danger rounded-0" type="submit">
+                    <button class="btn btn-sm btn-outline-danger rounded-0" type="submit" onclick="localStorage.removeItem('checkedInputs');">
                         <i class="fas fa-sign-out-alt" style="margin-right: 5px;"></i>
                         <small>LOGOUT</small>
                     </button>
