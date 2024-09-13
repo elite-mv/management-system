@@ -48,7 +48,7 @@ class Request extends Model
         'created_at',
     ];
 
-    protected $appends = ['total', 'reference', 'fund', 'fund_item'];
+    protected $appends = ['total', 'fund', 'fund_item'];
 
     protected function casts(): array
     {
