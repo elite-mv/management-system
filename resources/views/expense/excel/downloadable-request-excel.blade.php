@@ -10,6 +10,7 @@
         <th>BANK</th>
         <th>BANK CODE</th>
         <th>CHECK NUMBER</th>
+        <th>DATE</th>
     </tr>
     </thead>
     <tbody>
@@ -36,9 +37,7 @@
                     {{ $request->bankDetails->check_number}}
                 @endif
             </td>
-            <td>
-                {{\Carbon\Carbon::now()->format('m d Y')}}
-            </td>
+            <td>{{\Carbon\Carbon::now()->format('mdY')}}</td>
         </tr>
     @endforeach
     </tbody>
