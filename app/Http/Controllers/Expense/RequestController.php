@@ -151,6 +151,14 @@ class RequestController extends Controller
             $q->select(['request_id', DB::raw('quantity * cost as total_cost')]);
         }]);
 
+
+        if ($request->input('order') && $request->input('order') === 'ASC') {
+            $query->orderBy('created_at');
+        }else{
+            $query->orderBy('created_at', 'desc');
+        }
+
+
         $query->where('prepared_by', Auth::id());
 
         $requests = $query->paginate($request->input('entries') ?? 20, ['*'], 'page', $request->input('page') ?? 1);
@@ -633,6 +641,43 @@ class RequestController extends Controller
             $requestModel = ModelsRequest::findOrFail($requestID);
 
             $requestModel->paid_to = $paidTo;
+
+            $requestModel->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'ok',
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'message' => $e->getMessage(),
+            ],
+                500
+            );
+        }
+    }
+
+    public function updateOthers(Request $request, $requestID)
+    {
+
+        try {
+
+            $validated = $request->validate([
+                'others' => 'required|string',
+            ]);
+
+            DB::beginTransaction();
+
+            $others = $validated['others'];
+
+            $requestModel = ModelsRequest::findOrFail($requestID);
+
+            $requestModel->others = $others;
 
             $requestModel->save();
 

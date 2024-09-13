@@ -318,6 +318,7 @@
         });
 
         $('#signin_form').find('input[name="password"]').on('input', function() {
+
             if ($(this).val().trim() !== '') {
 
                 $('#wrong-password').css({

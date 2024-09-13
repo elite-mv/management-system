@@ -157,6 +157,7 @@ Route::prefix('expense')->group(function () {
 
             Route::post('/terms/{requestID}', [RequestController::class, 'updateTerms']);
             Route::post('/paid-to/{requestID}', [RequestController::class, 'updatePaidTo']);
+            Route::post('/others/{requestID}', [RequestController::class, 'updateOthers']);
 
             Route::get('/comments/{requestID}', [RequestCommentController::class, 'viewComments'])->name('comments');
             Route::post('/comment/{requestID}', [RequestCommentController::class, 'addComment']);

@@ -55,8 +55,20 @@
 
                             <div class="row align-items-center">
                                 <div class="col-6 col-md-3 form-group d-flex gap-2 align-items-center">
+                                    <label class="form-label mb-0" for="status">Order</label>
+                                    <select name="order" class="form-select inputs" style="background-color: rgba(255, 255, 255, 0.4);
+                                    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
+                                    border: 1px solid rgba(255, 255, 255, 0.5);
+                                    border-right: 1px solid rgba(255, 255, 255, 0.2);
+                                    border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+                                        <option selected value="DESC" @selected($app->request->order == 'DESC')>DESCENDING</option>
+                                        <option value="ASC" @selected($app->request->order == 'ASC')>ASCENDING</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-6 col-md-3 form-group d-flex gap-2 align-items-center">
                                     <label class="form-label mb-0" for="status">Payment Status</label>
-                                    <select name="paymentStatus" class="form-select inputs" id="status" style="background-color: rgba(255, 255, 255, 0.4);
+                                    <select name="paymentStatus" class="form-select inputs" style="background-color: rgba(255, 255, 255, 0.4);
                                     box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
                                     border: 1px solid rgba(255, 255, 255, 0.5);
                                     border-right: 1px solid rgba(255, 255, 255, 0.2);
@@ -65,22 +77,6 @@
                                         @foreach(\App\Enums\RequestStatus::cases() as $status)
                                             <option
                                                 @selected($app->request->paymentStatus == $status->value) value="{{$status->value}}">{{$status->value}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="col-6 col-md-3 form-group d-flex gap-2 align-items-center">
-                                    <label class="form-label mb-0 text-capitalize"
-                                           for="status">{{auth()->user()->role->name}}</label>
-                                    <select name="status" class="form-select inputs" id="status" style="background-color: rgba(255, 255, 255, 0.4);
-                                    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
-                                    border: 1px solid rgba(255, 255, 255, 0.5);
-                                    border-right: 1px solid rgba(255, 255, 255, 0.2);
-                                    border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
-                                        <option value="ALL">All</option>
-                                        @foreach(\App\Enums\RequestApprovalStatus::status() as $status)
-                                            <option
-                                                @selected($app->request->status == $status->name) value="{{$status->name}}">{{$status->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -202,6 +198,10 @@
         })
 
         $('#filterForm').find('select[name="entity"]').on('change', function () {
+            $('#filterForm').submit();
+        })
+
+        $('#filterForm').find('select[name="order"]').on('change', function () {
             $('#filterForm').submit();
         })
 

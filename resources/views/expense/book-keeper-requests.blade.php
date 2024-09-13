@@ -165,7 +165,7 @@
                                             @csrf
                                             <input id="downloadExpenseInput" type="hidden" name="id[]">
                                             <button class="btn btn-sm btn-outline-danger rounded-0 px-4" type="submit">Download
-                                                Check
+                                                Forms
                                             </button>
                                         </form>
                                     </div>

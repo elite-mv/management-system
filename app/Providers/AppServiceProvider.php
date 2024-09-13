@@ -62,11 +62,11 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Gate::define('finance-president', function (User $user) {
-            return $user->role->name == UserRole::PRESIDENT->value || $user->role == UserRole::FINANCE->value;
+            return $user->role->name == UserRole::PRESIDENT->value || $user->role->name == UserRole::FINANCE->value;
         });
 
         Gate::define('finance', function (User $user) {
-            $user->role == UserRole::FINANCE->value;
+            return $user->role->name == UserRole::FINANCE->value;
         });
 
         Gate::define('president', function (User $user) {
@@ -74,7 +74,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Gate::define('managing-role', function (User $user) {
-            return $user->role->name == UserRole::PRESIDENT->value || $user->role == UserRole::FINANCE->value || $user->role->name == UserRole::BOOK_KEEPER->value || $user->role->name == UserRole::ACCOUNTANT->value || $user->role->name == UserRole::AUDITOR->value;
+            return $user->role->name == UserRole::PRESIDENT->value || $user->role->name == UserRole::FINANCE->value || $user->role->name == UserRole::BOOK_KEEPER->value || $user->role->name == UserRole::ACCOUNTANT->value || $user->role->name == UserRole::AUDITOR->value;
         });
         Gate::define('manage', function () {
 
