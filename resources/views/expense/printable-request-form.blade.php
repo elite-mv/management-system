@@ -81,7 +81,6 @@
             background-color: transparent;
         }
 
-
         select {
             cursor: pointer;
         }
@@ -133,7 +132,7 @@
                             <div class="border border-dark"
                                  style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
                                 <img src="{{\Illuminate\Support\Facades\Storage::url($request->company->logo)}}"
-                                     class="img-fluid" alt="LOGO"
+                                     class="img-fluid" alt="FIXING"
                                      style="height: 100px; width: auto;">
                             </div>
                             <div class="bg-red text-center text-white border border-dark"
@@ -220,7 +219,6 @@
                                 <h1><b>{{ $request->pad_id}}</b></h1>
                             </div>
                         </div>
-
                     </div>
 
                     <div class="mb-2 btn-group rounded w-100" role="group" aria-label="Basic outlined example">
@@ -249,18 +247,24 @@
                         <tr>
                             <td colspan="4" class="small px-2">Supplier:</td>
                             <td colspan="8" class="small px-2 text-capitalize">
-                                @management
-                                <small>{{$request->supplier}}</small>
+                                @can('managing-role')
+                                    <small>{{$request->supplier}}</small>
                                 @else
                                     <small>[HIDDEN]</small>
-                                    @endmanagement
+                                @endcan
                             </td>
                             <td colspan="2" class="small px-2">REF NO:</td>
                             <td colspan="4" class="small px-2">{{ $request->reference }}</td>
                         </tr>
                         <tr>
                             <td colspan="4" class="small px-2">Paid to:</td>
-                            <td colspan="14" class="small px-2 text-capitalize">{{$request->paid_to}}</td>
+                            <td colspan="14" class="small px-2 text-capitalize">
+                                @can('managing-role')
+                                    <small>{{$request->paid_to}}</small>
+                                @else
+                                    <small>[HIDDEN]</small>
+                                @endcan
+                            </td>
                         </tr>
                         <tr>
                             <td colspan="4" class="small px-2">Requested By:</td>
@@ -290,7 +294,7 @@
                                 <td colspan="3" class="small px-2 bg-transparent">{{$item->measurement->name}}</td>
                                 <td colspan="2" class="small px-2 bg-transparent">{{$item->jobOrder->reference}}</td>
                                 <td colspan="2" class="small bg-transparent">
-                                    <div class="d-flex align-items-center bg-transparent">
+                                    <div class="d-flex align-items-center bg-transparent px-2">
                                         <p class="m-0 p-0 text-ellipsis"
                                            style="max-width: 45ch">{{$item->description}}</p>
                                         <i class="ms-auto fas fa-images"></i>
@@ -318,11 +322,11 @@
                         <tr>
                             <td colspan="4" class="px-2 small bg-gray">Supplier</td>
                             <td colspan="5" class="px-2 small">
-                                @management
-                                <small>{{$request->supplier}}</small>
+                                @can('managing-role')
+                                    <input id="supplierInput" value="{{$request->supplier}}" class="border-0 outline-0 w-100 small  text-capitalize">
                                 @else
                                     <small>[HIDDEN]</small>
-                                    @endmanagement
+                                @endcan
                             </td>
                             <td colspan="3" class="px-2 small bg-gray">Payment Type</td>
                             <td colspan="6" class="px-2 small">
@@ -350,11 +354,8 @@
                         <tr>
                             <td colspan="4" class="px-2 small bg-gray">Paid to</td>
                             <td colspan="5" class="px-2 small">
-                                @can('manage')
-                                    @if($request->paid_to)
-                                        <input id="paidToInput" value="{{$request->paid_to}}"
-                                               class="border-0 outline-0 w-100 small  text-capitalize">
-                                    @endif
+                                @can('managing-role')
+                                    <input id="paidToInput" value="{{$request->paid_to}}" class="border-0 outline-0 w-100 small  text-capitalize">
                                 @else
                                     <small>[HIDDEN]</small>
                                 @endcan
@@ -380,7 +381,6 @@
                             </td>
                             <td colspan="3" class="small bg-yellow text-center fw-bold" style="width: 179px">TOTAL</td>
                         </tr>
-
                         @foreach ($request->approvedItems as $item)
                             <tr>
                                 <td colspan="4" class="small px-2 bg-transparent">{{$item->quantity}}</td>
@@ -407,11 +407,11 @@
                             <td colspan="4" class="px-2 small fw-bold bg-gray">Supplier:</td>
                             <td colspan="5" class="px-2 small">
                                 @if(isset($request->checkVoucher))
-                                    @management
-                                    <small>{{$request->supplier}}</small>
-                                @else
-                                    <small>[HIDDEN]</small>
-                                    @endmanagement
+                                    @can('managing-role')
+                                        <small>{{$request->supplier}}</small>
+                                    @else
+                                        <small>[HIDDEN]</small>
+                                    @endcan
                                 @endif
                             </td>
                             <td colspan="3" class="px-2 small fw-bold bg-gray">Date:</td>
@@ -425,11 +425,11 @@
                             <td colspan="4" class="px-2 small fw-bold bg-gray">Paid to:</td>
                             <td colspan="5" class="px-2 small">
                                 @if(isset($request->checkVoucher))
-                                    @management
-                                    <small>{{$request->paid_to}}</small>
-                                @else
-                                    <small>[HIDDEN]</small>
-                                    @endmanagement
+                                    @can('managing-role')
+                                        <small>{{$request->paid_to}}</small>
+                                    @else
+                                        <small>[HIDDEN]</small>
+                                    @endcan
                                 @endif
                             </td>
                             <td colspan="3" class="px-2 small fw-bold bg-gray">Paid amount:</td>
@@ -1121,10 +1121,10 @@
 
         <div id="requestHistory" class="d-none h-100 col-3 flex-shrink-0">
             <div class="bg-white position-relative" style="width: 380px;">
-                <div
-                    class="bg-white sticky-top d-flex align-items-center gap-2 flex-shrink-0 p-3 border-bottom"
-                    style="z-index:100">
-                    <i class="fas fa-times mt-1"></i>
+                <div class="bg-white sticky-top d-flex align-items-center gap-2 flex-shrink-0 p-3 border-bottom" style="z-index:100">
+                    <button onclick="viewHistory()" class="btn btn-sm btn-outline-danger">
+                        <i class="fas fa-times mt-1"></i>
+                    </button>
                     <span class="fs-5 fw-semibold">Logs</span>
                 </div>
                 <div class="list-group list-group-flush border-bottom scroll-area">
@@ -1174,7 +1174,6 @@
             </div>
         </div>
     </div>
-
 
     <!-- Modal For Request Item -->
     <div class="modal fade" id="editItemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -1355,7 +1354,6 @@
 
 @endsection
 
-
 @section('script')
     <script>
 
@@ -1363,11 +1361,8 @@
             keyboard: false
         })
 
-
         const viewer = new Viewer(document.getElementById('uploads'));
-
         const fileUpload = document.querySelector('#fileUpload');
-
         const editItemForm = document.querySelector('#editItemForm');
         const editItemId = document.querySelector('#editItemId');
         const editItemQuantity = document.querySelector('#editItemQuantity');
@@ -1422,6 +1417,7 @@
         const declinedStatus = document.querySelector('#declinedStatus');
 
         const paidToInput = document.querySelector('#paidToInput');
+        const supplierInput = document.querySelector('#supplierInput');
         const termsInput = document.querySelector('#termsInput');
 
         const commentForm = document.querySelector('#commentForm');
@@ -1601,8 +1597,41 @@
                     }
 
                     showSuccessMessage('Paid to updated!');
+
+                    window.location.reload();
                 } catch (error) {
                     paidToInput.value = null
+                    showErrorMessage(error.message)
+                }
+            })
+        }
+
+        if (supplierInput) {
+            supplierInput.addEventListener('change', async () => {
+
+                try {
+
+                    const formData = new FormData();
+
+                    formData.append('supplier', supplierInput.value);
+
+                    const response = await fetch('/expense/expense-request/supplier/{{$request->id}}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Something went wrong!')
+                    }
+
+                    showSuccessMessage('Supplier is updated!');
+
+                    window.location.reload();
+                } catch (error) {
+                    supplierInput.value = null
                     showErrorMessage(error.message)
                 }
             })
@@ -2617,10 +2646,6 @@
             toastErrorBody.innerHTML = message;
             toastErrorModal.show();
         }
-
-    </script>
-
-    <script>
 
         const historyHolder = document.querySelector('#requestHistory');
 
