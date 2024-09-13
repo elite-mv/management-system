@@ -2,12 +2,14 @@
 
 namespace App\Mail\Expense;
 
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Types\Relations\Car;
 
 class ChatAlert extends Mailable
 {
@@ -38,8 +40,10 @@ class ChatAlert extends Mailable
      */
     public function envelope(): Envelope
     {
+        $date = Carbon::now()->format('Y-m-d H:i:s');
+
         return new Envelope(
-            subject: 'Request Comment Alert',
+            subject: 'Request Comment Alert ' . $date,
         );
     }
 

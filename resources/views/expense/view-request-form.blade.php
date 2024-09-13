@@ -96,9 +96,9 @@
 @section('body')
 
     @if($errors->any())
-
-        @dd($errors)
-        {{--        <h4>{{$errors->first()}}</h4>--}}
+        <div class="alert alert-danger" role="alert">
+            {{$errors->first()}}
+        </div>
     @endif
 
     <div class="d-flex gap-2 m-0 mx-auto p-0">
