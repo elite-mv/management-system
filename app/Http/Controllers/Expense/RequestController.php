@@ -276,16 +276,31 @@ class RequestController extends Controller
 
         switch ($role->name) {
             case UserRole::BOOK_KEEPER->value:
+
+                if(!$expenseRequest->bookKeeper){
+                    $viewForm = 'expense.view-request-form';
+                }
+
                 if ($expenseRequest->bookKeeper && $expenseRequest->bookKeeper->status != RequestApprovalStatus::PENDING) {
                     $viewForm = 'expense.view-request-form';
                 }
                 break;
             case UserRole::ACCOUNTANT->value:
+
+                if(!$expenseRequest->accountant){
+                    $viewForm = 'expense.view-request-form';
+                }
+
                 if ($expenseRequest->accountant && $expenseRequest->accountant->status != RequestApprovalStatus::PENDING) {
                     $viewForm = 'expense.view-request-form';
                 }
                 break;
             case UserRole::AUDITOR->value:
+
+                if(!$expenseRequest->auditor){
+                    $viewForm = 'expense.view-request-form';
+                }
+
                 if ($expenseRequest->auditor && $expenseRequest->auditor->status != RequestApprovalStatus::PENDING) {
                     $viewForm = 'expense.view-request-form';
                 }
