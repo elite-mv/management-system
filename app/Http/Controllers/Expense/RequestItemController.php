@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Expense;
 
 use App\Enums\RequestItemStatus;
+use App\Models\Expense\JobOrder;
 use App\Models\Expense\Measurement;
 use App\Models\Expense\RequestItem;
 use App\Models\Expense\RequestItemImage;
@@ -29,7 +30,7 @@ class RequestItemController extends Controller
 
             $requestItem = new RequestItem();
             $measurement = Measurement::where('id', $validated['measurement'])->firstOrFail();
-            $jobOrder = Measurement::where('id', $validated['jobOrder'])->firstOrFail();
+            $jobOrder = JobOrder::where('id', $validated['jobOrder'])->firstOrFail();
 
             $requestItem->quantity = $validated['quantity'];
             $requestItem->cost = $validated['cost'];
@@ -47,7 +48,8 @@ class RequestItemController extends Controller
 
         } catch (\Exception $exception) {
             DB::rollBack();
-            return response()->json(['message' => 'failed in adding item'], 500);
+//            return response()->json(['message' => 'failed in adding item'], 500);
+            return response()->json(['message' => $exception->getMessage()], 500);
         }
     }
 
