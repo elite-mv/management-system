@@ -55,12 +55,10 @@ class AccountantController extends Controller
 
             $qb->when($request->input('status') && $request->input('status') != 'ALL', function ($q) use ($request) {
                 $q->where('status', RequestApprovalStatus::valueOf($request->input('status')));
+                $q->whereHas('role', function ($q) {
+                    $q->where('name', UserRole::ACCOUNTANT->value);
+                });
             });
-
-            $qb->whereHas('role', function ($q) {
-                $q->where('name', UserRole::ACCOUNTANT->value);
-            });
-
         });
 
         $query->when(!$request->input('status'), function ($qb) use ($request) {
@@ -74,7 +72,6 @@ class AccountantController extends Controller
                     $qb->orderBy('created_at', 'DESC');
             }
         });
-
 
         $requests = $query->paginate($request->input('entries') ?? 100, ['*'], 'page', $request->input('page') ?? 1);
 
