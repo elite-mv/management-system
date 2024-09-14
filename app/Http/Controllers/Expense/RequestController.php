@@ -29,6 +29,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use App\Models\Expense\PaymentImage;
 
 class RequestController extends Controller
 {
@@ -42,7 +43,7 @@ class RequestController extends Controller
         return view('expense.request', [
             'companies' => $companies,
             'measurements' => $measurements,
-            'jobOrders' => $jobOrders
+            'jobOrders' => $jobOrders,
         ]);
     }
 
@@ -304,6 +305,7 @@ class RequestController extends Controller
 
         $measurements = Measurement::select(['id', 'name'])->get();
         $jobOrder = JobOrder::select(['id', 'name', 'reference'])->get();
+        $images = PaymentImage::all();
 
         $logs = RequestLogs::select(['id', 'description', 'user_id', 'created_at'])
             ->where('request_id', '=', $id)
@@ -316,6 +318,7 @@ class RequestController extends Controller
             'jobOrders' => $jobOrder,
             'measurements' => $measurements,
             'logs' => $logs,
+            'images' => $images,
         ]);
 
     }
@@ -847,5 +850,4 @@ class RequestController extends Controller
             return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
     }
-
 }

@@ -90,6 +90,12 @@
             cursor: pointer;
         }
 
+        .uploaded-img {
+            height: 100%;
+            width: auto;
+            object-fit: contain;
+        }
+
     </style>
 @endsection
 
@@ -679,7 +685,11 @@
                                     {{$request->expenseTypes->get(5)->category->name}}
                                 @endif
                             </td>
-                            <td colspan="1" rowspan="7"></td>
+                            @can('managing-role')
+                                <td colspan="1" class="px-2 text-center small fw-bold bg-blue">ATTACHMENT</td>
+                            @else
+                                <td colspan="1" rowspan="7"></td>
+                            @endcan
                             <td colspan="4" class="text-center fw-bold small">VAT INPUT AMOUNT</td>
                             <td colspan="5" class="px-2 small fw-bold bg-blue">FINANCE</td>
                         </tr>
@@ -693,6 +703,17 @@
                                     {{$request->expenseTypes->get(6)->category->name}}
                                 @endif
                             </td>
+                            @can('managing-role')
+                                <td colspan="1" rowspan="5" style="position:relative;">
+                                    <div style="position: absolute; height: 100%; width: 100%; display: flex; align-items: center;">
+                                        <div class="d-flex p-1 overflow-hidden gap-1" id="payment_images">
+                                            @foreach ($images as $index => $image)
+                                                <img class="uploaded-img" src="{{$image->public_image}}">
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </td>
+                            @endcan
                             <td colspan="4" class="text-center small px-2">
                                 @if($request->vat)
                                     <input readonly value="{{$request->vat->option_a}}" type="text" id="vatOption1"
@@ -851,6 +872,12 @@
                                     {{$request->expenseTypes->get(11)->category->name}}
                                 @endif
                             </td>
+                            @can('managing-role')
+                                <td colspan="1" class="text-center">
+                                    <input id="payment_upload" type="file" accept="image/jpeg, image/png, application/pdf" multiple="" name="files[]" class="d-none">
+                                    <label for="payment_upload" class="btn btn-sm w-100 rounded-0 btn-outline-danger border-0">UPLOAD IMAGES</label>
+                                </td>
+                            @endcan
                             <td colspan="2" class="fw-bold small px-2">OR No</td>
                             <td colspan="2" class="small px-2">
                                 @if($request->vat)

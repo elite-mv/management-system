@@ -26,6 +26,7 @@ use App\Http\Controllers\Expense\RequestVoucher;
 use App\Http\Controllers\Expense\PastRequestController;
 use App\Http\Controllers\Expense\UnitOfMeasureController;
 use App\Http\Controllers\Expense\VatController;
+use App\Http\Controllers\Expense\PaymentUploadsController;
 use App\Http\Controllers\Income\CustomerController;
 use App\Http\Controllers\Income\IncomeController;
 use App\Http\Controllers\Income\QuoteController;
@@ -182,7 +183,9 @@ Route::prefix('expense')->group(function () {
             Route::post('/request-item/delete/{id}', [RequestItemController::class, 'removeItem']);
 
             Route::post('/request-item/{id}', [RequestItemController::class, 'updateItem']);
+            Route::post('/request-item/payment-upload/{requestID}', [PaymentUploadsController::class, 'addPaymentUpload']);
             Route::post('/request-item/file/{id}', [RequestItemController::class, 'addRequestItemImage']);
+
             Route::post('/expense-request/bank-details', [BankDetailController::class, 'addBankDetails']);
             Route::delete('/expense-request/bank-details/{requestID}', [BankDetailController::class, 'removeBankDetails']);
             Route::post('/expense-request/delivery/status/{requestID}', [RequestDeliveryController::class, 'addDelivery']);

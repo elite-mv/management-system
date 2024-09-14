@@ -83,7 +83,7 @@ class BankSeeder extends Seeder
             ],
             [
                 'bank_name_id' => 5,
-                'code' => 'BPI-RCA-1496'
+                'code' => 'BPI-RCA-1946'
             ],
 
         ]);
