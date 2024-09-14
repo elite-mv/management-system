@@ -1137,7 +1137,7 @@
                                 <div class="col-10 mb-1 small">{{$log->description}}</div>
                             </div>
                             @can('developer', auth()->user())
-                                <button class="btn btn-sm btn-close bg-transparent ms-3" onclick="delete_log({{$log->id}});"></button>
+                                <button class="btn btn-sm btn-close bg-transparent ms-3" data-id="{{$log->id}}" onclick="console.log('{{$log->id}}');"></button>
                             @endcan
                         </a>
                     @endforeach
@@ -2613,44 +2613,6 @@
         function showErrorMessage(message) {
             toastErrorBody.innerHTML = message;
             toastErrorModal.show();
-        }
-
-        function delete_logs(data) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    try {
-
-                        const formData = new FormData();
-
-                        formData.append('log-id', data);
-
-                        const response = await fetch('/expense/expense-request/delete-log/{{$request->id}}', {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                            }
-                        });
-
-                        if (!response.ok) {
-                            throw new Error('Log deleting failed!');
-                        }
-
-                        showSuccessMessage('Log deleted.');
-
-                    } catch (error) {
-                        showErrorMessage(error.message);
-                    }
-                }
-            })
         }
 
     </script>

@@ -54,8 +54,12 @@
                                 <table id="accounts_database" class="table table-bordered">
                                     <thead>
                                     <tr>
+                                        <th class="sorttable_nosort">
+                                            <div class="form-check d-flex align-items-center justify-content-center p-0 m-0">
+                                                <input class="form-check-input p-0 m-0" type="checkbox" value="" id="requestAllInput">
+                                            </div>
+                                        </th>
                                         <th>EMAIL</th>
-                                        <th>PASSWORD</th>
                                         <th>USERNAME</th>
                                         <th>ROLE</th>
                                         <th>PIN</th>
@@ -64,19 +68,11 @@
                                     <tbody>
                                     @foreach($users as $user)
                                         <tr>
-                                            <td>{{$user->email}}</td>
-                                            <td>
-
-                                                <div class="d-flex gap-1 align-items-center">
-
-                                                    <input id="passwordInput{{$user->id}}" class="form-control"
-                                                           type="password" value="{{$user->password}}" readonly>
-
-                                                    <i  style="cursor: pointer" id="passwordEye{{$user->id}}" onclick="password({{$user->id}})" class="far fa-eye"></i>
-
-                                                </div>
-
+                                            <td class="text-center">
+                                                <input data-id='{{$user->id}}' id="requestInput{{$user->id}}"
+                                                       type="checkbox" class="form-check-input request-input-selection">
                                             </td>
+                                            <td>{{$user->email}}</td>
                                             <td>{{$user->name}}</td>
                                             <td>{{$user->role->name}}</td>
                                             <td>{{$user->pin}}</td>
@@ -97,8 +93,9 @@
 @endsection
 
 @section('script')
-    <script>
+    <script type="text/javascript" src="/js/sortable.js"></script>
 
+    <script>
         function password(id) {
 
             const target = document.querySelector(`#passwordInput${id}`);
