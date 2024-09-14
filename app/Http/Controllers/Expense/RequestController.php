@@ -305,7 +305,7 @@ class RequestController extends Controller
 
         $measurements = Measurement::select(['id', 'name'])->get();
         $jobOrder = JobOrder::select(['id', 'name', 'reference'])->get();
-        $images = PaymentImage::all();
+        $images = PaymentImage::where('request_id', '=', $id)->get();
 
         $logs = RequestLogs::select(['id', 'description', 'user_id', 'created_at'])
             ->where('request_id', '=', $id)
