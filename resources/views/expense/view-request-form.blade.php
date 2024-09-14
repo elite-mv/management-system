@@ -223,7 +223,7 @@
                         <tbody>
                         <tr>
                             <td colspan="4" class="small px-2">Date:</td>
-                            <td colspan="8" class="small px-2">{{$request->created_at->format('Y-m-d H:m')}}</td>
+                            <td colspan="8" class="small px-2">{{$request->created_at->format('Y-m-d H:i')}}</td>
                             <td colspan="2" class="small px-2">CV NO:</td>
                             <td colspan="4" class="small px-2">
                                 @if(isset($request->checkVoucher))
@@ -387,7 +387,7 @@
                             <td colspan="3" class="px-2 small fw-bold bg-gray">Date:</td>
                             <td colspan="6" class="px-2 small">
                                 @if(isset($request->checkVoucher))
-                                    {{ $request->checkVoucher->created_at->format('Y-m-d H:m') }}
+                                    {{ $request->checkVoucher->created_at->format('Y-m-d H:i') }}
                                 @endif
                             </td>
                         </tr>
@@ -553,10 +553,10 @@
                             <td colspan="3" class="px-2 bg-blue small">Incomplete</td>
                             <td colspan="5" class="px-2 small">
                                 @if($request->priority)
-                                    {{  $request->created_at->format('Y-m-d H:m')}}
+                                    {{  $request->created_at->format('Y-m-d H:i')}}
                                 @else
                                     @if($request->bookKeeper)
-                                        {{  $request->bookKeeper->created_at->format('Y-m-d H:m')}}
+                                        {{  $request->bookKeeper->created_at->format('Y-m-d H:i')}}
                                     @endif
                                 @endif
                             </td>
@@ -656,10 +656,10 @@
                             <td colspan="3" class="small px-2">No</td>
                             <td colspan="5" class="small px-2">
                                 @if($request->priority)
-                                    {{  $request->created_at->format('Y-m-d H:m')}}
+                                    {{  $request->created_at->format('Y-m-d H:i')}}
                                 @else
                                     @if($request->accountant)
-                                        {{$request->accountant->created_at->format('y-m-d H:m')}}
+                                        {{$request->accountant->created_at->format('y-m-d H:i')}}
                                     @endif
                                 @endif
                             </td>
@@ -759,7 +759,7 @@
                             </td>
                             <td colspan="5" class="small px-2">
                                 @if($request->finance)
-                                    {{$request->finance->created_at->format('y-m-d H:m')}}
+                                    {{$request->finance->created_at->format('y-m-d H:i')}}
                                 @endif
                             </td>
                         </tr>
@@ -849,7 +849,7 @@
                             </td>
                             <td colspan="5" class="small px-2">
                                 @if($request->auditor)
-                                    {{ $request->auditor->created_at->format('Y-m-d H:m')}}
+                                    {{ $request->auditor->created_at->format('Y-m-d H:i')}}
                                 @endif
                             </td>
                         </tr>
@@ -979,7 +979,7 @@
                         <a href="#" class="list-group-item list-group-item-action py-3 lh-tight">
                             <div class="d-flex w-100 align-items-center justify-content-between">
                                 <strong class="mb-1">{{$log->user->name}}</strong>
-                                <small class="text-muted">{{$log->created_at->format('Y-m-d h:m A')}}</small>
+                                <small class="text-muted">{{$log->created_at->format('Y-m-d H:i A')}}</small>
                             </div>
                             <div class="col-10 mb-1 small">{{$log->description}}</div>
                         </a>
