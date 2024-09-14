@@ -107,7 +107,8 @@
 
         <div class="col">
             <div class="bg-light p-2">
-                <a type="button" href="/expense/pdf/request/{{$request->id}}" class="btn btn-success">
+                {{-- <a type="button" href="/expense/pdf/request/{{$request->id}}" class="btn btn-success"> --}}
+                <a type="button" onclick="alert('This is temporary unavailable, thank you.')" class="btn btn-success">
                     <i class="fas fa-download"></i>
                     Download
                 </a>
