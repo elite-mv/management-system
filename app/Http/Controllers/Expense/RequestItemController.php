@@ -200,6 +200,10 @@ class RequestItemController extends Controller
 
                 $filename = $file->store('public');
 
+                if(!$filename){
+                    throw new \Exception('Unable to store image');
+                }
+
                 $requestImage = new RequestItemImage();
                 $requestImage->file = $filename;
                 $requestImage->request_item_id = $id;
