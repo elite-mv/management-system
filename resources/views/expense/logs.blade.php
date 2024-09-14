@@ -71,7 +71,7 @@
                                     <td>
                                         <a target="_blank" href="/expense/request/{{$log->request->id }}"> {{ $log->request->reference }}</a>
                                     </td>
-                                    <td>{{ $log->created_at->format('Y-m-d H:m A') }}</td>
+                                    <td>{{ $log->created_at->format('Y-m-d H:i A') }}</td>
                                     <td>{{ $log->user->name }}</td>
                                     <td>{{ $log->user->email }}</td>
                                 </tr>
