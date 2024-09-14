@@ -76,7 +76,7 @@ class AccountController
         $user = User::find($request->input('current_id'));
 
         if ($user) {
-            $user->password = $request->input('password');
+            $user->password = bcrypt($request->input('password'));
             $user->save();
 
             return response()->json(['success' => true], 200);
