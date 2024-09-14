@@ -320,34 +320,6 @@ class RequestController extends Controller
 
     }
 
-    public function deleteLog(Request $request, $requestID)
-    {
-        try {
-
-            DB::beginTransaction();
-
-            RequestLogs::where('request_id', $requestID, 'id', $request>input('log-id'))->delete();
-
-            DB::commit();
-
-            return response()->json([
-                'message' => 'ok',
-                'status' => '200',
-            ]);
-
-        } catch (\Exception $e) {
-
-            DB::rollBack();
-
-            return response()->json([
-                'message' => $e->getMessage(),
-                'status' => '500',
-            ],
-                500
-            );
-        }
-    }
-
     public function updatePaymentMethod(Request $request, AddRequestLog $addRequestLog, $requestID)
     {
         try {
@@ -661,7 +633,7 @@ class RequestController extends Controller
         }
     }
 
-    public function updatePaidTo(Request $request, $requestID)
+    public function updatePaidTo(Request $request, AddRequestLog $addRequestLog, $requestID)
     {
 
         try {
@@ -679,6 +651,47 @@ class RequestController extends Controller
             $requestModel->paid_to = $paidTo;
 
             $requestModel->save();
+
+            $addRequestLog->handle($requestID, 'paid to was set to ' . $paidTo);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'ok',
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'message' => $e->getMessage(),
+            ],
+                500
+            );
+        }
+    }
+
+    public function updateSupplier(Request $request, AddRequestLog $addRequestLog, $requestID)
+    {
+
+        try {
+
+            $validated = $request->validate([
+                'supplier' => 'required|string',
+            ]);
+
+            DB::beginTransaction();
+
+            $supplier = $validated['supplier'];
+
+            $requestModel = ModelsRequest::findOrFail($requestID);
+
+            $requestModel->supplier = $supplier;
+
+            $requestModel->save();
+
+            $addRequestLog->handle($requestID, 'supplier to was set to ' . $supplier);
 
             DB::commit();
 
