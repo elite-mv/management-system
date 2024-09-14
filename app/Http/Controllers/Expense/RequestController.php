@@ -234,7 +234,7 @@ class RequestController extends Controller
                                 $q->select(['id', 'name']);
                             },
                             'jobOrder' => function ($q) {
-                                $q->select(['id', 'name']);
+                                $q->select(['id', 'name','reference']);
                             }
                         ]);
                 },
