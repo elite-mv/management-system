@@ -2049,9 +2049,11 @@
 
                 data.attachments.forEach(attachment => {
 
-                    let imageSrc = (attachment.file.split('/'))[1];
+                    console.log(attachment);
 
-                    const thumbnail = $('<img>').attr('src', '/storage/' + imageSrc).addClass('uploaded-img');
+                    let imageSrc =   attachment.public_image;
+
+                    const thumbnail = $('<img>').attr('src', imageSrc).addClass('uploaded-img');
 
                     $('#uploads').append(thumbnail);
 

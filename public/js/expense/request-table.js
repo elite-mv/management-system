@@ -132,6 +132,9 @@ if (downloadExpenseForm) {
 
         downloadExpenseForm.submit();
     })
+}
+
+if(downloadCheckForm){
 
     downloadCheckForm.addEventListener('submit', (e) => {
         e.preventDefault();
