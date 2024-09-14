@@ -2020,6 +2020,8 @@
 
                 data.attachments.forEach(attachment => {
 
+                    console.log(attachment);
+
                     let imageSrc =   attachment.public_image;
 
                     const thumbnail = $('<img>').attr('src', imageSrc).addClass('uploaded-img');
