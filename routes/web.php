@@ -95,11 +95,12 @@ Route::prefix('income')->middleware([CompanyMiddleware::class])->group(function 
 
 Route::prefix('expense')->group(function () {
     Route::middleware(['auth', CheckUserPin::class])->group(function () {
-
         Route::get('/home', [HomeController::class, 'index']);
         Route::get('/request', [RequestController::class, 'index']);
 
         Route::get('/pdf/request/{requestID}', [PdfController::class, 'downloadPDF']);
+
+        Route::get('/items', [\App\Http\Controllers\Expense\ItemController::class, 'index']);
 
         Route::middleware([CompanyData::class])->get('/forms', [DownloadableFormController::class, 'index']);
         Route::post('/forms/excel', [DownloadableFormController::class, 'generateExcel']);
