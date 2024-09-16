@@ -111,15 +111,26 @@
         }
 
         function submitFilterForm(){
+            filterInputId.value = JSON.parse(localStorage.getItem('checkedInputs'));
             filterForm.submit();
         }
 
         filterForm.addEventListener('submit',(e)=>{
             e.preventDefault();
-            filterInputId.value = JSON.parse(localStorage.getItem('checkedInputs'));
             submitFilterForm();
         })
 
+        document.querySelector('#filterForm select[name="jobOrder"]').addEventListener('change', function() {
+            submitFilterForm();
+        })
+
+        document.querySelector('#filterForm select[name="bankCode"]').addEventListener('change', function() {
+            submitFilterForm();
+        })
+
+        document.querySelector('#filterForm select[name="company"]').addEventListener('change', function() {
+            submitFilterForm();
+        })
     </script>
 @endsection
 
