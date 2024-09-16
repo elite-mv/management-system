@@ -161,13 +161,13 @@
                                         <b>Requests</b>
                                     </div>
                                     <div class="col-sm-12 col-md-6 text-end d-none" id="collapseLayout">
-                                        {{-- <form method="POST" action="/test-pdf" id="downloadExpenseForm"> --}}
+                                         <form method="POST" action="/test-pdf" id="downloadExpenseForm">
                                             @csrf
                                             <input id="downloadExpenseInput" type="hidden" name="id[]">
-                                            <button class="btn btn-sm btn-outline-danger rounded-0 px-4" type="submit" onclick="alert('This is temporary unavailable, thank you.')">
+                                            <button class="btn btn-sm btn-outline-danger rounded-0 px-4" type="submit">
                                                 Download Forms
                                             </button>
-                                        {{-- </form> --}}
+                                         </form>
                                     </div>
                                 </div>
                             </div>
