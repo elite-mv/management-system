@@ -44,7 +44,13 @@ class RequestCommentController
                 'message' => $validated['message'],
             ]);
 
-            ChatAlertJob::dispatch($comment);
+            $expenseRequest = \App\Models\Expense\Request::where('id', $requestID)
+                ->with(['preparedBy'])
+                ->firstOrFail();
+
+            $commentor = User::findOrFail(Auth::id());
+
+            ChatAlertJob::dispatch($expenseRequest->reference,$requestID,$commentor->name,$expenseRequest->preparedBy->email);
 
             DB::commit();
 

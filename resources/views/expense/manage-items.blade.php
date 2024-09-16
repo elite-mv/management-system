@@ -1,54 +1,69 @@
 @extends('layouts.expense-index')
 
-@section('title', 'Daily Request')
-
-@section('style')
-    <style type="text/css">
-        .daily_request_nav {
-            color: rgb(255, 255, 255, 1.0);
-        }
-    </style>
-@endsection
+@section('title', 'Audit Items')
 
 @section('body')
+
+
     <div class="container p-3" style="position: relative;">
+
+
+        @if($errors->any())
+            @if($errors->any())
+                <div class="alert alert-danger" role="alert">
+                    {{$errors->first()}}
+                </div>
+            @endif
+        @endif
+
         <div class="mb-2">
-            <form class="mx-0 row gap-2 bg-white py-2 rounded">
+            <form method="GET" class="mx-0 row gap-2 bg-white py-2 rounded" id="filterForm">
 
                 <div class="col-12">
-                    <input type="search" class="form-control">
+                    <input autocomplete="off" value="{{$app->request->search}}" name="search" type="search" class="form-control">
                 </div>
-                <div class="col-2 d-flex gap-2 align-items-center">
-                    <label class="text-nowrap">Job Order</label>
-                    <select class="form-select">
-                        <option value="ALL">All</option>
-                        @foreach($jobOrders as $jobOrder)
-                            <option value="{{$jobOrder->id}}">{{$jobOrder->reference}}</option>
-                        @endforeach
-                    </select>
+                <div class="d-flex align-items-center gap-2">
+
+                    <div class="d-flex gap-2 align-items-center">
+                        <label class="text-nowrap">Job Order</label>
+                        <select name="jobOrder" class="form-select">
+                            <option value="ALL">All</option>
+                            @foreach($jobOrders as $jobOrder)
+                                <option @selected($app->request->jobOrder == $jobOrder->id) value="{{$jobOrder->id}}">{{$jobOrder->reference}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="d-flex gap-2 align-items-center">
+                        <label class="text-nowrap">Bank Code</label>
+                        <select name="bankCode" class="form-select">
+                            <option value="ALL">All</option>
+                            @foreach($bankCodes as $bankCode)
+                                <option @selected($app->request->bankCode == $bankCode->id) value="{{$bankCode->id}}">{{$bankCode->code}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="d-flex gap-2 align-items-center">
+                        <label>Entity</label>
+                        <select name="company" class="form-select">
+                            <option value="ALL">All</option>
+                            @foreach($companies as $company)
+                                <option  @selected($app->request->company == $company->id)  value="{{$company->id}}">{{$company->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
-                <div class="col-2 d-flex gap-2 align-items-center">
-                    <label class="text-nowrap">Bank Code</label>
-                    <select class="form-select">
-                        <option value="ALL">All</option>
-                        @foreach($bankCodes as $bankCode)
-                            <option value="{{$bankCode->id}}">{{$bankCode->code}}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-2 d-flex gap-2 align-items-center">
-                    <label>Entity</label>
-                    <select class="form-select">
-                        <option value="ALL">All</option>
-                        @foreach($companies as $company)
-                            <option value="{{$company->id}}">{{$company->name}}</option>
-                        @endforeach
-                    </select>
-                </div>
+
+                <input class="d-none" type="hidden" id="filterInputId" name="id[]">
+
             </form>
         </div>
         <div class="mb-2">
-            <a type="button" class="btn btn-success">Download Excel</a>
+            <form method="POST" action="/expense/excel-items" id="auditItemForm">
+                @csrf
+                <input class="d-none" type="hidden" id="auditItemInput" name="id[]">
+                <button type="submit" class="btn btn-success">Download Excel</button>
+            </form>
         </div>
         <div class="row mb-3">
             <div class="col-12">
@@ -67,55 +82,7 @@
                         </div>
                     </div>
                     <div class="card-body overflow-x-auto">
-                        <table class="table sortable" id="sortableTable">
-
-                            <thead>
-                            <tr>
-                                <th>PR Number</th>
-                                <th>DATE</th>
-                                <th>JOB ORDER</th>
-                                <th>COMPANY</th>
-                                <th>PARTICULARS</th>
-                                <th>CLASS</th>
-                                <th>BANK CODE</th>
-                                <th>CHECK NUMBER</th>
-                                <th>TOTAL</th>
-                            </tr>
-                            </thead>
-                            <tbody id="requestData">
-                            @foreach($items as $item)
-                                <tr>
-                                    <td>{!! \App\Helper\Helper::padID($item->request->id) !!}</td>
-                                    <td>{{$item->request->created_at->format('Y-m-d')}}</td>
-                                    <td>{{$item->jobOrder->reference}}</td>
-                                    <td class="text-capitalize">{{ strtolower($item->request->supplier)}}</td>
-                                    <td class="text-capitalize">{{ strtolower($item->description)}}</td>
-                                    <td class="text-uppercase">{{$item->request->company->name}}</td>
-                                    <td>
-                                        @if($item->request->bankDetails && $item->request->bankDetails->code)
-                                            {{$item->request->bankDetails->code->code}}
-                                        @else
-                                            <span class="text-secondary">--</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($item->request->bankDetails && $item->request->bankDetails->check_number)
-                                            {{$item->request->bankDetails->check_number}}
-                                        @else
-                                            <span class="text-secondary">--</span>
-                                        @endif
-                                    </td>
-                                    <td>{{\App\Helper\Helper::formatPeso($item->sub_total)}}</td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                            <tfoot>
-                            <tr class="fw-bold">
-                                <td  colspan="8">Total</td>
-                                <td>{!! \App\Helper\Helper::formatPeso($total) !!}</td>
-                            </tr>
-                            </tfoot>
-                        </table>
+                        @include('expense.partials.manage-items-table')
                     </div>
                     {{$items->links()}}
                 </div>
@@ -126,11 +93,31 @@
 
 @section('script')
     <script>
-        const searchForm = document.querySelector('#searchForm');
-        const searchStatus = document.querySelector('#searchStatus');
+        const filterForm = document.querySelector('#filterForm');
+        const filterInputId = document.querySelector('#filterInputId');
 
-        searchStatus.addEventListener('change', () => {
-            searchForm.submit();
+        const auditItemForm = document.querySelector('#auditItemForm');
+        const auditItemInput = document.querySelector('#auditItemInput');
+
+        if(auditItemForm){
+
+            auditItemForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                auditItemInput.value = JSON.parse(localStorage.getItem('checkedInputs'));
+
+                auditItemForm.submit();
+            })
+        }
+
+        function submitFilterForm(){
+            filterForm.submit();
+        }
+
+        filterForm.addEventListener('submit',(e)=>{
+            e.preventDefault();
+            filterInputId.value = JSON.parse(localStorage.getItem('checkedInputs'));
+            submitFilterForm();
         })
 
     </script>

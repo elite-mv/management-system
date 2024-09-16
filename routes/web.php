@@ -102,6 +102,7 @@ Route::prefix('expense')->group(function () {
         Route::get('/pdf/request/{requestID}', [PdfController::class, 'downloadPDF']);
 
         Route::get('/items', [\App\Http\Controllers\Expense\ItemController::class, 'index']);
+        Route::post('/excel-items', [\App\Http\Controllers\Expense\ItemController::class, 'downloadExcel']);
 
         Route::middleware([CompanyData::class])->get('/forms', [DownloadableFormController::class, 'index']);
         Route::post('/forms/excel', [DownloadableFormController::class, 'generateExcel']);

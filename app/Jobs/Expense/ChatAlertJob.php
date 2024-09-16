@@ -17,14 +17,30 @@ class ChatAlertJob implements ShouldQueue
 {
     use Queueable;
 
-    protected $comment;
+    protected $reference;
+    protected $requestID;
+    protected $userCommentor;
+    protected $preparedBy;
+
+    const cc = [
+        'bookkeeper@gtiarmoredcars.com',
+        'auditor@gtiarmoredcars.com',
+        'finance@gtiarmoredcars.com',
+        'jocelyn@eliteacesinc.com',
+        'ariel@accountant.com',
+        'john.castillo@eliteacesinc.com',
+        'mhelvoi@eliteacesinc.com',
+    ];
 
     /**
      * Create a new job instance.
      */
-    public function __construct(RequestComment $comment)
+    public function __construct(string $reference, string $requestID, string $userCommentor, string $preparedBy)
     {
-        $this->comment = $comment;
+        $this->reference = $reference;
+        $this->requestID = $requestID;
+        $this->userCommentor = $userCommentor;
+        $this->preparedBy = $preparedBy;
     }
 
     /**
@@ -32,13 +48,13 @@ class ChatAlertJob implements ShouldQueue
      */
     public function handle(): void
     {
-        Mail::to('john.castillo@cvsu.edu.ph')->send(new ChatAlert(
-//            $this->comment->request->reference,
-//            $this->comment->user->name,
-//            $this->comment->request->id,
-        '123',
-        '123',
-        '123',
+
+        Mail::to($this->preparedBy)
+            ->cc(self::cc)
+            ->send(new ChatAlert(
+                $this->reference,
+                $this->userCommentor,
+                $this->requestID,
         ));
     }
 }

@@ -184,6 +184,12 @@
                                                     Download Check
                                                 </button>
                                             </form>
+                                            <form method="GET" action="/expense/items" id="auditItemForm">
+                                                <input id="auditItemInput" type="hidden" name="id[]">
+                                                <button class="btn btn-sm btn-outline-danger rounded-0 px-4"
+                                                        type="submit">Audit Items
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
