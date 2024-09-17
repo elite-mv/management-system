@@ -233,7 +233,7 @@ Route::get('/tae', function (){
 });
 
 Route::get('/yawa', [PdfController::class, 'yawa']);
-Route::get('/test-sql', [MigrationController::class, 'index']);
+//Route::get('/test-sql', [MigrationController::class, 'index']);
 Route::get('/check', [PdfController::class, 'check']);
 
 Route::get('/check-excel/{expenseRequestID}', [PdfController::class, 'requestCheck']);
