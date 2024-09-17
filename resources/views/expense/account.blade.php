@@ -119,74 +119,8 @@
         </div>
         <h3 class="text-primary text-uppercase" style="margin-left: 250px;"><b>{{auth()->user()->role->name}}</b></h3>
         <hr class="my-5">
-        <div class="row gap-2">
-            <div class="col-auto px-5 py-3 fw-bold bg-primary bg-gradient">
-                <small>
-                    REQUEST
-                    [
-                        @php
-                            $counter = 0;
-                            foreach ($requests as $index => $request) {
-                                $counter++;
-                            }
-                            echo $counter;
-                        @endphp
-                     ]
-                </small>
-            </div>
-
-            <div class="col-auto px-5 py-3 fw-bold bg-secondary bg-gradient">
-                <small>
-                    PRIORITY REQUEST
-                    [
-                        @php
-                            $counter = 0;
-                            foreach ($requests as $index => $request) {
-                                if ($request->priority === 1) {
-                                    $counter++;
-                                }
-                            }
-                            echo $counter;
-                        @endphp
-                     ]
-                </small>
-            </div>
-
-            <div class="col-auto px-5 py-3 fw-bold bg-success bg-gradient">
-                <small>
-                    PENDING REQUEST
-                    [
-                        @php
-                            $counter = 0;
-                            foreach ($requests as $index => $request) {
-                                if ($request->status === 'PENDING') {
-                                    $counter++;
-                                }
-                            }
-                            echo $counter;
-                        @endphp
-                     ]
-                </small>
-            </div>
-
-            <div class="col-auto px-5 py-3 fw-bold bg-danger bg-gradient">
-                <small>
-                    RELEASED REQUEST
-                    [
-                        @php
-                            $counter = 0;
-                            foreach ($requests as $index => $request) {
-                                if ($request->status === 'RELEASED') {
-                                    $counter++;
-                                }
-                            }
-                            echo $counter;
-                        @endphp
-                     ]
-                </small>
-            </div>
-
-            <div class="col-12" id="profile_container">
+        <div class="row">
+            <div class="col-4" id="profile_container">
                 <div class="w-100 bg-white p-3 border border-dark rounded border-2 mx-auto">
                     <p class="fw-bold">MY PROFILE</p>
                     <form id="accountForm">
@@ -216,87 +150,42 @@
                         <input type="hidden" name="current_secret_pin" value="{{auth()->user()->pin}}">
                         <input type="hidden" name="current_password" value="{{auth()->user()->password}}">
                     </form>
+                </div>
+            </div>
+            <div class="col-8">
+                <p>
+                    <button class="btn btn-primary rounded-0" id="collapseRequest">
+                        REQUEST [
+                            @php
+                                $counter = 0;
+                                foreach ($requests as $index => $request) {
+                                    $counter++;
+                                }
+                                echo $counter;
+                            @endphp
+                        ]
+                    </button>
+                </p>
+                <div class="collapse" id="Request">
+                    <div class="card card-body">
+                        <div class="d-flex flex-direction-row gap-5">
+                            @php
+                                foreach ($requests as $index => $request) {
+                                    echo"
+                                        <div>
+                                            <a target='_blank' href='https://ralima.biz/expense/request/{{$request->id}}'>$request->reference</a>
+                                        </div>
+                                    ";
+                                }
+                            @endphp
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
 
     </div>
-    {{-- <div class="container p-3" style="position: relative;">
-
-        <div class="row">
-
-            <div class="col-sm-12 col-md-5 col-lg-5 mb-3">
-                <div class="mx-auto border border-dark border-2 bg-light p-3 text-center"
-                     style="border-radius: 10px; height: 600px; max-height: 100svh; max-height: 100vh; max-width: 100%; width: 375px;">
-                    <b>RCA GROUP OF COMPANIES</b>
-                    <div class="my-3 wraper">
-                        @foreach($companies as $index => $company)
-                            <div class="item item{{$index}}">
-                                <img src="/././{{Storage::url($company->logo)}}" style="height: 50px; width: auto;">
-                            </div>
-                        @endforeach
-                    </div>
-
-                    <div class="border border-dark border-2 mx-auto mb-2 bg-white"
-                         style="width: 100px; height: 100px;">
-                    </div>
-
-                    <div class="mb-2">
-                        <p class="mb-0">{{auth()->user()->name}}</p>
-                        <hr class="p-0 m-0">
-                        <small class="fw-bold">NAME</small>
-                    </div>
-
-                    <div class="mb-2">
-                        <p class="mb-0 text-uppercase">{{auth()->user()->role->name}} </p>
-                        <hr class="p-0 m-0">
-                        <small class="fw-bold">ROLE</small>
-                    </div>
-
-                    <div class="mb-2">
-                        <p class="mb-0">{{auth()->user()->email}}</p>
-                        <hr class="p-0 m-0">
-                        <small class="fw-bold">EMAIL</small>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-sm-12 col-md-7 col-lg-7" id="profile_container">
-                <div class="w-100 bg-white p-3 border border-dark rounded border-2 mx-auto">
-                    <p class="fw-bold">MY PROFILE</p>
-                    <form id="accountForm">
-                        <div class="mb-3 small form-group">
-                            <label CLASS="fw-bold text-danger form-label">USERNAME</label>
-                            <input class="p-2 form-control" type="text" value="{{auth()->user()->name}}" name="name">
-                        </div>
-                        <div class="mb-3 small form-group">
-                            <label CLASS="fw-bold text-danger form-label">5 SECRET PIN</label>
-                            <input class="p-2 form-control" type="password" name="secret_pin" minlength="5" maxlength="5">
-                        </div>
-                        <div class="mb-3 small form-group">
-                            <label CLASS="fw-bold text-danger form-label">Password</label>
-                            <input class="p-2 form-control" type="password" minlength="8" maxlength="16" name="password" id="password">
-                        </div>
-
-                        <div class="mb-3 small form-group d-none" id="confirmPasswordHolder">
-                            <label CLASS="fw-bold text-danger form-label">Confirm Password</label>
-                            <input class="p-2 form-control" type="password" minlength="8" maxlength="16" name="confirmPassword" id="confirmPassword">
-                        </div>
-
-                        <button type="submit" class="d-block mx-auto btn btn-success w-50 rounded-pill">
-                            UPDATE
-                        </button>
-                        <input type="hidden" name="current_id" value="{{auth()->user()->id}}">
-                        <input type="hidden" name="current_name" value="{{auth()->user()->name}}">
-                        <input type="hidden" name="current_secret_pin" value="{{auth()->user()->pin}}">
-                        <input type="hidden" name="current_password" value="{{auth()->user()->password}}">
-                    </form>
-                </div>
-            </div>
-        </div>
-
-    </div> --}}
 @endsection
 
 @section('script')
@@ -412,6 +301,11 @@
             window.location.href = '/expense/account';
 
         })
+
+        $('#collapseRequest').on('click', function() {
+            $('#Request').toggleClass('show');
+        });
+
 
     </script>
 @endsection
