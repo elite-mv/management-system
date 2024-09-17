@@ -51,7 +51,7 @@
                         </div>
                         <div class="col-sm-12 col-md-2 d-flex justify-content-end text-end">
                             <button type="button" class="btn btn-outline-primary rounded-0 px-3" data-bs-toggle="modal"
-                                data-bs-target="#addEntityModal">Add Job Order
+                                data-bs-target="#addEntityModal">Add Measurement
                             </button>
                         </div>
                     </div>
