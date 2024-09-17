@@ -16,69 +16,105 @@
             @endif
         @endif
 
-        <div class="mb-2">
-            <form method="GET" class="mx-0 row gap-2 bg-white py-2 rounded" id="filterForm">
-
-                <div class="col-12">
-                    <input autocomplete="off" value="{{$app->request->search}}" name="search" type="search" class="form-control">
-                </div>
-                <div class="d-flex align-items-center gap-2">
-
-                    <div class="d-flex gap-2 align-items-center">
-                        <label class="text-nowrap">Job Order</label>
-                        <select name="jobOrder" class="form-select">
-                            <option value="ALL">All</option>
-                            @foreach($jobOrders as $jobOrder)
-                                <option @selected($app->request->jobOrder == $jobOrder->id) value="{{$jobOrder->id}}">{{$jobOrder->reference}}</option>
-                            @endforeach
-                        </select>
+        <div class="d-flex overflow-y-auto m-0 p-3 mb-3" style="gap: 0 30px; border-radius: 7px;
+            background-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+            <div class="w-100 p-4" style="background-color: rgba(255, 255, 255, 0.75);
+                box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                border-right: 1px solid rgba(255, 255, 255, 0.2);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+                <form method="GET" id="filterForm">
+                    <div class="d-flex mb-2 gap-2 align-items-center">
+                        <div class="w-100 rounded-pill border d-flex align-items-start flex-direction-row gap-2 py-2 px-3" style="background-color: rgba(255, 255, 255, 0.4);
+                        box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
+                        border: 1px solid rgba(255, 255, 255, 0.5);
+                        border-right: 1px solid rgba(255, 255, 255, 0.2);
+                        border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+                            <div>
+                                <button class="border-0 bg-transparent" style="border-radius: 50%;">
+                                    <i class="fas fa-search text-secondary"></i>
+                                </button>
+                            </div>
+                            <div class="w-100 mx-1">
+                                <small>
+                                    <input autocomplete="off" placeholder="Search ..." name="search" type="search" value="{{$app->request->search}}" class="rounded-0 border-0 w-100 bg-transparent">
+                                </small>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="d-flex gap-2 align-items-center">
-                        <label class="text-nowrap">Bank Code</label>
-                        <select name="bankCode" class="form-select">
-                            <option value="ALL">All</option>
-                            @foreach($bankCodes as $bankCode)
-                                <option @selected($app->request->bankCode == $bankCode->id) value="{{$bankCode->id}}">{{$bankCode->code}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="d-flex gap-2 align-items-center">
-                        <label>Entity</label>
-                        <select name="company" class="form-select">
-                            <option value="ALL">All</option>
-                            @foreach($companies as $company)
-                                <option  @selected($app->request->company == $company->id)  value="{{$company->id}}">{{$company->name}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
+                    <div class="row align-items-center justify-content-around">
+                        <div class="col-6 col-md-3 form-group d-flex gap-2 align-items-center">
+                            <label class="form-label mb-0 text-nowrap" for="status">Job Order</label>
+                            <select name="jobOrder" class="form-select inputs" style="background-color: rgba(255, 255, 255, 0.4);
+                            box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
+                            border: 1px solid rgba(255, 255, 255, 0.5);
+                            border-right: 1px solid rgba(255, 255, 255, 0.2);
+                            border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+                                <option value="ALL">All</option>
+                                @foreach($jobOrders as $jobOrder)
+                                    <option @selected($app->request->jobOrder == $jobOrder->id) value="{{$jobOrder->id}}">{{$jobOrder->reference}}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                <input class="d-none" type="hidden" id="filterInputId" name="id[]">
+                        <div class="col-6 col-md-3 form-group d-flex gap-2 align-items-center">
+                            <label class="form-label mb-0 text-nowrap" for="status">Bank Code</label>
+                            <select name="bankCode" class="form-select inputs" style="background-color: rgba(255, 255, 255, 0.4);
+                            box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
+                            border: 1px solid rgba(255, 255, 255, 0.5);
+                            border-right: 1px solid rgba(255, 255, 255, 0.2);
+                            border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+                                <option value="ALL">All</option>
+                                @foreach($bankCodes as $bankCode)
+                                    <option @selected($app->request->bankCode == $bankCode->id) value="{{$bankCode->id}}">{{$bankCode->code}}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-            </form>
-        </div>
-        <div class="mb-2">
-            <form method="POST" action="/expense/excel-items" id="auditItemForm">
-                @csrf
-                <input class="d-none" type="hidden" id="auditItemInput" name="id[]">
-                <button type="submit" class="btn btn-success">Download Excel</button>
-            </form>
+                        <div class="col-6 col-md-3 form-group d-flex gap-2 align-items-center">
+                            <label class="form-label mb-0 text-nowrap" for="status">Entity</label>
+                            <select name="company" class="form-select inputs" style="background-color: rgba(255, 255, 255, 0.4);
+                            box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
+                            border: 1px solid rgba(255, 255, 255, 0.5);
+                            border-right: 1px solid rgba(255, 255, 255, 0.2);
+                            border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+                                <option value="ALL">All</option>
+                                @foreach($companies as $company)
+                                    <option  @selected($app->request->company == $company->id)  value="{{$company->id}}">{{$company->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <input class="d-none" type="hidden" id="filterInputId" name="id[]">
+
+                </form>
+            </div>
         </div>
         <div class="row mb-3">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header">
-                        <div class="d-flex justify-content-between align-items-center">
+                    <div class="card-header row">
+                        <div class="col-sm-12 col-md-6 d-flex text-start align-items-center">
                             <div class="text-start">
                                 <i class="fas fa-table me-1"></i>
                                 <b>Daily Requests</b>
                             </div>
-                            <div class="text-start">
-                                <form id="searchForm" class="d-flex gap-2 align-items-center">
-                                    <label class="form-label text-nowrap mb-0">Payment Status</label>
-                                </form>
-                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6 text-end">
+                            <form method="POST" action="/expense/excel-items" id="auditItemForm">
+                                @csrf
+                                <input class="d-none" type="hidden" id="auditItemInput" name="id[]">
+                                <button class="btn btn-sm btn-outline-success rounded-0 px-4"
+                                        type="submit">
+                                    Download Excel
+                                </button>
+                            </form>
                         </div>
                     </div>
                     <div class="card-body overflow-x-auto">

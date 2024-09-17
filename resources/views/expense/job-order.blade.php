@@ -24,24 +24,35 @@
         <div class="row mb-3">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="col-12 d-flex align-items-center justify-content-between">
-                                <div class="d-flex gap-2 align-items-center">
+                    <div class="card-header row">
+                        <div class="col-sm-12 col-md-2 d-flex align-items-center">
+                            <i class="fas fa-table me-1"></i>
+                            <b>Job Orders</b>
+                        </div>
+                        <div class="col-sm-12 col-md-8">
+                            <form class="searchForm">
+                                <div class="w-100 rounded-pill border d-flex align-items-start flex-direction-row gap-2 py-2 px-3" style="background-color: rgba(255, 255, 255, 0.4);
+                                box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 15px;
+                                border: 1px solid rgba(255, 255, 255, 0.5);
+                                border-right: 1px solid rgba(255, 255, 255, 0.2);
+                                border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
                                     <div>
-                                        <i class="fas fa-table me-1"></i>
-                                        <b>Entities</b>
+                                        <button class="border-0 bg-transparent" style="border-radius: 50%;">
+                                            <i class="fas fa-search text-secondary"></i>
+                                        </button>
                                     </div>
-                                    <div>
-                                        <form class="searchForm">
-                                            <input value="{{app('request')->input('search')}}" placeholder="Search..." class="form-control" id="searchInput" type="search" name="search">
-                                        </form>
+                                    <div class="w-100 mx-1">
+                                        <small>
+                                            <input autocomplete="off" placeholder="Search ..." name="search" type="search" value="{{app('request')->input('search')}}" class="rounded-0 border-0 w-100 bg-transparent" id="searchInput">
+                                        </small>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#addEntityModal">Add Entity
-                                </button>
-                            </div>
+                            </form>
+                        </div>
+                        <div class="col-sm-12 col-md-2 d-flex justify-content-end text-end">
+                            <button type="button" class="btn btn-outline-primary rounded-0 px-3" data-bs-toggle="modal"
+                                data-bs-target="#addEntityModal">Add Job Order
+                            </button>
                         </div>
                     </div>
                     <div class="card-body overflow-x-auto">

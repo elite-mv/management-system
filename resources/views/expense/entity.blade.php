@@ -32,7 +32,7 @@
                                     <i class="fas fa-table me-1"></i>
                                     <b>Entities</b>
                                 </div>
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-outline-primary rounded-0 px-3" data-bs-toggle="modal"
                                         data-bs-target="#addEntityModal">Add Entity
                                 </button>
                             </div>
