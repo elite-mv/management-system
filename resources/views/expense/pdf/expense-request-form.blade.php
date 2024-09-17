@@ -168,7 +168,13 @@
         </tr>
         <tr>
             <td colspan="4" class="small px-2">Paid to:</td>
-            <td colspan="14" class="small px-2 text-capitalize">{{$request->paid_to}}</td>
+            <td colspan="14" class="small px-2 text-capitalize">
+                @can('managing-role')
+                    <small>{{$request->paid_to}}</small>
+                @else
+                    <small>[HIDDEN]</small>
+                @endcan
+            </td>
         </tr>
         <tr>
             <td colspan="4" class="small px-2">Requested By:</td>
@@ -221,11 +227,11 @@
         <tr>
             <td colspan="4" class="px-2 small bg-gray">Supplier</td>
             <td colspan="5" class="px-2 small">
-                @management
-                <small>{{$request->supplier}}</small>
+                @can('managing-role')
+                    <small>{{$request->supplier}}</small>
                 @else
                     <small>[HIDDEN]</small>
-                    @endmanagement
+                @endcan
             </td>
             <td colspan="3" class="px-2 small bg-gray">Payment Type</td>
             <td colspan="6" class="px-2 small">
@@ -271,11 +277,11 @@
             <td colspan="4" class="px-2 small fw-bold bg-gray">Supplier:</td>
             <td colspan="5" class="px-2 small">
                 @if(isset($request->checkVoucher))
-                    @management
-                    <small>{{$request->supplier}}</small>
-                @else
-                    <small>[HIDDEN]</small>
-                    @endmanagement
+                    @can('managing-role')
+                        <small>{{$request->supplier}}</small>
+                    @else
+                        <small>[HIDDEN]</small>
+                    @endcan
                 @endif
             </td>
             <td colspan="3" class="px-2 small fw-bold bg-gray">Date:</td>
@@ -289,11 +295,11 @@
             <td colspan="4" class="px-2 small fw-bold bg-gray">Paid to:</td>
             <td colspan="5" class="px-2 small">
                 @if(isset($request->checkVoucher))
-                    @management
-                    <small>{{$request->paid_to}}</small>
-                @else
-                    <small>[HIDDEN]</small>
-                    @endmanagement
+                    @can('managing-role')
+                        <small>{{$request->paid_to}}</small>
+                    @else
+                        <small>[HIDDEN]</small>
+                    @endcan
                 @endif
             </td>
             <td colspan="3" class="px-2 small fw-bold bg-gray">Paid amount:</td>

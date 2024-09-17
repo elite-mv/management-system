@@ -67,7 +67,7 @@
                 <div class="border border-dark"
                      style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
                     <img src="{{\Illuminate\Support\Facades\Storage::url($request->company->logo)}}" class="img-fluid"
-                         alt="LOGO"
+                         alt="{{$request->company->name}}"
                          style="height: 100px; width: auto;">
                 </div>
                 <div class="bg-red text-center text-white border border-dark"
@@ -169,7 +169,13 @@
             </tr>
             <tr>
                 <td colspan="4" class="small px-2">Paid to:</td>
-                <td colspan="14" class="small px-2 text-capitalize">{{$request->paid_to}}</td>
+                <td colspan="14" class="small px-2 text-capitalize">
+                    @can('managing-role')
+                        <small>{{$request->paid_to}}</small>
+                    @else
+                        <small>[HIDDEN]</small>
+                    @endcan
+                </td>
             </tr>
             <tr>
                 <td colspan="4" class="small px-2">Requested By:</td>
@@ -197,8 +203,7 @@
                     <td colspan="2" class="small px-2 bg-transparent text-transparent">{{$item->quantity}}</td>
                     <td colspan="3" class="small px-2 bg-transparent"
                         style="max-width: 10ch">{{$item->measurement->name}}</td>
-                    <td colspan="2" class="small px-2 bg-transparent"
-                        style="max-width: 20ch">{{$item->jobOrder->name}}</td>
+                    <td colspan="2" class="small px-2 bg-transparent" style="max-width: 20ch">{{$item->jobOrder->name}}</td>
                     <td colspan="2" class="small bg-transparent text-overflow">
                         <p class="m-0 p-0 text-truncate" style="max-width: 20ch">{{$item->description}}</p>
                     </td>
@@ -223,11 +228,11 @@
             <tr>
                 <td colspan="4" class="px-2 small bg-gray">Supplier</td>
                 <td colspan="5" class="px-2 small">
-                    @management
-                    <small>{{$request->supplier}}</small>
+                    @can('managing-role')
+                        <small>{{$request->supplier}}</small>
                     @else
                         <small>[HIDDEN]</small>
-                        @endmanagement
+                    @endcan
                 </td>
                 <td colspan="3" class="px-2 small bg-gray">Payment Type</td>
                 <td colspan="6" class="px-2 small">
@@ -248,11 +253,9 @@
 
             @foreach ($request->fund_item as $item)
                 <tr>
-                    <td colspan="4" class="small px-2 bg-transparent">{{$item->quantity}}</td>
-                    <td colspan="4" class="small px-2 bg-transparent text-truncate"
-                        style="max-width: 20ch">{{$item->measurement->name}}</td>
-                    <td colspan="1" class="small px-2 bg-transparent text-truncate"
-                        style="max-width: 20ch">{{$item->jobOrder->name}}</td>
+                    <td colspan="4" class="small px-2 bg-transparent" >{{$item->quantity}}</td>
+                    <td colspan="4" class="small px-2 bg-transparent text-truncate"  style="max-width: 20ch">{{$item->measurement->name}}</td>
+                    <td colspan="1" class="small px-2 bg-transparent text-truncate" style="max-width: 20ch">{{$item->jobOrder->name}}</td>
                     <td colspan="3" role="button" class="small px-2 pointer" data-bs-toggle="modal"
                         data-bs-target="#exampleModal">
                         <p class="m-0 p-0 text-truncate" style="max-width: 20ch">{{$item->description}}</p>
@@ -275,11 +278,11 @@
                 <td colspan="4" class="px-2 small fw-bold bg-gray">Supplier:</td>
                 <td colspan="5" class="px-2 small">
                     @if(isset($request->checkVoucher))
-                        @management
-                        <small>{{$request->supplier}}</small>
-                    @else
-                        <small>[HIDDEN]</small>
-                        @endmanagement
+                        @can('managing-role')
+                            <small>{{$request->supplier}}</small>
+                        @else
+                            <small>[HIDDEN]</small>
+                        @endcan
                     @endif
                 </td>
                 <td colspan="3" class="px-2 small fw-bold bg-gray">Date:</td>
@@ -293,11 +296,11 @@
                 <td colspan="4" class="px-2 small fw-bold bg-gray">Paid to:</td>
                 <td colspan="5" class="px-2 small">
                     @if(isset($request->checkVoucher))
-                        @management
-                        <small>{{$request->paid_to}}</small>
-                    @else
-                        <small>[HIDDEN]</small>
-                        @endmanagement
+                        @can('managing-role')
+                            <small>{{$request->paid_to}}</small>
+                        @else
+                            <small>[HIDDEN]</small>
+                        @endcan
                     @endif
                 </td>
                 <td colspan="3" class="px-2 small fw-bold bg-gray">Paid amount:</td>
