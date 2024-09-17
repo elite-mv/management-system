@@ -112,7 +112,7 @@
 
         <div class="col">
             <div class="bg-light p-2">
-                 <a type="button" href="/expense/pdf/request/{{$request->id}}" class="btn btn-success">
+                <a type="button" href="/expense/pdf/request/{{$request->id}}" class="btn btn-success">
                     <i class="fas fa-download"></i>
                     Download
                 </a>
@@ -328,7 +328,8 @@
                             <td colspan="4" class="px-2 small bg-gray">Supplier</td>
                             <td colspan="5" class="px-2 small">
                                 @can('managing-role')
-                                    <input id="supplierInput" value="{{$request->supplier}}" class="border-0 outline-0 w-100 small  text-capitalize">
+                                    <input id="supplierInput" value="{{$request->supplier}}"
+                                           class="border-0 outline-0 w-100 small  text-capitalize">
                                 @else
                                     <small>[HIDDEN]</small>
                                 @endcan
@@ -360,7 +361,8 @@
                             <td colspan="4" class="px-2 small bg-gray">Paid to</td>
                             <td colspan="5" class="px-2 small">
                                 @can('managing-role')
-                                    <input id="paidToInput" value="{{$request->paid_to}}" class="border-0 outline-0 w-100 small  text-capitalize">
+                                    <input id="paidToInput" value="{{$request->paid_to}}"
+                                           class="border-0 outline-0 w-100 small  text-capitalize">
                                 @else
                                     <small>[HIDDEN]</small>
                                 @endcan
@@ -368,7 +370,8 @@
                             <td colspan="3" class="px-2 small bg-gray">Terms</td>
                             <td colspan="6" class="px-2 small">
                                 @if($request->terms)
-                                    <input id="termsInput" value="{{$request->terms}}" class="border-0 outline-0 w-100 small text-capitalize">
+                                    <input id="termsInput" value="{{$request->terms}}"
+                                           class="border-0 outline-0 w-100 small text-capitalize">
                                 @else
                                     <input id="termsInput" class="border-0 outline-0 w-100 small text-capitalize">
                                 @endif
@@ -555,7 +558,7 @@
                                     Priority
                                 @else
                                     @can('book-keeper',auth()->user())
-                                        <form id="bookerKeeperForm" method="POST"
+                                        <form class="managingForm" id="bookerKeeperForm" method="POST"
                                               action="/expense/expense-request/book-keeper/approval/{{$request->id}}">
                                             @csrf
                                             <select id="bookerKeeperStatus" name="status"
@@ -696,7 +699,7 @@
                                     Priority
                                 @else
                                     @can('accountant',auth()->user())
-                                        <form id="accountantForm" method="POST"
+                                        <form class="managingForm" id="accountantForm" method="POST"
                                               action="/expense/expense-request/accountant/approval/{{$request->id}}">
                                             @csrf
                                             <select id="accountantStatus" name="status"
@@ -821,7 +824,8 @@
                             </td>
                             @can('managing-role')
                                 <td colspan="1" rowspan="5" style="position:relative;">
-                                    <div style="position: absolute; height: 100%; width: 100%; display: flex; align-items: center;">
+                                    <div
+                                        style="position: absolute; height: 100%; width: 100%; display: flex; align-items: center;">
                                         <div class="d-flex p-1 overflow-hidden gap-1" id="payment_images">
                                             @foreach ($images as $index => $image)
                                                 <img class="uploaded-img" src="{{$image->public_image}}">
@@ -840,7 +844,7 @@
                             </td>
                             <td colspan="5" class="small px-2 selectable">
                                 @can('finance-president',auth()->user())
-                                    <form id="financeForm" method="POST"
+                                    <form class="managingForm" id="financeForm" method="POST"
                                           action="/expense/expense-request/finance/approval/{{$request->id}}">
                                         @csrf
                                         <select id="financeStatus" name="status" class="border-0 outline-0 w-100">
@@ -961,7 +965,7 @@
                             </td>
                             <td colspan="5" class="small px-2 selectable">
                                 @can('auditor',auth()->user())
-                                    <form id="auditorForm" method="POST"
+                                    <form class="managingForm" id="auditorForm" method="POST"
                                           action="/expense/expense-request/auditor/approval/{{$request->id}}">
                                         @csrf
                                         <select id="auditorStatus" name="status" class="border-0 outline-0 w-100">
@@ -1052,8 +1056,12 @@
                             </td>
                             @can('managing-role')
                                 <td colspan="1" class="text-center">
-                                    <input id="payment_upload" type="file" accept="image/jpeg, image/png, application/pdf" multiple="" name="files[]" class="d-none">
-                                    <label for="payment_upload" class="btn btn-sm w-100 rounded-0 btn-outline-danger border-0">UPLOAD IMAGES</label>
+                                    <input id="payment_upload" type="file"
+                                           accept="image/jpeg, image/png, application/pdf" multiple="" name="files[]"
+                                           class="d-none">
+                                    <label for="payment_upload"
+                                           class="btn btn-sm w-100 rounded-0 btn-outline-danger border-0">UPLOAD
+                                        IMAGES</label>
                                 </td>
                             @endcan
                             <td colspan="2" class="fw-bold small px-2">OR No</td>
@@ -1089,7 +1097,8 @@
                             <td colspan="4" class="px-2">
                                 <div class="d-flex gap-1 align-items-center mb-1">
                                     <label class="small">Others:</label>
-                                    <input value="{{$request->others}}" id="othersInput" class="small w-100 outline-0 border-1 border-top-0 border-start-0 border-end-0">
+                                    <input value="{{$request->others}}" id="othersInput"
+                                           class="small w-100 outline-0 border-1 border-top-0 border-start-0 border-end-0">
                                 </div>
                             </td>
                             <td colspan="2" class="fw-bold small px-2">Voucher No</td>
@@ -1146,7 +1155,8 @@
 
         <div id="requestHistory" class="d-none h-100 col-3 flex-shrink-0">
             <div class="bg-white position-relative" style="width: 380px;">
-                <div class="bg-white sticky-top d-flex align-items-center gap-2 flex-shrink-0 p-3 border-bottom" style="z-index:100">
+                <div class="bg-white sticky-top d-flex align-items-center gap-2 flex-shrink-0 p-3 border-bottom"
+                     style="z-index:100">
                     <button onclick="viewHistory()" class="btn btn-sm btn-outline-danger">
                         <i class="fas fa-times mt-1"></i>
                     </button>
@@ -1154,7 +1164,8 @@
                 </div>
                 <div class="list-group list-group-flush border-bottom scroll-area">
                     @foreach($logs as $log)
-                        <a href="#" class="list-group-item list-group-item-action py-3 lh-tight d-flex align-items-center">
+                        <a href="#"
+                           class="list-group-item list-group-item-action py-3 lh-tight d-flex align-items-center">
                             <div class="w-100">
                                 <div class="d-flex w-100 align-items-center justify-content-between">
                                     <strong class="mb-1">{{$log->user->name}}</strong>
@@ -1163,7 +1174,8 @@
                                 <div class="col-10 mb-1 small">{{$log->description}}</div>
                             </div>
                             @can('developer', auth()->user())
-                                <button class="btn btn-sm btn-close bg-transparent ms-3" data-id="{{$log->id}}" onclick="console.log('{{$log->id}}');"></button>
+                                <button class="btn btn-sm btn-close bg-transparent ms-3" data-id="{{$log->id}}"
+                                        onclick="console.log('{{$log->id}}');"></button>
                             @endcan
                         </a>
                     @endforeach
@@ -1243,20 +1255,24 @@
                             <div class="row">
                                 <div class="col-2 m-0 p-0 small border-0">
                                     @can('manage')
-                                        <input id="editItemQuantity" type="text" class="p-2 h-100 w-100" name="quantity">
+                                        <input id="editItemQuantity" type="text" class="p-2 h-100 w-100"
+                                               name="quantity">
                                     @else
-                                        <input id="editItemQuantity" type="text" class="p-2 h-100 w-100" name="quantity" disabled>
+                                        <input id="editItemQuantity" type="text" class="p-2 h-100 w-100" name="quantity"
+                                               disabled>
                                     @endcan
                                 </div>
                                 <div class="col-2 m-0 p-0 small border-0">
                                     @can('manage')
-                                        <select name="measurement" id="editItemUnitOfMeasurement" class="p-2 h-100 w-100">
+                                        <select name="measurement" id="editItemUnitOfMeasurement"
+                                                class="p-2 h-100 w-100">
                                             @foreach($measurements as $measurement)
                                                 <option value="{{$measurement->id}}">{{$measurement->name}}</option>
                                             @endforeach
                                         </select>
                                     @else
-                                        <select disabled name="measurement" id="editItemUnitOfMeasurement" class="p-2 h-100 w-100">
+                                        <select disabled name="measurement" id="editItemUnitOfMeasurement"
+                                                class="p-2 h-100 w-100">
                                             @foreach($measurements as $measurement)
                                                 <option value="{{$measurement->id}}">{{$measurement->name}}</option>
                                             @endforeach
@@ -1291,14 +1307,16 @@
                                     @can('manage')
                                         <input name="cost" id="editItemCost" type="text" class="p-2 h-100 w-100">
                                     @else
-                                        <input name="cost" id="editItemCost" type="text" class="p-2 h-100 w-100" disabled>
+                                        <input name="cost" id="editItemCost" type="text" class="p-2 h-100 w-100"
+                                               disabled>
                                     @endcan
                                 </div>
                                 <div class="col-2 small border-0 m-0 p-0">
                                     @can('manage')
                                         <input id="editItemTotal" type="text" class="p-2 h-100 w-100" name="total">
                                     @else
-                                        <input id="editItemTotal" type="text" class="p-2 h-100 w-100" name="total" disabled>
+                                        <input id="editItemTotal" type="text" class="p-2 h-100 w-100" name="total"
+                                               disabled>
                                     @endcan
                                 </div>
                             </div>
@@ -1340,13 +1358,15 @@
                                     @can('manage')
                                         <select id="editItemStatus" class="p-2" name="status">
                                             @foreach(App\Enums\RequestItemStatus::status() as $requestStatus)
-                                                <option value="{{$requestStatus->name}}">{{$requestStatus->name}}</option>
+                                                <option
+                                                    value="{{$requestStatus->name}}">{{$requestStatus->name}}</option>
                                             @endforeach
                                         </select>
                                     @else
                                         <select id="editItemStatus" class="p-2" name="status" disabled>
                                             @foreach(App\Enums\RequestItemStatus::status() as $requestStatus)
-                                                <option value="{{$requestStatus->name}}">{{$requestStatus->name}}</option>
+                                                <option
+                                                    value="{{$requestStatus->name}}">{{$requestStatus->name}}</option>
                                             @endforeach
                                         </select>
                                     @endcan
@@ -1452,6 +1472,8 @@
         const othersInput = document.querySelector('#othersInput');
 
         let initialLoad = true;
+
+        const managingForms = document.querySelectorAll('.managingForm');
 
 
         if (receivedBy) {
@@ -1681,7 +1703,7 @@
                     });
 
 
-                    const data = await  response.json();
+                    const data = await response.json();
 
                     if (!response.ok) {
                         throw new Error(data.message)
@@ -1793,24 +1815,28 @@
 
         if (bookerKeeperStatus) {
             bookerKeeperStatus.addEventListener('change', () => {
+                fireSubmitEvent();
                 bookerKeeperForm.submit();
             })
         }
 
         if (accountantStatus) {
             accountantStatus.addEventListener('change', () => {
+                fireSubmitEvent();
                 accountantForm.submit();
             })
         }
 
         if (financeStatus) {
             financeStatus.addEventListener('change', () => {
+                fireSubmitEvent();
                 financeForm.submit();
             })
         }
 
         if (auditorStatus) {
             auditorStatus.addEventListener('change', () => {
+                fireSubmitEvent();
                 auditorForm.submit();
             })
         }
@@ -2077,7 +2103,7 @@
 
                     console.log(attachment);
 
-                    let imageSrc =   attachment.public_image;
+                    let imageSrc = attachment.public_image;
 
                     const thumbnail = $('<img>').attr('src', imageSrc).addClass('uploaded-img');
 
@@ -2738,6 +2764,12 @@
 
         function viewHistory() {
             historyHolder.classList.toggle('d-none')
+        }
+
+        function fireSubmitEvent(){
+            let timestamp = Date.now().toString();
+            console.log('Updating: ', timestamp)
+            localStorage.setItem('update', timestamp);
         }
 
     </script>

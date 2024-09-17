@@ -137,7 +137,7 @@ if (downloadExpenseForm) {
     })
 }
 
-if(downloadCheckForm){
+if (downloadCheckForm) {
 
     downloadCheckForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -148,7 +148,7 @@ if(downloadCheckForm){
     })
 }
 
-if(auditItemForm){
+if (auditItemForm) {
 
     auditItemForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -158,3 +158,11 @@ if(auditItemForm){
         auditItemForm.submit();
     })
 }
+
+window.addEventListener('storage', function (event) {
+    if (filterForm && event.key === 'update') {
+        setTimeout(() => {
+            filterForm.submit();
+        }, 500)
+    }
+})
