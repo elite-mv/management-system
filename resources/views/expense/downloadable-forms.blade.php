@@ -20,7 +20,7 @@
     <div class="row m-0">
         <div class="col-sm-12 col-md-10 mx-auto">
 
-            <div class="d-flex overflow-y-auto m-0 p-3" style="gap: 0 30px; border-radius: 7px;
+            <div class="d-flex overflow-y-auto m-0 p-3 mb-3" style="gap: 0 30px; border-radius: 7px;
                 background-color: rgba(255, 255, 255, 0.2);
                 box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
                 border: 1px solid rgba(255, 255, 255, 0.5);
@@ -101,32 +101,26 @@
                 </div>
             </div>
 
-            <div class="d-flex gap-2 my-2">
-                <form id="excelForm" method="POST" action="/expense/forms/excel">
-                    @csrf
-                    <button type="submit" class="btn btn-success rounded-0 px-3">Export to Excel</button>
-                </form>
-                <form id="pdfForm" method="POST" action="/expense/forms/pdf">
-                    @csrf
-                    <button type="submit" class="btn btn-danger rounded-0 px-3">Export to PDF</button>
-                </form>
-            </div>
-
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header">
-                            <div class="row">
+                        <div class="card-header row">
+                            <div class="col-sm-12 col-md-6 d-flex align-items-center">
                                 <div class="col-auto text-start">
                                     <i class="fas fa-table me-1"></i>
                                     <b>Requests</b>
                                 </div>
-                                <div class="col text-start">
-                                    <div class="d-flex justify-content-around">
-                                        <div class="fw-bold text-end">Total Requested: {!! \App\Helper\Helper::formatPeso($total) !!}</div>
-                                        <div class="fw-bold text-end">Total Approved: {!! \App\Helper\Helper::formatPeso($approved) !!}</div>
-                                        <div class="fw-bold text-end">Total Balance: {!! \App\Helper\Helper::formatPeso($total - $approved) !!}</div>
-                                    </div>
+                            </div>
+                            <div class="col-sm-12 col-md-6">
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <form id="excelForm" method="POST" action="/expense/forms/excel">
+                                        @csrf
+                                        <button type="submit" class="btn btn-outline-success rounded-0 px-3">Export to Excel</button>
+                                    </form>
+                                    <form id="pdfForm" method="POST" action="/expense/forms/pdf">
+                                        @csrf
+                                        <button type="submit" class="btn btn-outline-danger rounded-0 px-3">Export to PDF</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -134,19 +128,19 @@
                             <table class="table table-bordered table-responsive">
                                 <thead>
                                 <tr>
-                                    <th>REFERENCE</th>
-                                    <th>ENTITY</th>
-                                    <th>PAID TO</th>
-                                    <th>REQUESTED BY</th>
-                                    <th>BOOK KEEPER</th>
-                                    <th>ACCOUNTANT</th>
-                                    <th>FINANCE</th>
-                                    <th>AUDITOR</th>
-                                    <th>PAYMENT STATUS</th>
-                                    <th>REQUEST STATUS</th>
-                                    <th>AMOUNT REQUEST</th>
-                                    <th>APPROVED AMOUNT</th>
-                                    <th>BALANCE</th>
+                                    <th class="text-nowrap">REFERENCE</th>
+                                    <th class="text-nowrap">ENTITY</th>
+                                    <th class="text-nowrap">PAID TO</th>
+                                    <th class="text-nowrap">REQUESTED BY</th>
+                                    <th class="text-nowrap">BOOK KEEPER</th>
+                                    <th class="text-nowrap">ACCOUNTANT</th>
+                                    <th class="text-nowrap">FINANCE</th>
+                                    <th class="text-nowrap">AUDITOR</th>
+                                    <th class="text-nowrap">PAYMENT STATUS</th>
+                                    <th class="text-nowrap">REQUEST STATUS</th>
+                                    <th class="text-nowrap">AMOUNT REQUEST</th>
+                                    <th class="text-nowrap">APPROVED AMOUNT</th>
+                                    <th class="text-nowrap">BALANCE</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -210,6 +204,13 @@
                                 </tr>
                                 </tfoot>
                             </table>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-flex justify-content-around">
+                                <div class="fw-bold text-end">Total Requested: {!! \App\Helper\Helper::formatPeso($total) !!}</div>
+                                <div class="fw-bold text-end">Total Approved: {!! \App\Helper\Helper::formatPeso($approved) !!}</div>
+                                <div class="fw-bold text-end">Total Balance: {!! \App\Helper\Helper::formatPeso($total - $approved) !!}</div>
+                            </div>
                         </div>
                     </div>
                 </div>

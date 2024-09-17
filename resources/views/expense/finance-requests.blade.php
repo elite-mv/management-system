@@ -161,11 +161,6 @@
                                             <i class="fas fa-table me-1"></i>
                                             <b>Requests</b>
                                         </div>
-
-                                        <div class="fw-bold">
-                                            <span>Total: </span>
-                                            <span class="pl-5 m-0">{!! \App\Helper\Helper::formatPeso($total) !!}</span>
-                                        </div>
                                     </div>
                                     <div class="col-sm-12 col-md-6 text-end d-none" id="collapseLayout">
                                         <div class="d-flex gap-2 justify-content-end">
@@ -241,6 +236,12 @@
                                     @endforelse
 
                                     </tbody>
+                                    <tfoot>
+                                        <tr class="fw-bold">
+                                            <td colspan="7">Total</td>
+                                            <td>{!! \App\Helper\Helper::formatPeso($total) !!}</td>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                                 <div class="container-fluid">
                                     {{ $requests->links()}}
