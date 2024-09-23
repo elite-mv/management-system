@@ -83,7 +83,7 @@ class FinanceController extends Controller
         $total = self::getTotal($request);
 
         return view('expense.finance-requests', [
-            'requests' => $requests,
+            'requests' =>  $requests->appends(request()->except('page')),
             'total' => $total,
         ]);
     }
