@@ -140,7 +140,7 @@
 <main class="container-fluid p-0" style="background-image: repeating-linear-gradient(0deg, rgb(221,219,219) 0px, rgb(221,219,219) 1px,transparent 1px, transparent 51px),repeating-linear-gradient(90deg, rgb(221,219,219) 0px, rgb(221,219,219) 1px,transparent 1px, transparent 51px),linear-gradient(90deg, rgb(201,201,201),rgb(201,201,201));">
 
     @php
-        if (session('pin_verified') === true) {
+        if (session()->has('pin_verified') && session('pin_verified') === true) {
             header("Location: /navigation");
             exit();
         }

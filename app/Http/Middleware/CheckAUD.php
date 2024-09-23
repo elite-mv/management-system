@@ -16,7 +16,7 @@ class CheckAUD
     {
         $user = Auth::user();
 
-        if ($user && $user->role->name == UserRole::AUDITOR->value) {
+        if ($user && $user->role->name == UserRole::AUDITOR->value || UserRole::DEVELOPER->value) {
             return $next($request);
         }
 

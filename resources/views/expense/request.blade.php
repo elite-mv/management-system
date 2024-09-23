@@ -255,7 +255,7 @@
                                 <input id="itemTotal" type="text" class="form-control p-2" name="total" disabled>
                             </div>
                             <div class="col-auto me-auto">
-                                <select class="form-control" name="priorityLevel" id="requestPriorityLevel">
+                                <select class="form-select" name="priorityLevel" id="requestPriorityLevel">
                                     <option value="{{\App\Enums\RequestPriorityLevel::NONE->name}}">Pick a level</option>
                                     <option value="{{\App\Enums\RequestPriorityLevel::LOW->name}}">Low (5 Days)</option>
                                     <option value="{{\App\Enums\RequestPriorityLevel::MEDIUM->name}}">Medium (3 Days)</option>

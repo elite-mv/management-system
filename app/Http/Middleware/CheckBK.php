@@ -16,7 +16,7 @@ class CheckBK
     {
         $user = Auth::user();
 
-        if ($user && $user->role->name == UserRole::BOOK_KEEPER->value) {
+        if ($user && $user->role->name == UserRole::BOOK_KEEPER->value || UserRole::DEVELOPER->value) {
             return $next($request);
         }
 

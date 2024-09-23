@@ -16,7 +16,7 @@ class CheckPRES
     {
         $user = Auth::user();
 
-        if ($user && $user->role->name == UserRole::PRESIDENT->value) {
+        if ($user && $user->role->name == UserRole::PRESIDENT->value || UserRole::DEVELOPER->value) {
             return $next($request);
         }
 

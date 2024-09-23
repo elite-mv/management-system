@@ -11,6 +11,44 @@
 @endsection
 
 @section('body')
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" action="/expense/update-bank">
+                @method('PATCH')
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group mb-2">
+                            <select name="bankNameSelection" class="small form-select">
+                                <option value="-1" selected>SELECT AN OPTION</option>
+                                @foreach($bank_names as $bankName)
+                                    <option class="text-dark" value="{{$bankName->id}}">{{$bankName->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <select name="bankCodeSelection" class="small form-select">
+                                <option value="-1" selected>SELECT AN OPTON</option>
+                                @foreach($bank_codes as $bankCode)
+                                    <option class="text-dark" value="{{$bankCode->id}}">{{$bankCode->code}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="p-3 px-md-0 m-0">
 
         <div class="row m-0">
@@ -172,12 +210,17 @@
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="col-sm-12 col-md-6 text-end d-none" id="collapseLayout">
                                         <div class="d-flex gap-2 justify-content-end">
-                                             <form method="POST" action="/test-pdf" id="downloadExpenseForm">
+                                            <button class="btn btn-sm btn-outline-danger rounded-0 px-4" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                Bulk Update
+                                            </button>
+
+                                            <form method="POST" action="/test-pdf" id="downloadExpenseForm">
                                                 @csrf
                                                 <input id="downloadExpenseInput" type="hidden" name="id[]">
-                                                 <button class="btn btn-sm btn-outline-danger rounded-0 px-4" type="submit">
+                                                <button class="btn btn-sm btn-outline-danger rounded-0 px-4" type="submit">
                                                     Download Forms
                                                 </button>
                                              </form>
@@ -262,6 +305,15 @@
 @endsection
 
 @section('script')
+    <script>
+        $('select[name="bankNameSelection"]').on('change', function() {
+            console.log($(this).val());
+        })
+
+        $('select[name="bankCodeSelection"]').on('change', function() {
+            console.log($(this).val());
+        })
+    </script>
     <script type="text/javascript" src="/js/expense/request-table.js"></script>
     <script type="text/javascript" src="/js/sortable.js"></script>
 @endsection

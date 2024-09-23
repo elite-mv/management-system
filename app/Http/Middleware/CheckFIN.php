@@ -16,7 +16,7 @@ class CheckFIN
     {
         $user = Auth::user();
 
-        if ($user && $user->role->name == UserRole::FINANCE->value) {
+        if ($user && $user->role->name == UserRole::FINANCE->value || UserRole::DEVELOPER->value) {
             return $next($request);
         }
 

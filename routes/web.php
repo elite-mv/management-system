@@ -111,11 +111,10 @@ Route::prefix('expense')->group(function () {
         Route::get('/prev-request/{requestID}', [RequestController::class, 'prevRequest']);
         Route::middleware([CompanyData::class])->get('/requests', [RequestController::class, 'getRequests']);
         Route::get('/daily-request', [DailyRequest::class, 'index']);
-
         Route::middleware([CompanyData::class, CheckBK::class])->get('/book-keeper', [BookKeeperController::class, 'index']);
         Route::middleware([CompanyData::class, CheckACC::class])->get('/accountant', [AccountantController::class, 'index']);
-        Route::middleware([CompanyData::class, CheckFIN::class])->get('/finance', [FinanceController::class, 'index']);
-        Route::middleware([CompanyData::class, CheckPRES::class])->get('/president', [PresidentController::class, 'index']);
+        Route::middleware([CompanyData::class, CheckFIN::class, BankData::class, BankCodesData::class])->get('/finance', [FinanceController::class, 'index']);
+        Route::middleware([CompanyData::class, CheckPRES::class, BankData::class, BankCodesData::class])->get('/president', [PresidentController::class, 'index']);
         Route::middleware([CompanyData::class, CheckAUD::class])->get('/auditor', [AuditorController::class, 'index']);
 
         Route::get('/job-order', [JobOrderController::class, 'index']);
