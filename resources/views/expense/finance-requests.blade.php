@@ -11,6 +11,41 @@
 @endsection
 
 @section('body')
+    <div class="d-none" id="bulkUpdate">
+        <div class="card card-body rounded-0" style="background: rgba(255, 255, 255, 0.5);">
+            <table class="w-50 mx-auto">
+                <tbody>
+                    <tr>
+                        <td class="text-center fw-bold bg-blue small">BANK NAME</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select name="bankNameSelection" class="w-100 h-100 border-0 box outline-0 small">
+                                <option value="-1" selected>SELECT AN OPTION</option>
+                                @foreach($bank_names as $bankName)
+                                    <option class="text-dark" value="{{$bankName->id}}">{{$bankName->name}}</option>
+                                @endforeach
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-center fw-bold bg-blue small">BANK CODE</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select name="bankCodeSelection" class="w-100 h-100 border-0 box outline-0 small">
+                                <option value="-1" selected>SELECT AN OPTON</option>
+                                @foreach($bank_codes as $bankCode)
+                                    <option class="text-dark" value="{{$bankCode->id}}">{{$bankCode->code}}</option>
+                                @endforeach
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <div class="p-3 px-md-0 m-0">
 
         <div class="row m-0">
@@ -172,12 +207,16 @@
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="col-sm-12 col-md-6 text-end d-none" id="collapseLayout">
                                         <div class="d-flex gap-2 justify-content-end">
-                                             <form method="POST" action="/test-pdf" id="downloadExpenseForm">
+                                            <button class="btn btn-sm btn-outline-danger rounded-0 px-4" type="button" onclick="bulkUpdates();">
+                                                Bulk Update
+                                            </button>
+                                            <form method="POST" action="/test-pdf" id="downloadExpenseForm">
                                                 @csrf
                                                 <input id="downloadExpenseInput" type="hidden" name="id[]">
-                                                 <button class="btn btn-sm btn-outline-danger rounded-0 px-4" type="submit">
+                                                <button class="btn btn-sm btn-outline-danger rounded-0 px-4" type="submit">
                                                     Download Forms
                                                 </button>
                                              </form>
@@ -262,6 +301,15 @@
 @endsection
 
 @section('script')
+    <script>
+        $('select[name="bankNameSelection"]').on('change', function() {
+            console.log($(this).val());
+        })
+
+        $('select[name="bankCodeSelection"]').on('change', function() {
+            console.log($(this).val());
+        })
+    </script>
     <script type="text/javascript" src="/js/expense/request-table.js"></script>
     <script type="text/javascript" src="/js/sortable.js"></script>
 @endsection

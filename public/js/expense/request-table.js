@@ -7,7 +7,6 @@ const downloadCheckInput = document.querySelector('#downloadCheckInput');
 const auditItemForm = document.querySelector('#auditItemForm');
 const auditItemInput = document.querySelector('#auditItemInput');
 
-
 const filterModal = new bootstrap.Modal('#filterModal');
 const checkedInputs = new Map();
 
@@ -166,3 +165,9 @@ window.addEventListener('storage', function (event) {
         }, 500)
     }
 })
+
+const bulkUpdate = document.querySelector('#bulkUpdate');
+
+function bulkUpdates() {
+    bulkUpdate.classList.toggle('d-none')
+}
