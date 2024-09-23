@@ -16,7 +16,7 @@ class CheckACC
     {
         $user = Auth::user();
 
-        if ($user && $user->role->name == UserRole::ACCOUNTANT->value) {
+        if ($user && $user->role->name == UserRole::ACCOUNTANT->value || UserRole::DEVELOPER->value) {
             return $next($request);
         }
 
