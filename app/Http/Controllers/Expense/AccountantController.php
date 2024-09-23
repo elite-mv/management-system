@@ -76,7 +76,7 @@ class AccountantController extends Controller
         $requests = $query->paginate($request->input('entries') ?? 100, ['*'], 'page', $request->input('page') ?? 1);
 
         return view('expense.accountant-requests', [
-            'requests' => $requests,
+            'requests' =>  $requests->appends(request()->except('page')),
             'total' => 0,
         ]);
     }

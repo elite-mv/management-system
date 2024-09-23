@@ -169,12 +169,22 @@
                             <div class="card-header">
                                 <div class="row justify-content-between" style="height: 30px">
                                     <div class="col-sm-12 col-md-6 text-start d-flex gap-2 align-items-center">
-                                        <div>
-                                            <i class="fas fa-table me-1"></i>
-                                            <b>Requests</b>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div>
+                                                <i class="fas fa-table me-1"></i>
+                                                <b>Requests</b>
+                                            </div>
+                                            <div>
+                                                <span class="ml-3 fw-bold text-danger">Total: </span>
+                                                <span class="fw-bold text-danger">{!! \App\Helper\Helper::formatPeso($total) !!}</span>
+                                            </div>
+                                            <div>
+                                                <span class="ml-3 fw-bold text-secondary">Request Count: </span>
+                                                <span class="fw-bold text-secondary">{{$requests->total()}}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-12 col-md-6 text-end d-none">
+                                    <div id="collapseLayout" class="col-sm-12 col-md-6 text-end d-none">
                                         <div class="d-flex gap-2 justify-content-end">
                                             <form method="POST" action="/test-pdf" id="downloadExpenseForm">
                                                 @csrf
@@ -231,7 +241,7 @@
                                             <td>{{ $request->reference}}</td>
                                             <td>{{$request->created_at->diffForHumans()}}</td>
                                             <td class="text-uppercase">{{ $request->company->name}}</td>
-                                            <td class="text-capitalize">{{ $request->request_by}}</td>
+                                            <td class="text-capitalize" style="max-width: 25ch">{{ $request->request_by}}</td>
                                             <td class="text-uppercase">{{ $request->status}}</td>
                                             <td>{!! \App\Helper\Helper::formatPeso( $request->items->first()->total_cost ) !!}</td>
                                             <td>
@@ -249,14 +259,7 @@
                                             </td>
                                         </tr>
                                     @endforelse
-
                                     </tbody>
-                                    <tfoot>
-                                        <tr class="fw-bold">
-                                            <td colspan="7">Total</td>
-                                            <td>{!! \App\Helper\Helper::formatPeso($total) !!}</td>
-                                        </tr>
-                                    </tfoot>
                                 </table>
                                 <div class="container-fluid">
                                     {{ $requests->links()}}

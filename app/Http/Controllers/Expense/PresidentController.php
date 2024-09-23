@@ -84,7 +84,7 @@ class PresidentController extends Controller
         $total = self::getTotal($request);
 
         return view('expense.president-requests', [
-            'requests' => $requests,
+            'requests' => $requests->appends(request()->except('page')),
             'total' => $total,
         ]);
     }
