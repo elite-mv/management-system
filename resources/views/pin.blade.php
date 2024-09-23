@@ -137,7 +137,14 @@
 
 </head>
 <body>
-<main class="container-fluid p-0">
+<main class="container-fluid p-0" style="background-image: repeating-linear-gradient(0deg, rgb(221,219,219) 0px, rgb(221,219,219) 1px,transparent 1px, transparent 51px),repeating-linear-gradient(90deg, rgb(221,219,219) 0px, rgb(221,219,219) 1px,transparent 1px, transparent 51px),linear-gradient(90deg, rgb(201,201,201),rgb(201,201,201));">
+
+    @php
+        if (session('pin_verified') === true) {
+            header("Location: /navigation");
+            exit();
+        }
+    @endphp
 
     <ul class="lightrope">
         <li></li>
@@ -188,7 +195,7 @@
 
         <div id="pin" class="mx-auto"
              style="width: 80%; height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column; margin: 0; padding: 0;">
-            <div>
+            <div class="text-center">
                 <small><h1>ENTER YOUR 5 SECRET PIN</h1></small>
             </div>
             <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 0 15px;">
@@ -269,7 +276,6 @@
 
         pinForm.submit();
     }
-
 </script>
 </body>
 </html>
