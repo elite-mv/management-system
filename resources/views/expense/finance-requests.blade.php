@@ -11,38 +11,41 @@
 @endsection
 
 @section('body')
-    <div class="d-none" id="bulkUpdate">
-        <div class="card card-body rounded-0" style="background: rgba(255, 255, 255, 0.5);">
-            <table class="w-50 mx-auto">
-                <tbody>
-                    <tr>
-                        <td class="text-center fw-bold bg-blue small">BANK NAME</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <select name="bankNameSelection" class="w-100 h-100 border-0 box outline-0 small">
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" action="/expense/update-bank">
+                @method('PATCH')
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group mb-2">
+                            <select name="bankNameSelection" class="small form-select">
                                 <option value="-1" selected>SELECT AN OPTION</option>
                                 @foreach($bank_names as $bankName)
                                     <option class="text-dark" value="{{$bankName->id}}">{{$bankName->name}}</option>
                                 @endforeach
                             </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center fw-bold bg-blue small">BANK CODE</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <select name="bankCodeSelection" class="w-100 h-100 border-0 box outline-0 small">
+                        </div>
+                        <div class="form-group mb-2">
+                            <select name="bankCodeSelection" class="small form-select">
                                 <option value="-1" selected>SELECT AN OPTON</option>
                                 @foreach($bank_codes as $bankCode)
                                     <option class="text-dark" value="{{$bankCode->id}}">{{$bankCode->code}}</option>
                                 @endforeach
                             </select>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -210,9 +213,10 @@
 
                                     <div class="col-sm-12 col-md-6 text-end d-none" id="collapseLayout">
                                         <div class="d-flex gap-2 justify-content-end">
-                                            <button class="btn btn-sm btn-outline-danger rounded-0 px-4" type="button" onclick="bulkUpdates();">
+                                            <button class="btn btn-sm btn-outline-danger rounded-0 px-4" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                                 Bulk Update
                                             </button>
+
                                             <form method="POST" action="/test-pdf" id="downloadExpenseForm">
                                                 @csrf
                                                 <input id="downloadExpenseInput" type="hidden" name="id[]">
