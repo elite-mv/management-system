@@ -658,7 +658,7 @@
                                     {{  $request->created_at->format('Y-m-d H:i')}}
                                 @else
                                     @if($request->accountant)
-                                        {{$request->accountant->created_at->format('y-m-d H:i')}}
+                                        {{$request->accountant->created_at->format('Y-m-d H:i')}}
                                     @endif
                                 @endif
                             </td>
@@ -758,7 +758,7 @@
                             </td>
                             <td colspan="5" class="small px-2">
                                 @if($request->finance)
-                                    {{$request->finance->created_at->format('y-m-d H:i')}}
+                                    {{$request->finance->updated_at->format('Y-m-d H:i')}}
                                 @endif
                             </td>
                         </tr>

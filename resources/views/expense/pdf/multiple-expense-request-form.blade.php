@@ -147,7 +147,7 @@
             <tbody>
             <tr>
                 <td colspan="4" class="small px-2">Date:</td>
-                <td colspan="8" class="small px-2">{{$request->created_at->format('Y-m-d H:m')}}</td>
+                <td colspan="8" class="small px-2">{{$request->created_at->format('Y-m-d H:i')}}</td>
                 <td colspan="2" class="small px-2">CV NO:</td>
                 <td colspan="4" class="small px-2">
                     @if(isset($request->checkVoucher))
@@ -288,7 +288,7 @@
                 <td colspan="3" class="px-2 small fw-bold bg-gray">Date:</td>
                 <td colspan="6" class="px-2 small">
                     @if(isset($request->checkVoucher))
-                        {{ $request->checkVoucher->created_at->format('Y-m-d H:m') }}
+                        {{ $request->checkVoucher->created_at->format('Y-m-d H:i') }}
                     @endif
                 </td>
             </tr>
@@ -439,10 +439,10 @@
                 <td colspan="3" class="px-2 bg-blue small">Incomplete</td>
                 <td colspan="5" class="px-2 small">
                     @if($request->priority)
-                        {{  $request->created_at->format('Y-m-d H:m')}}
+                        {{  $request->created_at->format('Y-m-d H:i')}}
                     @else
                         @if($request->bookKeeper)
-                            {{  $request->bookKeeper->created_at->format('Y-m-d H:m')}}
+                            {{  $request->bookKeeper->created_at->format('Y-m-d H:i')}}
                         @endif
                     @endif
                 </td>
@@ -527,10 +527,10 @@
                 <td colspan="3" class="small px-2">No</td>
                 <td colspan="5" class="small px-2">
                     @if($request->priority)
-                        {{  $request->created_at->format('Y-m-d H:m')}}
+                        {{  $request->created_at->format('Y-m-d H:i')}}
                     @else
                         @if($request->accountant)
-                            {{$request->accountant->created_at->format('y-m-d H:m')}}
+                            {{$request->accountant->created_at->format('y-m-d H:i')}}
                         @endif
                     @endif
                 </td>
@@ -596,7 +596,7 @@
                 </td>
                 <td colspan="5" class="small px-2">
                     @if($request->finance)
-                        {{$request->finance->created_at->format('y-m-d H:m')}}
+                        {{$request->finance->updated_at->format('Y-m-d H:i')}}
                     @endif
                 </td>
             </tr>
@@ -667,7 +667,7 @@
                 </td>
                 <td colspan="5" class="small px-2">
                     @if($request->auditor)
-                        {{ $request->auditor->created_at->format('Y-m-d H:m')}}
+                        {{ $request->auditor->created_at->format('Y-m-d H:i')}}
                     @endif
                 </td>
             </tr>
