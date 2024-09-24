@@ -199,7 +199,7 @@
                                             <td>{{ $request->reference}}</td>
                                             <td>{{$request->created_at->diffForHumans()}}</td>
                                             <td class="text-uppercase">{{ $request->company->name}}</td>
-                                            <td class="text-capitalize" style="max-width: 25ch">{{ $request->request_by}}</td>
+                                            <td class="text-capitalize" style="max-width: 25ch">{{ strtolower($request->request_by)}}</td>
                                             <td class="text-uppercase">{{ $request->status}}</td>
                                             <td>{!! \App\Helper\Helper::formatPeso( $request->items->first()->total_cost ) !!}</td>
                                             <td>
