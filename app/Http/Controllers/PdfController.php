@@ -240,22 +240,23 @@ class PdfController
     public function downloadPDF($requestID)
     {
         try {
-
-            $request = ExpenseRequest::findOrFail($requestID);
-
-            $measurements = Measurement::get();
-            $jobOrder = JobOrder::get();
-            $bankNames = BankName::get();
-            $bankCodes = BankCode::get();
-            $expenseCategory = ExpenseCategory::get();
+            $request = ExpenseRequest::with([
+                'items' => function ($query) {
+                    $query->select(['id','job_order_id','request_id','description','measurement_id','status', DB::raw('SUM(quantity * cost) as sub_total')]);
+                    $query->with(['jobOrder']);
+                    $query->groupBy('id','job_order_id','request_id','description','measurement_id','status',);
+                },
+                'company',
+                'preparedBy',
+                'checkVoucher',
+                'bankDetails',
+                'expenseTypes',
+                'approvals',
+                ])
+                ->findOrFail($requestID);
 
             $html = view('expense.pdf.expense-request-form', [
-                'bank_names' => $bankNames,
-                'bank_codes' => $bankCodes,
-                'expense_category' => $expenseCategory,
                 'request' => $request,
-                'measurements' => $measurements,
-                'jobOrders' => $jobOrder,
             ])->render();
 
             $snappdf = new \Beganovich\Snappdf\Snappdf();
@@ -268,10 +269,7 @@ class PdfController
 
         } catch (\Exception $exception) {
             return $exception->getMessage();
-//            return redirect()->back()->withErrors([$exception->getMessage()]);
         }
-
-
     }
 
     public function downloadMultiplePDF(Request $request)
@@ -281,6 +279,21 @@ class PdfController
             $ids = explode(',', $request->input('id')[0]);
 
             $requests = ExpenseRequest::whereIn('id', $ids)->get();
+
+            $requests = ExpenseRequest::whereIn('id', $ids)
+                ->with([
+                'items' => function ($query) {
+                    $query->select(['id','job_order_id','request_id','description','measurement_id','status', DB::raw('SUM(quantity * cost) as sub_total')]);
+                    $query->with(['jobOrder']);
+                    $query->groupBy('id','job_order_id','request_id','description','measurement_id','status',);
+                },
+                'company',
+                'preparedBy',
+                'checkVoucher',
+                'bankDetails',
+                'expenseTypes',
+                'approvals',
+            ])->get();
 
             $references = ExpenseRequest::select(['reference', 'id'])
                 ->whereIn('id', $ids)
@@ -296,19 +309,10 @@ class PdfController
                 }
             }
 
-            $measurements = Measurement::get();
-            $jobOrder = JobOrder::get();
-            $bankNames = BankName::get();
-            $bankCodes = BankCode::get();
             $expenseCategory = ExpenseCategory::get();
 
             $html = view('expense.pdf.multiple-expense-request-form', [
-                'bank_names' => $bankNames,
-                'bank_codes' => $bankCodes,
-                'expense_category' => $expenseCategory,
                 'requests' => $requests,
-                'measurements' => $measurements,
-                'jobOrders' => $jobOrder,
             ])->render();
 
             $snappdf = new \Beganovich\Snappdf\Snappdf();
