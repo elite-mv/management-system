@@ -18,7 +18,7 @@ class PresidentController extends Controller
     {
         $query = ModelsRequest::query();
 
-        $query->select(['id', 'reference', 'request_by', 'company_id', 'status', 'created_at']);
+        $query->select(['id', 'reference', 'request_by', 'company_id', 'status', 'supplier','created_at']);
 
         $query->with('items', function ($query) {
             $query->select('request_id', DB::raw('SUM(quantity * cost) as total_cost'))
@@ -32,6 +32,7 @@ class PresidentController extends Controller
         $query->when($request->input('search'), function ($qb) use ($request) {
             $qb->where(function ($qb) use ($request) {
                 $qb->where('id', Helper::rawID($request->input('search')));
+                $qb->orWhere('supplier', 'LIKE', $request->input('search') . '%');
                 $qb->orWhere('request_by', 'LIKE', $request->input('search') . '%');
                 $qb->orWhere('reference', 'LIKE', $request->input('search') . '%');
             });
@@ -102,6 +103,7 @@ class PresidentController extends Controller
                 $query->when($request->input('search'), function ($qb) use ($request) {
                     $qb->where(function ($qb) use ($request) {
                         $qb->where('id', Helper::rawID($request->input('search')));
+                        $qb->orWhere('supplier', 'LIKE', $request->input('search') . '%');
                         $qb->orWhere('request_by', 'LIKE', $request->input('search') . '%');
                         $qb->orWhere('reference', 'LIKE', $request->input('search') . '%');
                     });
