@@ -168,7 +168,7 @@
                 </p>
                 <div class="collapse" id="Request">
                     <div class="card card-body">
-                        <div class="d-flex flex-direction-row gap-5">
+                        <div class="d-flex flex-direction-row gap-5" style="overflow-x: auto;">
                             @php
                                 foreach ($requests as $index => $request) {
                                     echo"
@@ -305,7 +305,6 @@
         $('#collapseRequest').on('click', function() {
             $('#Request').toggleClass('show');
         });
-
 
     </script>
 @endsection
