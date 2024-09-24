@@ -162,6 +162,7 @@ class PresidentController extends Controller
         $query->when($request->input('search'), function ($qb) use ($request) {
             $qb->where(function ($qb) use ($request) {
                 $qb->where('id', Helper::rawID($request->input('search')));
+                $qb->orWhere('supplier', 'LIKE', $request->input('search') . '%');
                 $qb->orWhere('request_by', 'LIKE', $request->input('search') . '%');
                 $qb->orWhere('reference', 'LIKE', $request->input('search') . '%');
             });
