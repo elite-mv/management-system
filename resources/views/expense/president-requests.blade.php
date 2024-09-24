@@ -227,6 +227,7 @@
                                         <th>DURATION</th>
                                         <th>ENTITY</th>
                                         <th>REQUESTED BY</th>
+                                        <th>SUPPLIER</th>
                                         <th>STATUS</th>
                                         <th>TOTAL</th>
                                         <th>ACTION</th>
@@ -243,6 +244,11 @@
                                             <td>{{$request->created_at->diffForHumans()}}</td>
                                             <td class="text-uppercase">{{ $request->company->name}}</td>
                                             <td class="text-capitalize" style="max-width: 25ch">{{ strtolower($request->request_by)}}</td>
+                                            <td class="text-capitalize" style="max-width: 25ch">
+                                                @if($request->supplier)
+                                                    {{ strtolower($request->supplier)}}
+                                                @endif
+                                            </td>
                                             <td class="text-uppercase">{{ $request->status}}</td>
                                             <td>{!! \App\Helper\Helper::formatPeso( $request->items->first()->total_cost ) !!}</td>
                                             <td>
