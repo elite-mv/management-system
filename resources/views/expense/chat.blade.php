@@ -4,6 +4,13 @@
 
 @extends('layouts.expense-index')
 
+@section('style')
+    <style type="text/css">
+        .chat_nav {
+            color: rgb(255, 255, 255, 1.0);
+        }
+    </style>
+@endsection
 
 @section('title', 'Group Message')
 

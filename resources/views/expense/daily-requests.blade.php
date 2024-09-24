@@ -21,11 +21,6 @@
                                 <i class="fas fa-table me-1"></i>
                                 <b>Daily Requests</b>
                             </div>
-                            <div class="text-start">
-                                <form id="searchForm" class="d-flex gap-2 align-items-center">
-                                    <label class="form-label text-nowrap mb-0">Payment Status</label>
-                                </form>
-                            </div>
                         </div>
                     </div>
                     <div class="card-body overflow-x-auto">

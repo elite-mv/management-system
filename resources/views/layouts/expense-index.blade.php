@@ -427,7 +427,7 @@
                 <hr class="border-1 border-top border-light m-0 p-0 w-100"/>
                 <small class="my-2 text-start" style="color: rgb(255, 255, 255, 0.5);"><b>MESSAGES</b></small>
                 <div class="mb-3">
-                    <a href="/expense/chat" class="group_message_nav">
+                    <a href="/expense/chat" class="chat_nav">
                         <i class="far fa-comments" style="height: 20px; width: 20px;"></i>
                         <small><b>Group Message</b></small>
                     </a>
