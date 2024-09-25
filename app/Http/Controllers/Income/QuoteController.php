@@ -32,6 +32,22 @@ class QuoteController
         ]);
     }
 
+    public function addQuote(Request $request)
+    {
+
+        $quote = new Quotation();
+
+        $request->validate([
+            'details' => 'required',
+            'quantity' => 'required',
+            'cost' => 'required',
+            'discount' => 'required',
+        ]);
+
+        return $request->all();
+
+    }
+
     public function customer_get()
     {
         $customers = Customer::get();

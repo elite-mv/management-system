@@ -72,6 +72,7 @@ Route::prefix('income')->middleware([CompanyMiddleware::class])->group(function 
 
     Route::get('/api/customers', [CustomerController::class, 'getCustomers']);
 
+
     Route::post('/customer/add', [CustomerController::class, 'customer_add']);
     Route::get('/customer/get', [CustomerController::class, 'customer_get']);
     Route::put('/customer/update', [CustomerController::class, 'customer_update']);
@@ -81,6 +82,7 @@ Route::prefix('income')->middleware([CompanyMiddleware::class])->group(function 
     Route::get('/customer/currency/get', [CustomerController::class, 'currency_get']);
 
     Route::get('/quote', [QuoteController::class, 'index']);
+    Route::post('/quote', [QuoteController::class, 'addQuote']);
     Route::post('/quote/add_list', [QuoteController::class, 'add_list']);
     Route::post('/quote/add_item', [QuoteController::class, 'add_item']);
     Route::post('/quote/get_list', [QuoteController::class, 'get_list']);
