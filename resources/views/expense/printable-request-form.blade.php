@@ -123,7 +123,8 @@
                 </button>
 
                 @can('finance-president',auth()->user())
-                    <a class="btn btn-secondary" type="button" href="/check-excel/{{$request->id}}">
+                    <a class="btn btn-secondary" id="CheckWriter" href="">
+                    {{-- <a class="btn btn-secondary" type="button" href="/check-excel/{{$request->id}}"> --}}
                         <i class="fas fa-plus-circle me-2"></i>Check Writer
                     </a>
                 @endcan
@@ -2772,6 +2773,13 @@
             localStorage.setItem('update', timestamp);
         }
 
+        $('#CheckWriter').on('click', function(event) {
+            event.preventDefault();
+
+            window.location.href = "/check-excel/{{$request->id}}";
+
+            window.alert('Paper Size: Yougata 4 4.13 x 9.25 \nCustom Margin:\nTop 0\nHeader 0.3\nRight 0.7\nFooter 0.3\nBottom 1\nLeft 0.7');
+        })
     </script>
 @endsection
 
