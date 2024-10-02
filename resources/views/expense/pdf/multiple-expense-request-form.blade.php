@@ -61,6 +61,7 @@
 </head>
 <body>
 @foreach($requests as $request)
+
     <div class="mx-auto">
         <div class="d-flex mb-4 gap-2">
             <div>
@@ -158,7 +159,7 @@
             <tr>
                 <td colspan="4" class="small px-2">Supplier:</td>
                 <td colspan="8" class="small px-2 text-capitalize">
-                    @can('management',\Illuminate\Support\Facades\Auth::user())
+                    @can('managing-role',\Illuminate\Support\Facades\Auth::user())
                         {{$request->supplier}}
                     @else
                         [HIDDEN]
@@ -170,7 +171,7 @@
             <tr>
                 <td colspan="4" class="small px-2">Paid to:</td>
                 <td colspan="14" class="small px-2 text-capitalize">
-                    @can('managing-role')
+                    @can('managing-role', \Illuminate\Support\Facades\Auth::user())
                         <small>{{$request->paid_to}}</small>
                     @else
                         <small>[HIDDEN]</small>
@@ -218,7 +219,7 @@
             <tr>
                 <td colspan="9" class="px-2 small text-end fw-bold bg-gray text-uppercase">TOTAL</td>
                 <td colspan="4"
-                    class="px-2 small text-end">{!! \App\Helper\Helper::formatPeso($request->total) !!}</td>
+                    class="px-2 small text-end">{!! \App\Helper\Helper::formatPeso($request->sub_total) !!}</td>
                 <td colspan="5"
                     class="px-2 small text-center fw-bold bg-gray text-uppercase">{!! \App\Helper\Helper::formatPeso($request->fund) !!}</td>
             </tr>
@@ -241,7 +242,6 @@
                     @endif
                 </td>
             </tr>
-
             <tr>
                 <td colspan="4" class="small bg-yellow text-center fw-bold">QTY</td>
                 <td colspan="4" class="small bg-yellow text-center fw-bold">UOM</td>
@@ -530,7 +530,7 @@
                         {{  $request->created_at->format('Y-m-d H:i')}}
                     @else
                         @if($request->accountant)
-                            {{$request->accountant->created_at->format('y-m-d H:i')}}
+                            {{$request->accountant->created_at->format('Y-m-d H:i')}}
                         @endif
                     @endif
                 </td>
@@ -727,10 +727,11 @@
             </tr>
             </tbody>
         </table>
-        @if(!$loop->last)
-            <div style="page-break-before: always" class="page-break"></div>
-        @endif
     </div>
+
+    @if(!$loop->last)
+        <div style="page-break-before: always" class="page-break"></div>
+    @endif
 
 @endforeach
 

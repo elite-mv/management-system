@@ -69,7 +69,7 @@
             <div class="modal fade text-dark" id="quotationModal" tabindex="-1" aria-labelledby="Quotation Configuration" aria-hidden="true">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
-                        <form>
+                        <form method="POST" action="/income/quote">
                             @csrf
                             <div class="modal-header">
                                 <h1 class="modal-title fs-5">Quotation Configuration</h1>
@@ -104,7 +104,7 @@
                                     </div>
 
                                     <div style="overflow-x: auto;">
-                                        <table class="table table-bordered" id="quotation_item">
+                                        <table  class="table table-bordered" id="quotationTable">
                                             <thead>
                                                 <tr>
                                                     <th scope="col" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">UNIT DETAILS</th>
@@ -116,21 +116,33 @@
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <th scope="row" class="p-0"><input type="text" class="p-2 rounded-0 border-0 form-control" placeholder="Type the unit details." style="width: 300px;"></th>
-                                                    <td class="p-0"><input type="number" class="p-2 rounded-0 border-0 text-end form-control" value="1.00" step=".01"></td>
-                                                    <td class="p-0"><input type="number" class="p-2 rounded-0 border-0 text-end form-control" value="0.00" step=".01"></td>
-                                                    <td class="p-0"><input type="number" class="p-2 rounded-0 border-0 text-end form-control" max="100" min="0" value="0" step=".01"></td>
-                                                    <td class="p-0"><input type="number" class="p-2 rounded-0 border-0 text-end form-control" value="0.00" step=".01" disabled></td>
+                                                    <td class="p-0">
+                                                        <input name="details[]" type="text" class="w-100 p-2 form-control" placeholder="Type the unit details." style="width: 300px;">
+                                                    </td>
+                                                    <td class="p-0">
+                                                        <input name="quantity[]" type="number" class="p-2 rounded-0 border-0 text-end form-control" value="1.00" step=".01">
+                                                    </td>
+                                                    <td class="p-0">
+                                                        <input name="cost[]" type="number" class="p-2 rounded-0 border-0 text-end form-control" value="0.00" step=".01">
+                                                    </td>
+                                                    <td class="p-0">
+                                                        <input name="discount[]" type="number" class="p-2 rounded-0 border-0 text-end form-control" max="100" min="0" value="0" step=".01">
+                                                    </td>
+                                                    <td class="p-0">
+                                                        <input class="p-2 rounded-0 border-0 text-end form-control" value="0.00" step=".01" disabled>
+                                                    </td>
                                                 </tr>
                                             </tbody>
                                         </table>
                                     </div>
 
                                     <div class="d-flex flex-direction-row gap-3">
+
                                         <div class="d-flex flex-direction-row" style="height: 50%; width: 50%;">
-                                            <button class="btn btn-outline-danger rounded-0" name="add_item">+ ITEM</button>
-                                            <input type="number" value="1" min="1" max="100" name="add_item_number" class="px-2 rounded-0 border-1 text-end" style="width: 60px; border-style: solid solid solid none;">
+                                                <button type="button" class="btn btn-outline-danger rounded-0" id="addItemBtn">+ ITEM</button>
+                                                <input type="number" value="1" min="1" max="100" id="addItemInput" class="px-2 rounded-0 border-1 text-end" style="width: 60px; border-style: solid solid solid none;">
                                         </div>
+
                                         <div class="d-flex p-3 w-100 bg-light gap-2" style="flex-direction: column; border-radius: 10px;">
                                             <div class="d-flex" style="justify-content: left;">
                                                 <div>
@@ -502,6 +514,11 @@
         const customerSearch = document.querySelector('#customerSearch');
         const customerSearchSuggestion = document.querySelector('#customerSearchSuggestion');
 
+        const quotationTable = document.querySelector('#quotationTable');
+
+        const addItemBtn = document.querySelector('#addItemBtn');
+        const addItemInput = document.querySelector('#addItemInput');
+
         let timer;
         let prevValue = '';
         const timeoutVal = 300;
@@ -520,7 +537,7 @@
             }
         });
 
-         function handleKeyUp(e) {
+        function handleKeyUp(e) {
 
             window.clearTimeout(timer); // prevent errant multiple timeouts from being generated
 
@@ -562,6 +579,66 @@
 
         function handleKeyPress(e) {
             window.clearTimeout(timer);
+        }
+
+        addItemBtn.addEventListener('click',()=>{
+            appendItem(addItemInput.value);
+        })
+
+        function appendItem(max = 1){
+
+            const inputClasList = ['form-control'];
+
+            for (let i = 0; i < max; i++) {
+
+                const tr = document.createElement('tr');
+                const details = document.createElement('td');
+                const quantity = document.createElement('td');
+                const cost = document.createElement('td');
+                const discount = document.createElement('td');
+                const amount = document.createElement('td');
+
+                const detailsInput = document.createElement('input');
+                const quantityInput = document.createElement('input');
+                const costInput = document.createElement('input');
+                const discountInput = document.createElement('input');
+                const amountInput = document.createElement('input');
+
+                detailsInput.setAttribute('name', 'details[]');
+                quantityInput.setAttribute('name', 'quantity[]');
+                costInput.setAttribute('name', 'cost[]');
+                discountInput.setAttribute('name', 'discount[]');
+
+                detailsInput.classList.add(...inputClasList);
+                quantityInput.classList.add(...inputClasList);
+                costInput.classList.add(...inputClasList);
+                discountInput.classList.add(...inputClasList);
+                amountInput.classList.add(...inputClasList);
+
+                detailsInput.setAttribute('placeholder', 'Type the unit details.');
+                quantityInput.setAttribute('type', 'number');
+                costInput.setAttribute('type', 'number');
+                discountInput.setAttribute('type', 'number');
+                amountInput.disabled = true;
+
+                quantityInput.setAttribute('min', '1');
+                costInput.setAttribute('min', '0');
+                discountInput.setAttribute('min', '0');
+
+                details.appendChild(detailsInput);
+                quantity.appendChild(quantityInput);
+                cost.appendChild(costInput);
+                discount.appendChild(discountInput);
+                amount.appendChild(amountInput);
+
+                tr.appendChild(details);
+                tr.appendChild(quantity);
+                tr.appendChild(cost);
+                tr.appendChild(discount);
+                tr.appendChild(amount);
+
+                quotationTable.appendChild(tr)
+            }
         }
 
         window.addEventListener('load', function() {
