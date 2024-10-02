@@ -263,7 +263,6 @@ class PdfController
 
             $snappdf
                 ->setHtml($html)
-                ->waitBeforePrinting(10)
                 ->save('pdf/' . $request->reference . '.pdf');
 
             return response()->download('pdf/' . $request->reference . '.pdf');
