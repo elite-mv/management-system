@@ -87,7 +87,18 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Gate::define('managing-role', function (User $user) {
-            return $user->role->name == UserRole::PRESIDENT->value || $user->role->name == UserRole::FINANCE->value || $user->role->name == UserRole::BOOK_KEEPER->value || $user->role->name == UserRole::ACCOUNTANT->value || $user->role->name == UserRole::AUDITOR->value || $user->role->name == UserRole::DEVELOPER->value;
+
+            $role = $user->role->name;
+
+            return in_array($role, [
+                UserRole::PRESIDENT->value,
+                UserRole::FINANCE->value,
+                UserRole::BOOK_KEEPER->value,
+                UserRole::ACCOUNTANT->value,
+                UserRole::AUDITOR->value,
+                UserRole::DEVELOPER->value,
+            ]);
+
         });
 
         Gate::define('developer', function (User $user) {

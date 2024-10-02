@@ -240,11 +240,10 @@ class PdfController
     public function downloadPDF($requestID)
     {
         try {
+
             $request = ExpenseRequest::with([
                 'items' => function ($query) {
-                    $query->select(['id','job_order_id','cost','request_id','quantity','description','measurement_id','status', DB::raw('SUM(quantity * cost) as sub_total')]);
                     $query->with(['jobOrder']);
-                    $query->groupBy('id','quantity','job_order_id','cost','request_id','description','measurement_id','status',);
                 },
                 'company',
                 'preparedBy',
@@ -253,6 +252,7 @@ class PdfController
                 'expenseTypes',
                 'approvals',
                 ])
+                ->withSum('items as sub_total', DB::raw('(quantity * cost)'))
                 ->findOrFail($requestID);
 
             $html = view('expense.pdf.expense-request-form', [
@@ -283,9 +283,7 @@ class PdfController
             $requests = ExpenseRequest::whereIn('id', $ids)
                 ->with([
                 'items' => function ($query) {
-                    $query->select(['id','job_order_id','cost','request_id','quantity','description','measurement_id','status', DB::raw('SUM(quantity * cost) as sub_total')]);
                     $query->with(['jobOrder']);
-                    $query->groupBy('id','quantity','job_order_id','cost','request_id','description','measurement_id','status',);
                 },
                 'company',
                 'preparedBy',
@@ -293,7 +291,9 @@ class PdfController
                 'bankDetails',
                 'expenseTypes',
                 'approvals',
-            ])->get();
+            ])
+                ->withSum('items as sub_total', DB::raw('(quantity * cost)'))
+                ->get();
 
             $references = ExpenseRequest::select(['reference', 'id'])
                 ->whereIn('id', $ids)
@@ -324,7 +324,8 @@ class PdfController
             return response()->download('pdf/' . $fileName . '.pdf');
 
         } catch (\Exception $exception) {
-            return redirect()->back()->withErrors([$exception->getMessage()]);
+            return  $exception->getMessage();
+//            return redirect()->back()->withErrors([$exception->getMessage()]);
         }
     }
 
