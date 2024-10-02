@@ -168,17 +168,31 @@
                 </p>
                 <div class="collapse" id="Request">
                     <div class="card card-body">
-                        <div class="d-flex flex-direction-row gap-5" style="overflow-x: auto;">
+                        <div class="d-flex px-3 gap-3" style="overflow-x: auto;">
                             @php
                                 foreach ($requests as $index => $request) {
-                                    echo"
-                                        <div>
-                                            <a target='_blank' href='https://ralima.biz/expense/request/{{$request->id}}'>$request->reference</a>
-                                        </div>
-                                    ";
+                                    $data = $request->approvals;
+                                    $array = json_decode($data, true);
+                                    if (isset($array[0]['count'])) {
+                                        $count = $array[0]['count'];
+                                    } else {
+                                        $count = null; // Handle the case where count isn't set
+                                    }
+                                    echo'
+                                        <button type="button" class="btn btn-sm btn-outline-dark px-3 text-nowrap" data-id="'. $count .'">
+                                            '. $request->reference .'
+                                        </button>
+                                    ';
                                 }
                             @endphp
                         </div>
+                    </div>
+                </div>
+                <div class="collapse" id="View">
+                    <div class="container text-center" style="position: relative;">
+                        <input type="range" min="0" max="100" value="75" class="w-100" style="height: 10px;" readonly>
+                        <span style="position: absolute; right: 0; margin-right: 13px; top: 0; margin-top: 12px;"><i class="fas fa-flag"></i></span>
+                        <b></b>
                     </div>
                 </div>
             </div>
@@ -304,6 +318,20 @@
 
         $('#collapseRequest').on('click', function() {
             $('#Request').toggleClass('show');
+            $('#View').removeClass('show');
+        });
+
+        document.getElementById('Request').addEventListener('click', function(event) {
+            const value = event.target.getAttribute('data-id');
+            let multiplier = 0;
+            if (value) {
+                multiplier = value * 25;
+            } else {
+                multiplier = 0;
+            }
+            $('#View input[type="range"]').val(multiplier);
+            $('#View > div > b').text('Progress... ' + multiplier + '%');
+            $('#View').addClass('show');
         });
 
     </script>

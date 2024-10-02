@@ -242,9 +242,9 @@ class PdfController
         try {
             $request = ExpenseRequest::with([
                 'items' => function ($query) {
-                    $query->select(['id','job_order_id','request_id','description','measurement_id','status', DB::raw('SUM(quantity * cost) as sub_total')]);
+                    $query->select(['id','job_order_id','cost','request_id','quantity','description','measurement_id','status', DB::raw('SUM(quantity * cost) as sub_total')]);
                     $query->with(['jobOrder']);
-                    $query->groupBy('id','job_order_id','request_id','description','measurement_id','status',);
+                    $query->groupBy('id','quantity','job_order_id','cost','request_id','description','measurement_id','status',);
                 },
                 'company',
                 'preparedBy',
@@ -283,9 +283,9 @@ class PdfController
             $requests = ExpenseRequest::whereIn('id', $ids)
                 ->with([
                 'items' => function ($query) {
-                    $query->select(['id','job_order_id','request_id','description','measurement_id','status', DB::raw('SUM(quantity * cost) as sub_total')]);
+                    $query->select(['id','job_order_id','cost','request_id','quantity','description','measurement_id','status', DB::raw('SUM(quantity * cost) as sub_total')]);
                     $query->with(['jobOrder']);
-                    $query->groupBy('id','job_order_id','request_id','description','measurement_id','status',);
+                    $query->groupBy('id','quantity','job_order_id','cost','request_id','description','measurement_id','status',);
                 },
                 'company',
                 'preparedBy',

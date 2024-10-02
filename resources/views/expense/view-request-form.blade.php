@@ -121,9 +121,12 @@
                     View Logs
                 </button>
 
-                <a class="btn btn-secondary" type="button" href="/check-excel/{{$request->id}}">
-                    <i class="fas fa-plus-circle me-2"></i>Check Writer
-                </a>
+                @can('finance-president',auth()->user())
+                    <a class="btn btn-secondary" id="CheckWriter" href="">
+                    {{-- <a class="btn btn-secondary" type="button" href="/check-excel/{{$request->id}}"> --}}
+                        <i class="fas fa-plus-circle me-2"></i>Check Writer
+                    </a>
+                @endcan
 
             </div>
 
@@ -1402,5 +1405,13 @@
                 }
             })
         }
+
+        $('#CheckWriter').on('click', function(event) {
+            event.preventDefault();
+
+            window.alert('Paper Size: Yougata 4 4.13 x 9.25 \n Custom Margin: Top 0, Header 0.3, Right 0.7, Footer 0.3, Bottom 1, Left 0.7');
+
+            window.location.href = "/check-excel/{{$request->id}}";
+        })
     </script>
 @endsection

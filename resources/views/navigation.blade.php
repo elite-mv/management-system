@@ -31,6 +31,11 @@
         }
 
         body{
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* body{
             background: #eaeaea;
             overflow: hidden;
         }
@@ -165,7 +170,7 @@
         .button button:hover{
             background: #ababab;
             color: #fff;
-        }
+        } */
     </style>
 
     <style>
@@ -275,125 +280,142 @@
         }
     </style>
 </head>
-<body>
+<body style="background-image: repeating-linear-gradient(0deg, rgb(41, 41, 41) 0px, rgb(41, 41, 41) 1px,transparent 1px, transparent 21px),repeating-linear-gradient(90deg, rgb(41, 41, 41) 0px, rgb(41, 41, 41) 1px,transparent 1px, transparent 21px),linear-gradient(90deg, hsl(87,0%,9%),hsl(87,0%,9%));">
 
-<div class="container">
+    <div class="container-fluid">
+        <ul class="lightrope">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+        <div class="row m-0 p-1 gap-2">
+            <div class="col-sm-12 col-md-6 mx-auto m-0 p-4 position-relative overflow-hidden" style="display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 5px 0; margin-top: 15px; position: relative;
+                background-color: rgba(255, 255, 255, 0.4);
+                box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                border-right: 1px solid rgba(255, 255, 255, 0.2);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 7px;">
+                <div style="position: absolute; top: 30px; left: -200px; transform: rotate(-45deg); transform-origin: center center; width: 500px;" class="bg-warning px-3 rounded-0 py-1 text-center">
+                    <b class="text-white">PENDING</b>
+                </div>
+                <div class="w-100 h-100 p-5" style="border-radius: 7px; background-image: url(https://i.ibb.co/qCkd9jS/img1.jpg); background-size: cover;">
+                    <b class="text-white" style="text-shadow: 2px 3px 0 #000;">SMS Blaster</b><br>
+                    <small class="text-white" style="text-shadow: 3px 4px 0 #000;">Batch texting anywhere on the Philippines.</small><br>
+                    <a class="mt-4 btn btn-danger rounded-pill px-5" href="">Proceed</a>
+                </div>
+            </div>
 
-    <ul class="lightrope">
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-    </ul>
+            <div class="col-sm-12 col-md-6 mx-auto m-0 p-4 position-relative overflow-hidden" style="display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 5px 0; margin-top: 15px; position: relative;
+                background-color: rgba(255, 255, 255, 0.4);
+                box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                border-right: 1px solid rgba(255, 255, 255, 0.2);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 7px;">
+                <div style="position: absolute; top: 30px; left: -200px; transform: rotate(-45deg); transform-origin: center center; width: 500px;" class="bg-danger px-3 rounded-0 py-1 text-center">
+                    <b class="text-white">DONE</b>
+                </div>
+                <div class="w-100 h-100 p-5" style="border-radius: 7px; background-image: url(images/expense_request.jpg); background-size: cover;">
+                    <b class="text-white" style="text-shadow: 2px 3px 0 #000;">Expense Request</b><br>
+                    <small class="text-white" style="text-shadow: 3px 4px 0 #000;">Expense Request</small><br>
+                    <a class="mt-4 btn btn-danger rounded-pill px-5" href="/expense/request">Proceed</a>
+                </div>
+            </div>
 
-    <div class="slide">
-        <div class="item" style="background-image: url(https://i.ibb.co/qCkd9jS/img1.jpg);">
-            <div class="content">
-                <div class="name">SMS Blaster</div>
-                <div class="des">Batch texting anywhere on the Philippines.</div>
-                <button class="btn btn-danger rounded-0" id="sms_blaster">Proceed</button>
+            <div class="col-sm-12 col-md-6 mx-auto m-0 p-4 position-relative overflow-hidden" style="display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 5px 0; margin-top: 15px; position: relative;
+                background-color: rgba(255, 255, 255, 0.4);
+                box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                border-right: 1px solid rgba(255, 255, 255, 0.2);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 7px;">
+                <div style="position: absolute; top: 30px; left: -200px; transform: rotate(-45deg); transform-origin: center center; width: 500px;" class="bg-warning px-3 rounded-0 py-1 text-center">
+                    <b class="text-white">PENDING</b>
+                </div>
+                <div class="w-100 h-100 p-5" style="border-radius: 7px; background-image: url(https://i.ibb.co/NSwVv8D/img3.jpg); background-size: cover;">
+                    <b class="text-white" style="text-shadow: 2px 3px 0 #000;">Sales & Purchasing</b><br>
+                    <small class="text-white" style="text-shadow: 3px 4px 0 #000;">Generate quotation, invoice, PO and JO.</small><br>
+                    <a class="mt-4 btn btn-danger rounded-pill px-5" href="">Proceed</a>
+                </div>
             </div>
-        </div>
-        <div class="item" style="background-image: url(images/expense_request.jpg);">
-            <div class="content">
-                <div class="name">Expense Request</div>
-                <div class="des">Submit a new expense form, record a past expense record, manage a submitted expense requests and produce an expense report.</div>
-                <a href="/expense/request" role="button" class="btn btn-danger rounded-0" id="expense_request">Proceed</a>
-            </div>
-        </div>
-        <div class="item" style="background-image: url(https://i.ibb.co/NSwVv8D/img3.jpg);">
-            <div class="content">
-                <div class="name">Material Management</div>
-                <div class="des">Monitor vehicle progress.</div>
-                <button class="btn btn-danger rounded-0" id="material_management">Proceed</button>
-            </div>
-        </div>
-        <div class="item" style="background-image: url(https://i.ibb.co/Bq4Q0M8/img4.jpg);">
-            <div class="content">
-                <div class="name">Payroll Management</div>
-                <div class="des">Generate payroll summary and daily time records.</div>
-                <button class="btn btn-danger rounded-0">Proceed</button>
-            </div>
-        </div>
-        <div class="item" style="background-image: url(https://i.ibb.co/jTQfmTq/img5.jpg);">
-            <div class="content">
-                <div class="name">Payment Uploads</div>
-                <div class="des">Compilations of receipt and generate monthly expenses.</div>
-                <button class="btn btn-danger rounded-0">Proceed</button>
-            </div>
-        </div>
-        <div class="item" style="background-image: url(https://i.ibb.co/RNkk6L0/img6.jpg);">
-            <div class="content">
-                <div class="name">Guntech</div>
-                <div class="des">Automate generation of quotation, invoice and receipts.</div>
-                <button class="btn btn-danger rounded-0">Proceed</button>
-            </div>
-        </div>
 
+            <div class="col-sm-12 col-md-6 mx-auto m-0 p-4 position-relative overflow-hidden" style="display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 5px 0; margin-top: 15px; position: relative;
+                background-color: rgba(255, 255, 255, 0.4);
+                box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                border-right: 1px solid rgba(255, 255, 255, 0.2);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 7px;">
+                <div style="position: absolute; top: 30px; left: -200px; transform: rotate(-45deg); transform-origin: center center; width: 500px;" class="bg-warning px-3 rounded-0 py-1 text-center">
+                    <b class="text-white">PENDING</b>
+                </div>
+                <div class="w-100 h-100 p-5" style="border-radius: 7px; background-image: url(https://i.ibb.co/Bq4Q0M8/img4.jpg); background-size: cover;">
+                    <b class="text-white" style="text-shadow: 2px 3px 0 #000;">Payroll</b><br>
+                    <small class="text-white" style="text-shadow: 3px 4px 0 #000;">Generate payroll and summary of daily time records.</small><br>
+                    <a class="mt-4 btn btn-danger rounded-pill px-5" href="">Proceed</a>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="button">
-        <button class="prev"><i class="fa-solid fa-arrow-left"></i></button>
-        <button class="next"><i class="fa-solid fa-arrow-right"></i></button>
-    </div>
+    <script type="text/javascript">
+        $(window).on('load', function() {
+            $(".loader").fadeOut('slow');
+        });
 
-</div>
-<script type="text/javascript">
-    $(window).on('load', function() {
-        $(".loader").fadeOut('slow');
-    });
+        // let next = document.querySelector('.next')
+        // let prev = document.querySelector('.prev')
 
-    let next = document.querySelector('.next')
-    let prev = document.querySelector('.prev')
+        // next.addEventListener('click', function(){
+        //     let items = document.querySelectorAll('.item')
+        //     document.querySelector('.slide').appendChild(items[0])
+        // })
 
-    next.addEventListener('click', function(){
-        let items = document.querySelectorAll('.item')
-        document.querySelector('.slide').appendChild(items[0])
-    })
+        // prev.addEventListener('click', function(){
+        //     let items = document.querySelectorAll('.item')
+        //     document.querySelector('.slide').prepend(items[items.length - 1])
+        // })
 
-    prev.addEventListener('click', function(){
-        let items = document.querySelectorAll('.item')
-        document.querySelector('.slide').prepend(items[items.length - 1])
-    })
-
-</script>
+    </script>
 </body>
 </html>
