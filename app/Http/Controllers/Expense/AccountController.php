@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\Expense\Request as ModelsRequest;
 use App\Models\Expense\RequestItem;
 use Illuminate\Support\Facades\Auth;
+use App\Enums\RequestApprovalStatus;
+use Illuminate\Support\Facades\DB;
 
 class AccountController
 {
@@ -16,10 +18,12 @@ class AccountController
 
         $companies = Company::select('id', 'name', 'logo')->get();
         $requests_query = ModelsRequest::query();
-        $requests_query->where('prepared_by', Auth::id());
+        $requests_query->with(['approvals' => function($query){
+            $query->select(['id','request_id',DB::raw('COUNT(*) as count')])
+            ->where('status', RequestApprovalStatus::APPROVED->name)
+            ->groupBy('request_id','id');
+        }])->where('prepared_by', Auth::id());
         $requests = $requests_query->get();
-
-        // $items = RequestItem::all()->get();
 
         return view('expense.account', [
             'companies' => $companies,
