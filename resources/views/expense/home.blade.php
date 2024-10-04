@@ -9,6 +9,23 @@
         .home_nav {
             color: rgb(255, 255, 255, 1.0);
         }
+
+        .line {
+            left: -47px;
+            position: absolute;
+            background-color: #000;
+            width: 3px;
+            height: 100%;
+        }
+
+        .bullet {
+            left: -50px;
+            position: absolute;
+            background-color: #000;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
     </style>
 @endsection
 
@@ -30,90 +47,91 @@
                          style="position: absolute; top: -22px; left: 25px; margin: 0; padding: 0 10px 0 10px;">
                         <b><h5 class="m-0 p-0 px-1 py-1 text-white">WHAT`S NEW</h5></b>
                     </div>
-                    <div class="w-100 text-start" style="overflow-y: auto; height: 75vh">
-                        <small>
-                            <p class="ms-4 text-danger">5 SECRET PIN ARE IMPLEMENTED</p>
-                            <p class="ms-5">
-                                Added as an additional security.
-                                <br><br>
-                                Can be updated at [My Profile].
-                            </p>
-                        </small>
-                        <small>
-                            <p class="ms-4 text-danger">EMAIL NOTIFICATIONS ARE IMPLEMENTED</p>
-                            <p class="ms-5">
-                                Submitting a checked priority request notifies finance.
-                                <br><br>
-                                Submitting a unchecked priority request notifies book keeper.
-                                <br><br>
-                                Commenting on a request notifies requestor, book keeper, accountant, finance and
-                                auditor.
-                                <br><br>
-                                Check your notifications by accessing your webmail via [entity website + /webmail] or by
-                                adding your corporate email to an email application.
-                                <br><br><br>
-                                Sample of [entity website + /webmail]:
-                                <br><br>
-                                - eliteacesinc.com/webmail
-                            </p>
-                        </small>
-                        <small>
-                            <p class="ms-4 text-danger">GROUP MESSAGE IS IMPLEMENTED</p>
-                            <p class="ms-5">
-                                The messages on the [Group Message] can be seen by everyone.
-                                <br><br>
-                                Leaving a message notifies everyone.
-                            </p>
-                        </small>
-                        <small>
-                            <p class="ms-4 text-danger">LOGS ARE IMPLEMENTED</p>
-                            <p class="ms-5">
-                                The system creates history of events or changes that happens on the request form.
-                                <br><br>
-                                Log records the activity or event that happened and who triggers it.
-                            </p>
-                        </small>
-                        <small>
-                            <p class="ms-4 text-danger">AUTO SAVE IS IMPLEMENTED</p>
-                            <p class="ms-5">
-                                When the system detect any changes to the request form it automatically saves it.
-                            </p>
-                        </small>
-                        <small>
-                            <p class="ms-4 text-danger">MY PROFILE IS IMPLEMENTED</p>
-                            <p class="ms-5">
-                                The system allows user to update their username and password.
-                                <br><br><br>
-                                Disclaimer:
-                                <br><br>
-                                - The Management System does not update the password of your corporate email.
-                                <br><br>
-                                - Your Management System account is seperate from your corporate email.
-                            </p>
-                        </small>
-                        <small>
-                            <p class="ms-4 text-danger">VIEW REQUEST IS IMPLEMENTED</p>
-                            <p class="ms-5">
-                                The system allows user to download the request form in PDF format, see the logs, add
-                                attachments to the requested items and comment on their request.
-                            </p>
-                        </small>
-                        <small>
-                            <p class="ms-4 text-danger">SUBMIT REQUEST IS IMPLEMENTED</p>
-                            <p class="ms-5">
-                                The [Request] page allows user to submit a request, choose entity, add items, delete
-                                items,
-                                update items, attach multiple images and set priority.
-                                <br><br>
-                                The [Request] page automatically do all the calculations for the total of all items.
-                                <br><br>
-                                The [Request] page only accepts positive integers, deleting an input will auto change
-                                the
-                                current value to 1.
-                                <br><br>
-                                The [My Request] page contains the history of all the request made by the user.
-                            </p>
-                        </small>
+
+                    <div class="text-start d-flex flex-column w-75 ps-5">
+                        <div class="d-flex flex-column position-relative justify-content-center py-4">
+                            <span class="bullet"></span>
+                            <span class="line"></span>
+                            <small><b>System Deployment</b></small>
+                            <small class="ms-5">The revised system now utilizes the Laravel framework.</small>
+                        </div>
+
+                        <div class="d-flex flex-column position-relative justify-content-center py-4">
+                            <span class="bullet"></span>
+                            <span class="line"></span>
+                            <small><b>System Development</b></small>
+                            <small class="ms-5">The system's expense request conversion & revision and sales & purhasing development was initialize on August 12, 2024.</small>
+                        </div>
+
+                        <div class="d-flex flex-column position-relative justify-content-center py-4">
+                            <span class="bullet"></span>
+                            <span class="line"></span>
+                            <small><b>System Upgrade</b></small>
+                            <small class="ms-5">The system was transfered to a secured server.</small>
+                        </div>
+
+                        <div class="d-flex flex-column position-relative justify-content-center py-4">
+                            <span class="bullet"></span>
+                            <span class="line"></span>
+                            <small><b>System Transition</b></small>
+                            <small class="ms-5">The system was preparation for server transfer was initialized on August 07, 2024.</small>
+                        </div>
+
+                        <div class="d-flex flex-column position-relative justify-content-center py-4">
+                            <span class="bullet"></span>
+                            <span class="line"></span>
+                            <small><b>System Revision</b></small>
+                            <small class="ms-5">The system revision was initialized during its development.</small>
+                        </div>
+
+                        <div class="d-flex flex-column position-relative justify-content-center py-4">
+                            <span class="bullet"></span>
+                            <span class="line"></span>
+                            <small><b>System Deployment</b></small>
+                            <small class="ms-5">The system's user deployment was supervise by Jocelyn Compoto.</small>
+                        </div>
+
+                        <div class="d-flex flex-column position-relative justify-content-center py-4">
+                            <span class="bullet"></span>
+                            <span class="line"></span>
+                            <small><b>System Achievement</b></small>
+                            <small class="ms-5">The system first request was created on May 17, 2024.</small>
+                        </div>
+
+                        <div class="d-flex flex-column position-relative justify-content-center py-4">
+                            <span class="bullet"></span>
+                            <span class="line"></span>
+                            <small><b>System Deployment</b></small>
+                            <small class="ms-5">The system was deployed at Infinity Free.</small>
+                        </div>
+
+                        <div class="d-flex flex-column position-relative justify-content-center py-4">
+                            <span class="bullet"></span>
+                            <span class="line"></span>
+                            <small><b>System Design</b></small>
+                            <small class="ms-5">The system design was supervise by Jocelyn Compoto.</small>
+                        </div>
+
+                        <div class="d-flex flex-column position-relative justify-content-center py-4">
+                            <span class="bullet"></span>
+                            <span class="line"></span>
+                            <small><b>System Architecture</b></small>
+                            <small class="ms-5">The system utilized the serverless architecture.</small>
+                        </div>
+
+                        <div class="d-flex flex-column position-relative justify-content-center py-4">
+                            <span class="bullet"></span>
+                            <span class="line"></span>
+                            <small><b>System Development</b></small>
+                            <small class="ms-5">The system development was initialize on April 22, 2024.</small>
+                        </div>
+
+                        <div class="d-flex flex-column position-relative justify-content-center py-4">
+                            <span class="bullet"></span>
+                            <span class="line"></span>
+                            <small><b>System Introduction</b></small>
+                            <small class="ms-5">The system concept was introduced to the interns on April 22, 2024.</small>
+                        </div>
                     </div>
                 </div>
             </div>

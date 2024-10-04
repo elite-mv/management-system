@@ -28,8 +28,6 @@ class ChatAlertJob implements ShouldQueue
         'finance@gtiarmoredcars.com',
         'jocelyn@eliteacesinc.com',
         'ariel@accountant.com',
-        'john.castillo@eliteacesinc.com',
-        'mhelvoi@eliteacesinc.com',
     ];
 
     /**
