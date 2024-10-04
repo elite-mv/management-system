@@ -115,7 +115,7 @@ class DownloadableFormController
             ]);
 
         return view('expense.downloadable-forms', [
-            'requests' => $requests->paginate(20),
+            'requests' => $requests->paginate(20)->appends(request()->except('page')),
             'total' => $this->totalSum($request),
             'approved' => $this->approved($request),
         ]);
