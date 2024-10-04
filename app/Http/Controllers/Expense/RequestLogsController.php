@@ -33,7 +33,7 @@ class RequestLogsController
         });
 
         $query->orderBy('created_at', 'desc');
-        $logs = $query->paginate(25);
+        $logs = $query->paginate(25)->appends(request()->except('page'));
 
         return view('expense.logs', [
             'logs' => $logs,
